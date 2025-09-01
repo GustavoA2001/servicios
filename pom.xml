@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.servicios</groupId>
+    <artifactId>servicios</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>usuarios-service</module>
+        <!--
+        1: Autenticación y Usuarios (usuarios-service)
+
+        -Entidades: Usuario (Clientes, Trabajadores, Administradores), GrupoTrabajo.        
+        
+        -Endpoints básicos: 
+        Crear, actualizar, eliminar usuario.
+        Encriptación de datos sensibles (DNI, teléfono, etc.).
+        Validación opcional RENIEC.
+
+        -Base de datos: Usuarios + roles + grupos.
+
+        -->
+
+        <module>servicios-service</module>
+        <!--
+        2: Catálogo de Servicios (servicios-service)
+        
+        -Entidades: Servicio (propios o externos), CategoriaServicio.
+        
+        -Endpoints básicos: 
+        Crear / modificar / eliminar servicio.
+        Consultar catálogo por categoría, disponibilidad.
+
+        -Integración futura con pedidos-service para disponibilidad y precios.
+        -Búsqueda y filtrado.
+        -->
+
+        <module>pedidos-service</module>
+        <!--
+        3: Pedidos o Reservas (pedidos-service)
+
+        -Entidades: Pedido, Reserva.
+
+        -Funcionalidades:
+        Registrar reservas con precio, fecha y estado.
+        Asignación manual o automática de trabajadores/grupos.
+        
+        -Endpoints:
+        Crear reserva/pedido.
+        Actualizar estado (pendiente, confirmado, cancelado, completado).
+        Consultar pedidos por usuario o grupo de trabajo.
+        -->
+
+        <module>pagos-service</module>
+        <!--
+        4: Pagos (pagos-service)
+        
+        -Funcionalidades iniciales:
+        Procesar pagos hacia la empresa.
+        Guardar historial de transacciones.
+        Diseño flexible para futuras divisiones automáticas (empresa + trabajador).
+        
+        -Endpoints:
+        Crear pago.
+        Consultar historial.
+        Ver estado de pago.
+        -->
+
+        <module>notificaciones-service</module>
+        <!--
+        5: Notificaciones (notificaciones-service)
+
+        -Funcionalidades:
+        Emails, push notifications y alertas internas.
+        
+        -Endpoints:
+        Enviar notificación a usuario/roles/grupos.
+        Plantillas básicas de notificación.
+        -->
+
+        <module>admin-service</module> 
+        <!--
+        6: Administración (admin-service)
+
+        -Funcionalidades:
+        Control de usuarios (aprobar, suspender).
+        Monitoreo de pedidos y pagos.
+        
+        -Endpoints:
+        Listar usuarios, pedidos, pagos.
+        Modificar estado de usuarios.
+
+        -->
+
+        <module>chat-service</module>  
+        <!--
+        7: Comunicación / Chat (chat-service)
+
+        -Funcionalidades:
+        Mensajería interna entre cliente y trabajador.
+        
+        -Endpoints:
+        Crear sala de chat.
+        Enviar / recibir mensajes.
+        Historial de conversaciones.
+        -->
+
+        <!-- OPCIONAL -->
+        <module>api-gateway</module>
+        <!--
+        8: api-gateway
+        
+        -Funcionalidades:
+        Punto único de entrada para todas las solicitudes externas.
+        Enrutamiento hacia los microservicios internos (usuarios-service, servicios-service, pedidos-service, pagos-service, etc.).
+        Seguridad centralizada: autenticación y autorización de usuarios.
+        Balanceo de carga y limitación de solicitudes (throttling).
+        Posible transformación de solicitudes/respuestas (agregar encabezados, modificar datos).
+        
+        -Endpoints (configurados como rutas hacia microservicios):
+        /usuarios/** → enruta a usuarios-service.
+        /servicios/** → enruta a servicios-service.
+        /pedidos/** → enruta a pedidos-service.
+        /pagos/** → enruta a pagos-service.
+        /notificaciones/** → enruta a notificaciones-service.
+        /admin/** → enruta a admin-service (si está activo).
+        /chat/** → enruta a chat-service (si está activo).
+        
+        -->
+
+    </modules>
+
+
+</project>
