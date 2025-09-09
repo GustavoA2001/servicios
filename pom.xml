@@ -24,6 +24,7 @@
 
         -Base de datos: Usuarios + roles + grupos.
 
+        Podemos dividir el usuarios para tener login y registro
         -->
 
         <module>servicios-service</module>
@@ -38,6 +39,7 @@
 
         -Integración futura con pedidos-service para disponibilidad y precios.
         -Búsqueda y filtrado.
+        -Se acaba cuando se seleccione el servicio y nos envia al pedidos-service por ruta
         -->
 
         <module>pedidos-service</module>
