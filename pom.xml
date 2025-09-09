@@ -11,20 +11,27 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>usuarios-service</module>
+        <module>login-service</module>
         <!--
         1: Autenticación y Usuarios (usuarios-service)
 
-        -Entidades: Usuario (Clientes, Trabajadores, Administradores), GrupoTrabajo.        
+        -Entidades: Usuario (Clientes, Trabajadores, Administradores), GrupoTrabajo.   
         
         -Endpoints básicos: 
-        Crear, actualizar, eliminar usuario.
-        Encriptación de datos sensibles (DNI, teléfono, etc.).
+        Solo valida a los usuarios
         Validación opcional RENIEC.
 
         -Base de datos: Usuarios + roles + grupos.
+        -->
+        <module>registro-service</module>
+        <!--
+        2: Registro y modificaciondeusuarios
+        
+        -Entidades: Usuario (Clientes, Trabajadores, Administradores), GrupoTrabajo.  
 
-        Podemos dividir el usuarios para tener login y registro
+        -Endpoints:
+        Crear, actualizar, eliminar usuario.
+        Encriptación de datos sensibles (DNI, teléfono, etc.).
         -->
 
         <module>servicios-service</module>
