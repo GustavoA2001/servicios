@@ -22,6 +22,7 @@
         Validación opcional RENIEC.
 
         -Base de datos: Usuarios + roles + grupos.
+        port: 8081
         -->
         <module>registro-service</module>
         <!--
@@ -32,11 +33,12 @@
         -Endpoints:
         Crear, actualizar, eliminar usuario.
         Encriptación de datos sensibles (DNI, teléfono, etc.).
+        port: 8082
         -->
 
         <module>servicios-service</module>
         <!--
-        2: Catálogo de Servicios (servicios-service)
+        3: Catálogo de Servicios (servicios-service)
         
         -Entidades: Servicio (propios o externos), CategoriaServicio.
         
@@ -47,11 +49,12 @@
         -Integración futura con pedidos-service para disponibilidad y precios.
         -Búsqueda y filtrado.
         -Se acaba cuando se seleccione el servicio y nos envia al pedidos-service por ruta
+        port: 8083
         -->
 
         <module>pedidos-service</module>
         <!--
-        3: Pedidos o Reservas (pedidos-service)
+        4: Pedidos o Reservas (pedidos-service)
 
         -Entidades: Pedido, Reserva.
 
@@ -63,11 +66,12 @@
         Crear reserva/pedido.
         Actualizar estado (pendiente, confirmado, cancelado, completado).
         Consultar pedidos por usuario o grupo de trabajo.
+        port: 8084
         -->
 
         <module>pagos-service</module>
         <!--
-        4: Pagos (pagos-service)
+        5: Pagos (pagos-service)
         
         -Funcionalidades iniciales:
         Procesar pagos hacia la empresa.
@@ -78,23 +82,25 @@
         Crear pago.
         Consultar historial.
         Ver estado de pago.
+        port: 8085
         -->
 
         <module>notificaciones-service</module>
         <!--
-        5: Notificaciones (notificaciones-service)
+        6: Notificaciones (notificaciones-service)
 
         -Funcionalidades:
-        Emails, push notifications y alertas internas.
+        Emails, push notifications y alertas a los usuarios.
         
         -Endpoints:
         Enviar notificación a usuario/roles/grupos.
         Plantillas básicas de notificación.
+        port: 8086
         -->
 
         <module>admin-service</module> 
         <!--
-        6: Administración (admin-service)
+        7: Administración (admin-service)
 
         -Funcionalidades:
         Control de usuarios (aprobar, suspender).
@@ -103,12 +109,12 @@
         -Endpoints:
         Listar usuarios, pedidos, pagos.
         Modificar estado de usuarios.
-
+        port: 8087
         -->
 
         <module>chat-service</module>  
         <!--
-        7: Comunicación / Chat (chat-service)
+        8: Comunicación / Chat (chat-service)
 
         -Funcionalidades:
         Mensajería interna entre cliente y trabajador.
@@ -117,12 +123,13 @@
         Crear sala de chat.
         Enviar / recibir mensajes.
         Historial de conversaciones.
+        port: 8088
         -->
 
         <!-- OPCIONAL -->
         <module>api-gateway</module>
         <!--
-        8: api-gateway
+        9: api-gateway
         
         -Funcionalidades:
         Punto único de entrada para todas las solicitudes externas.
@@ -139,7 +146,7 @@
         /notificaciones/** → enruta a notificaciones-service.
         /admin/** → enruta a admin-service (si está activo).
         /chat/** → enruta a chat-service (si está activo).
-        
+        port: 8089
         -->
 
     </modules>
