@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios | ADM</title>
+    <style>
+        .headers {
+            height: 55px;
+        }
+
+        .usuarios_container {
+            display: flex;
+            height: calc(100vh - 55px);
+            overflow: hidden;
+        }
+
+        /*==========
+        ASIDE USUARIOS
+        ============*/
+        aside.aside_usuarios {
+            width: 260px;
+            background-color: var(--color-white-dos);
+            padding: 20px;
+            height: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        aside.aside_usuarios h3 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        aside.aside_usuarios ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            flex-direction: column;
+        }
+
+        aside.aside_usuarios a {
+            text-decoration: none;
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            background-color: transparent;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid var(--color-morado-suave);
+            transition: background-color 1s ease, transform 0.15s ease;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        aside.aside_usuarios li {
+            text-decoration: none;
+            color: var(--text-black);
+        }
+
+        aside.aside_usuarios a:hover,
+        .aside_usuarios a.active {
+            background-color: #b392e075;
+            color: var(--text-black);
+            transform: scale(1.02);
+            border-radius: 50px;
+        }
+
+        /*==========
+        SECTION USUARIOS
+        ============*/
+        section.section_usuarios {
+            background-color: var(--color-white-tres);
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        section.section_usuarios h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .list_usuarios {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .list_usuarios a {
+            text-decoration: none;
+            color: var(--text-black);
+        }
+
+        .usuario-card {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 12px;
+            width: 230px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .usuario-card:hover {
+            transform: translateY(-5px);
+        }
+
+
+        .usuario-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 3px solid var(--color-morado-suave);
+        }
+
+        .usuario-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-black);
+        }
+
+        .usuario-card p {
+            color: #555;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .usuario-id {
+            font-size: 12px;
+            color: #888;
+        }
+
+        aside.aside_usuarios,
+        section.section_usuarios {
+            margin: 10px;
+            border-radius: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/styleAdmin.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header th:replace="components/menu_admin" class="headers"></header>
+
+    <div class="usuarios_container">
+        <!-- Eleccion de navegación -->
+        <aside class="aside_usuarios">
+            <h3>Menú de Usuarios</h3>
+            <ul>
+                <a th:href="@{/usuarios/clientes}" th:classappend="${tipo} == 'Cliente' ? 'active'">
+                    <li>Clientes</li>
+                </a>
+                <a th:href="@{/usuarios/trabajadores}" th:classappend="${tipo} == 'Trabajador' ? 'active'">
+                    <li>Trabajadores</li>
+                </a>
+                <a th:href="@{/usuarios/administradores}" th:classappend="${tipo} == 'Administrador' ? 'active'">
+                    <li>Administradores</li>
+                </a>
+            </ul>
+        </aside>
+
+        <!-- Sección de contenido donde se muestran los usuarios -->
+        <section class="section_usuarios">
+            <!-- Muestra los usuarios según los tipos de usuarios -->
+            <div class="usuarios_content">
+                <div class="list_usuarios" th:if="${activePage != 'usuario_info'}">
+
+                    <a th:each="usuario : ${usuarios}"
+                        th:href="@{/usuarios/usuario/{tipo}/{id}(tipo=${tipo}, id=${usuario.id})}" class="usuario-link">
+                        <div class="usuario-card">
+                            <img th:src="@{${usuario.rutaFoto}}" alt="Foto de usuario" class="usuario-foto">
+                            <h3 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h3>
+                            <p>Email: <span th:text="${usuario.email}"></span></p>
+                            <p class="usuario-id">ID: <span th:text="${usuario.id}"></span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Muestra al usuario seleccionado -->
+            <div class="usuario_info" th:if="${activePage == 'usuario_info'}">
+                <div th:replace="components/usuario_info"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <!--Componente usuario_model para crear un nuevo usuario-->
+    <div th:replace="components/usuario_model"></div>
+</body>
+
+</html>

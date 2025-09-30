@@ -1,0 +1,50 @@
+:root {
+
+    --base-pri: #3F1677;   
+    --base-sec: #2A5D8B;  
+    --base-ter: #FFFFFF;   
+    
+    --text-black: #141313;
+    --text-purpura: #783CC8;
+    --text-white: #EBEBEB;
+
+    --color-aqua: #20B89D;     
+    --color-verde-brilante: #13F9D0;  
+    --color-dark: #1E1E1E;    
+    --color-gris-claro: #EBEBEB;      
+    --color-gris: #8C8E8F;   
+    --color-azul-suave: #93B4B9;  
+    --color-vino: #AF2A3F;    
+    --color-melo: #FA5F60;     
+    --color-morado-suave: #B392E0;
+    --color-morado-fuerte: #332069;     
+
+    --color-pale: #FCE8E8;    
+    --color-verde-oscuro: #004F40;
+    --color-verde-amarillo: #C2E827; 
+
+    /*
+    Blancos
+    */
+    --color-white: #EDEEF1; 
+    --color-white-uno:#fbfbfb;
+    --color-white-dos: #dee0e7;
+    --color-white-tres: #f7f6fc;
+
+
+
+    /*==============
+    Alertas
+    ================*/
+    --color-red: #F02427;      /* Rojo brillante */
+    --color-green: #27C62C;      /* Verde vibrante */
+    --color-blue: #4B99E0;   /* Azul cielo */
+
+    
+    /* Nuevos colores añadidos */
+    --color-naranja: #F06D5D;    
+    --color-verde-gris: #A8C080;  
+    --color-purpura: #7F4C7A;    
+    --color-cielo: #74C6E3;    
+    --color-amarillo: #F6A800;     
+}

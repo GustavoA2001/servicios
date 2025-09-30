@@ -1,0 +1,100 @@
+@import url(colors.css);
+@import url(font.css);
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--base-ter);
+}
+
+.menu_admin {
+    background-color: var(--base-ter);
+    color: var(--color-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    flex-wrap: wrap;
+    height: 55px;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    width: 200px;
+}
+
+.menu_admin ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+}
+
+.menu_admin ul li {
+    display: inline;
+}
+
+.menu_admin ul li a {
+    color: var(--color-dark);
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s;
+    font-weight: 600;
+    padding: 5px 10px;
+}
+
+.menu_admin ul li a:hover {
+    color: var(--text-purpura);
+}
+
+.user_actions {
+    display: flex;
+    gap: 10px;
+}
+
+.user_actions button {
+    background-color: var(--color-morado-fuerte);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.user_actions button:hover {
+    background-color: var(--color-morado-suave);
+}
+
+.menu_admin ul li.active a {
+    color: var(--text-purpura);
+    font-weight: bold;
+    border: 1px solid var(--text-purpura);
+    border-radius: 50px;
+}
+
+@media (max-width: 768px) {
+    .menu_admin {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu_admin ul {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .user_actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
