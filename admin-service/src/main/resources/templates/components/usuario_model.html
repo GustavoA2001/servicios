@@ -3,21 +3,27 @@
 
 <!-- Modal -->
 <div class="usuario_modal" id="userModal">
-    <div class="modal-content">
-        <span class="close" id="closeModalBtn">&times;</span>
-        <h2>Nuevo Usuario</h2>
-        <form>
-            <input type="text" placeholder="Nombre" required>
-            <input type="text" placeholder="Apellido" required>
-            <input type="email" placeholder="Correo electrónico" required>
-            <input type="password" placeholder="Contraseña" required>
+    <div class="modal_usuario_content">
 
-            <select required>
+        <span class="close_modal_usuario" id="closeModalBtn">&times;</span>
+
+        <h2 class="league-spartan">Nuevo Usuario</h2>
+        
+        <form id="userForm" enctype="multipart/form-data">
+            <input type="text" id="nombre" placeholder="Nombre" required>
+            <input type="text" id="apellido" placeholder="Apellido" required>
+            <input type="email" id="email" placeholder="Correo electrónico" required>
+            <input type="password" id="pwd" placeholder="Contraseña" required>
+
+            <select id="rol" required>
                 <option value="">Selecciona un rol</option>
                 <option value="cliente">Cliente</option>
                 <option value="trabajador">Trabajador</option>
                 <option value="administrador">Administrador</option>
             </select>
+
+            <!-- Fecha de registro (Oculto, generado automáticamente en backend) -->
+            <input type="hidden" id="fechaRegistro" value="<?php echo date('Y-m-d H:i:s'); ?>">
 
             <button type="submit">Registrar</button>
         </form>
@@ -28,6 +34,7 @@
     const openModalBtn = document.getElementById("openModalBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const modal = document.getElementById("userModal");
+    const userForm = document.getElementById("userForm");
 
     openModalBtn.addEventListener("click", () => {
         modal.style.display = "flex";
@@ -42,7 +49,37 @@
             modal.style.display = "none";
         }
     });
+
+    userForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(userForm);
+        // Aquí puedes agregar una llamada a un backend para registrar al usuario
+        console.log('Datos del formulario:', Object.fromEntries(formData.entries()));
+
+        // Aquí agregamos código para procesar la imagen si la hay
+        if (formData.get('fotito')) {
+            const file = formData.get('fotito');
+            console.log("Archivo de foto:", file.name);
+        }
+
+        // Luego de enviar el formulario, puedes cerrar el modal
+        modal.style.display = "none";
+    });
 </script>
+
+<script>
+    // Asignar clase 'cabin' a los inputs y select
+    document.querySelectorAll('.modal_usuario_content form input').forEach(function (input) {
+        input.classList.add('cabin');
+    });
+
+    // Asignar clase 'cabin' a los options dentro del select
+    document.querySelectorAll('.modal_usuario_content form select option').forEach(function (option) {
+        option.classList.add('cabin');
+    });
+</script>
+
 
 <style>
 
@@ -65,7 +102,7 @@
         z-index: 1100;
     }
 
-    .btn-open:hover {
+    .btn_open:hover {
         background: #7b57a6;
         transform: scale(1.05);
     }
@@ -87,7 +124,7 @@
         padding: 20px;
     }
 
-    .modal-content {
+    .modal_usuario_content {
         background: #fff;
         padding: 25px;
         border-radius: 12px;
@@ -98,8 +135,10 @@
         animation: fadeIn 0.3s ease;
     }
 
-    /* Botón cerrar */
-    .close {
+    /* ==========
+    CERRAR MODAL
+    ============ */
+    .close_modal_usuario {
         position: absolute;
         top: 12px;
         right: 16px;
@@ -109,12 +148,12 @@
         transition: color 0.2s ease;
     }
 
-    .close:hover {
+    .close_modal_usuario:hover {
         color: #000;
     }
 
     /* Título */
-    .modal-content h2 {
+    .modal_usuario_content h2 {
         margin-top: 0;
         text-align: center;
         margin-bottom: 20px;
@@ -122,21 +161,21 @@
     }
 
     /* Formulario */
-    form {
+    .modal_usuario_content form {
         display: flex;
         flex-direction: column;
         gap: 14px;
     }
 
-    input,
-    select {
+    .modal_usuario_content form input,
+    .modal_usuario_content form select {
         padding: 12px;
         border-radius: 8px;
         border: 1px solid #ccc;
         font-size: 14px;
     }
 
-    button[type="submit"] {
+    .modal_usuario_content form button[type="submit"] {
         background: var(--color-morado-suave);
         color: white;
         border: none;
@@ -147,7 +186,7 @@
         transition: background 0.3s ease;
     }
 
-    button[type="submit"]:hover {
+    .modal_usuario_content form button[type="submit"]:hover {
         background: #7b57a6;
     }
 

@@ -21,7 +21,7 @@
         ============*/
         aside.aside_usuarios {
             width: 260px;
-            background-color: var(--color-white-dos);
+            background-color: var(--color-white-uno);
             padding: 20px;
             height: auto;
             box-sizing: border-box;
@@ -83,11 +83,20 @@
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
+            display: flex;
+        }
+        
+        section.section_usuarios .usuarios_content {
+            display: block;
+            width: 100%;
         }
 
         section.section_usuarios h2 {
             text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            text-align: center;
+            justify-content: center;
         }
 
         .list_usuarios {
@@ -151,14 +160,14 @@
 </head>
 
 <body>
-    <!-- Header -->
+    <!-- Componenetes Header -->
     <header th:replace="components/menu_admin" class="headers"></header>
 
     <div class="usuarios_container">
         <!-- Eleccion de navegación -->
         <aside class="aside_usuarios">
-            <h3>Menú de Usuarios</h3>
-            <ul>
+            <h3 class="cabin">Menú de Usuarios</h3>
+            <ul class="space-grotesk">
                 <a th:href="@{/usuarios/clientes}" th:classappend="${tipo} == 'Cliente' ? 'active'">
                     <li>Clientes</li>
                 </a>
@@ -174,9 +183,14 @@
         <!-- Sección de contenido donde se muestran los usuarios -->
         <section class="section_usuarios">
             <!-- Muestra los usuarios según los tipos de usuarios -->
-            <div class="usuarios_content">
-                <div class="list_usuarios" th:if="${activePage != 'usuario_info'}">
+            <div class="usuarios_content"  th:if="${activePage != 'usuario_info'}">
+                <h2 class="cabin">
+                    Lista de&nbsp;<span th:text="${tipo}"></span> 
+                    &nbsp;(<span th:text="${contador}"></span>)
+                </h2>
+                <div class="list_usuarios space-grotesk">
 
+                    
                     <a th:each="usuario : ${usuarios}"
                         th:href="@{/usuarios/usuario/{tipo}/{id}(tipo=${tipo}, id=${usuario.id})}" class="usuario-link">
                         <div class="usuario-card">

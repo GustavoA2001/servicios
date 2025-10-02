@@ -1,0 +1,25 @@
+<div class="servicio_cliente">
+    <h3>Clientes que solicitaron el servicio</h3>
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>Pedido ID</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Duración</th>
+                <th>Costo Total</th>
+                <th>Cliente</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="${p.pedidoID}"></td>
+                <td th:text="${p.fechaPedido}"></td>
+                <td th:text="${p.estadoPedido}"></td>
+                <td th:text="${p.duracionPedido}"></td>
+                <td th:text="${p.costoTotal}"></td>
+                <td th:text="${p.cliente.nombre} + ' ' + ${p.cliente.apellido}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

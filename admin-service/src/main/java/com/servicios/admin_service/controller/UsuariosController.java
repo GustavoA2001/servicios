@@ -23,31 +23,38 @@ public class UsuariosController {
 
     // Redirección al entrar a /usuarios
     @GetMapping
-    public String indexUsuarios() {
+    public String UsuariosHTML(Model model) {
+        model.addAttribute("activeMenu", "usuarios");
         return "redirect:/usuarios/clientes";
     }
 
     @GetMapping("/clientes")
     public String mostrarClientes(Model model) {
         List<Cliente> clientes = usuarioDAO.obtenerClientes();
+        model.addAttribute("activeMenu", "usuarios");
         model.addAttribute("usuarios", clientes);
         model.addAttribute("tipo", "Cliente");
+        model.addAttribute("contador", clientes.size()); 
         return "usuarios";
     }
 
     @GetMapping("/trabajadores")
     public String mostrarTrabajadores(Model model) {
         List<Empleado> trabajadores = usuarioDAO.obtenerEmpleadosPorRol(2);
+        model.addAttribute("activeMenu", "usuarios");
         model.addAttribute("usuarios", trabajadores);
         model.addAttribute("tipo", "Trabajador");
+        model.addAttribute("contador", trabajadores.size()); 
         return "usuarios";
     }
 
     @GetMapping("/administradores")
     public String mostrarAdministradores(Model model) {
         List<Empleado> administradores = usuarioDAO.obtenerEmpleadosPorRol(1);
+        model.addAttribute("activeMenu", "usuarios");
         model.addAttribute("usuarios", administradores);
         model.addAttribute("tipo", "Administrador");
+        model.addAttribute("contador", administradores.size()); 
         return "usuarios";
     }
     @GetMapping("/usuario/{tipo}/{id}")
@@ -56,12 +63,13 @@ public class UsuariosController {
     
         if ("Cliente".equalsIgnoreCase(tipo)) {
             usuario = usuarioDAO.obtenerClientePorId(id);
-            tipo = "Cliente";  // normalizamos el valor
+            tipo = "Cliente";  
         } else {
             usuario = usuarioDAO.obtenerEmpleadoPorId(id);
-            tipo = "Empleado"; // normalizamos el valor
+            tipo = "Empleado"; 
         }
-    
+
+        model.addAttribute("activeMenu", "usuarios");
         model.addAttribute("usuario", usuario);
         model.addAttribute("activePage", "usuario_info");
         model.addAttribute("tipo", tipo);

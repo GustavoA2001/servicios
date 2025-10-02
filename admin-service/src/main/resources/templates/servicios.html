@@ -1,25 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servicios | ADM</title>
+    <style>
+        .headers {
+            height: 55px;
+        }
+
+        .servicios_container {
+            display: flex;
+            height: calc(100vh - 55px);
+            overflow: hidden;
+        }
+
+        /*==========
+        ASIDE SERVICIOS
+        ============*/
+        aside.aside_servicios {
+            width: 800px;
+            background-color: var(--color-white-uno);
+            padding: 20px;
+            height: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+
+        /* ====== TITULO ====== */
+        aside.aside_servicios h2 {
+            margin-bottom: 15px;
+        }
+
+        /* ====== BUSCADOR ====== */
+        .buscador_servicios {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .buscador_servicios input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px 0 0 6px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .buscador_servicios button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            background: var(--color-morado-suave);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* ====== TABLA ====== */
+        .lista_servicios table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .lista_servicios th,
+        .lista_servicios td {
+            border-bottom: 1px solid var(--color-purpura);
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .lista_servicios th {
+            background: var(--color-white-tres);
+            font-weight: bold;
+        }
+
+        /* ====== EMPLEADO ====== */
+        .empleado_link {
+            color: var(--color-morado-fuerte);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .empleado_link:hover {
+            text-decoration: underline;
+        }
+
+        /* ====== ACCIONES ====== */
+        .acciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .acciones button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #fff;
+        }
+
+        .acciones button:hover {
+            opacity: 0.85;
+        }
+
+        .acciones .clientes {
+            background: #2196F3;
+        }
+
+        .acciones .modificar {
+            background: #4CAF50;
+        }
+
+        .acciones .suspender {
+            background: #FF9800;
+        }
+
+        .acciones .ocultar {
+            background: #607D8B;
+        }
+
+        .acciones .eliminar {
+            background: #E53935;
+        }
+
+        /* ====== CATEGORÍAS ====== */
+        .categoria {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 13px;
+            border: 2px solid transparent;
+        }
+
+        /* Ejemplo de colores por tipo */
+        .categoria.soporte {
+            border-color: #2196F3;
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .categoria.consultoria {
+            border-color: #4CAF50;
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .categoria.mantenimiento {
+            border-color: #FF9800;
+            color: #FF9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+
+        .categoria.seguridad {
+            border-color: #E53935;
+            color: #E53935;
+            background: rgba(229, 57, 53, 0.1);
+        }
+
+        /*==========
+        SECTION SERVICIOS
+        ============*/
+        section.section_servicios {
+            background-color: var(--color-white-tres);
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        aside.aside_servicios,
+        section.section_servicios {
+            margin: 10px;
+            border-radius: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/styleAdmin.css">
 </head>
+
 <body>
+    <!-- Componenetes Header -->
     <header th:replace="components/menu_admin" class="headers"></header>
 
-    <aside class="aside_servicios">
-        <!--Menu para mostrar los servicios-->
-        <!--Botones para cambiar los funcionamientos de los servicios-->
+    <div class="servicios_container">
+        <aside class="aside_servicios">
+            <h2>Servicios</h2>
 
-    </aside>
+            <!-- Buscador -->
+            <div class="buscador_servicios">
+                <input type="text" placeholder="Buscar servicio..." />
+                <button>🔍</button>
+            </div>
 
-    <section class="section_servicios">
-        <!--Contenedor donde se muestran los servicios-->
-        <!--Muestra los servicios que se ofrecen, -->
-        
+            <!-- Lista de Servicios -->
+            <div class="lista_servicios">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Servicio</th>
+                            <th>Precio</th>
+                            <th>Categoría</th>
+                            <th>Empleado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="s : ${servicios}">
+                            <td th:text="${s.servicioId}">#001</td>
+                            <td th:text="${s.nomb_Servicio}">Soporte Técnico</td>
+                            <td th:text="${s.precio_Servicio}">$150</td>
+                            <td>
+                                <span th:class="'categoria ' + ${s.categoria.NombreCategoria}"
+                                    th:text="${s.categoria.NombreCategoria}">
+                                    Soporte
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="@{'/usuarios/usuario/Trabajador/' + ${s.empleado.id}}" class="empleado_link"
+                                    th:text="${s.empleado.nombre} + ' ' + ${s.empleado.apellido}">
+                                    Juan Pérez
+                                </a>
+                            </td>
+                            <td class="acciones">
+
+                                <button class="clientes" th:attr="data-id=${s.servicioId}">
+                                    Clientes
+                                </button>
+
+                                <button class="modificar">Modificar</button>
+                                <button class="suspender">Suspender</button>
+                                <button class="eliminar">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </aside>
 
 
-    </section>
+        <section class="section_servicios">
+            <!--Contenedor donde se muestran datos relacionados a los servicios-->
+            <!--Clientes que solicitarion los servicios / Las calificaciones que tuvo el servicio-->
+
+            <!--BANNER: Mostramos un banner por defecto sobre los servicios-->
+            <div class="section_servicios_banner default">
+                
+            </div>
+            <!--CLIENTES: Mostramos los clientes que solicitaron el servicio-->
+
+            <div th:if="${activePage == 'servicio_cliente'}">
+                <div th:replace="components/servicio_cliente"></div>
+            </div>
+
+            <!--CALIFICACIONES: Mostramos la calificacion que le dieron al servicio-->
+            <div></div>
+
+
+        </section>
+    </div>
+
+
 </body>
+
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const colorBank = [
+            { border: "#2196F3", bg: "rgba(33, 150, 243, 0.1)" },  // Azul
+            { border: "#4CAF50", bg: "rgba(76, 175, 80, 0.1)" },   // Verde
+            { border: "#FF9800", bg: "rgba(255, 152, 0, 0.1)" },   // Naranja
+            { border: "#E53935", bg: "rgba(229, 57, 53, 0.1)" },   // Rojo
+            { border: "#9C27B0", bg: "rgba(156, 39, 176, 0.1)" },  // Morado
+            { border: "#009688", bg: "rgba(0, 150, 136, 0.1)" },   // Verde Agua
+            { border: "#795548", bg: "rgba(121, 85, 72, 0.1)" }    // Marrón
+        ];
+
+        // Mapa para guardar colores asignados por nombre de categoría
+        const assignedColors = {};
+
+        document.querySelectorAll(".categoria").forEach(span => {
+            const catName = span.textContent.trim().toLowerCase();
+
+            // Si ya tiene color asignado, lo reutilizamos
+            if (!assignedColors[catName]) {
+                const randomColor = colorBank[Math.floor(Math.random() * colorBank.length)];
+                assignedColors[catName] = randomColor;
+            }
+
+            // Aplicamos estilos
+            const color = assignedColors[catName];
+            span.style.borderColor = color.border;
+            span.style.color = color.border;
+            span.style.backgroundColor = color.bg;
+        });
+    });
+</script>
+<!--script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const colorBank = [
+        { border: "#2196F3", bg: "rgba(33, 150, 243, 0.1)" },  // Azul
+        { border: "#4CAF50", bg: "rgba(76, 175, 80, 0.1)" },   // Verde
+        { border: "#FF9800", bg: "rgba(255, 152, 0, 0.1)" },   // Naranja
+        { border: "#E53935", bg: "rgba(229, 57, 53, 0.1)" },   // Rojo
+        { border: "#9C27B0", bg: "rgba(156, 39, 176, 0.1)" },  // Morado
+        { border: "#009688", bg: "rgba(0, 150, 136, 0.1)" },   // Verde Agua
+        { border: "#795548", bg: "rgba(121, 85, 72, 0.1)" }    // Marrón
+    ];
+
+    const assignedColors = {};
+    let colorIndex = 0;
+
+    document.querySelectorAll(".categoria").forEach(span => {
+        const catName = span.textContent.trim().toLowerCase();
+
+        if (!assignedColors[catName]) {
+            assignedColors[catName] = colorBank[colorIndex % colorBank.length];
+            colorIndex++;
+        }
+
+        const color = assignedColors[catName];
+        span.style.borderColor = color.border;
+        span.style.color = color.border;
+        span.style.backgroundColor = color.bg;
+    });
+});
+
+</script-->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".clientes").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const servicioId = btn.getAttribute("data-id");
+                
+                const resp = await fetch(`/servicios/${servicioId}/clientes`);
+                const pedidos = await resp.json();
+    
+                const section = document.querySelector(".section_servicios");
+                section.innerHTML = `
+                    <h3>Clientes que solicitaron el servicio</h3>
+                    <table border="1" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Pedido ID</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Duración</th>
+                                <th>Costo Total</th>
+                                <th>Cliente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pedidos.map(p => `
+                                <tr>
+                                    <td>${p.pedidoID}</td>
+                                    <td>${p.fechaPedido}</td>
+                                    <td>${p.estadoPedido}</td>
+                                    <td>${p.duracionPedido}</td>
+                                    <td>${p.costoTotal}</td>
+                                    <td>${p.cliente.nombre} ${p.cliente.apellido}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                `;
+            });
+        });
+    });
+    </script>
+    
