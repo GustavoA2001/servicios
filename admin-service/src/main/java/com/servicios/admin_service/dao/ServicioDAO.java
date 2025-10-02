@@ -1,7 +1,6 @@
 package com.servicios.admin_service.dao;
 
-import com.servicios.admin_service.model.CategoriaServicio;
-import com.servicios.admin_service.model.Empleado;
+
 import com.servicios.admin_service.model.Servicio;
 import com.servicios.admin_service.model.Pedido;
 

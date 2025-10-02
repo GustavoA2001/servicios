@@ -2,8 +2,7 @@ package com.servicios.admin_service.dao;
 
 import com.servicios.admin_service.model.Cliente;
 import com.servicios.admin_service.model.Empleado;
-import com.servicios.admin_service.model.Trabajador;
-import com.servicios.admin_service.model.Usuario;
+
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
