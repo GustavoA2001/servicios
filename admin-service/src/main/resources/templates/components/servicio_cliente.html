@@ -1,25 +1,135 @@
-<div class="servicio_cliente">
+<!-- templates/components/servicio_cliente.html -->
+<div class="servicio_cliente" th:fragment="tabla_clientes(pedidos)">
     <h3>Clientes que solicitaron el servicio</h3>
-    <table border="1" width="100%">
-        <thead>
-            <tr>
-                <th>Pedido ID</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th>Duración</th>
-                <th>Costo Total</th>
-                <th>Cliente</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td th:text="${p.pedidoID}"></td>
-                <td th:text="${p.fechaPedido}"></td>
-                <td th:text="${p.estadoPedido}"></td>
-                <td th:text="${p.duracionPedido}"></td>
-                <td th:text="${p.costoTotal}"></td>
-                <td th:text="${p.cliente.nombre} + ' ' + ${p.cliente.apellido}"></td>
-            </tr>
-        </tbody>
-    </table>
+
+    <div class="tabla_clientes_container">
+        <table class="tabla_clientes">
+            <thead>
+                <tr class="league-spartan">
+                    <th>N</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Duración</th>
+                    <th>Costo Total</th>
+                    <th>Cliente</th>
+                    <th>Calificación</th>
+                </tr>
+            </thead>
+            <tbody class="cabin">
+                <!-- Caso: Sí hay clientes -->
+                <tr th:each="p : ${pedidos}" th:if="${pedidos != null and !pedidos.isEmpty()}">
+                    <td th:text="${p.pedidoID}"></td>
+                    <td
+                        th:text="${p.fechaPedido != null ? #temporals.format(p.fechaPedido, 'dd MMMM yyyy') : 'No disponible'}">
+                    </td>
+                    <td>
+                        <span class="estado" th:classappend="${p.estadoPedido.toLowerCase()}"
+                            th:text="${p.estadoPedido}">
+                        </span>
+                    </td>
+                    <td th:text="${p.duracionPedido}"></td>
+                    <td th:text="'S/.'+${p.costoTotal}"></td>
+                    <td>
+                        <a th:href="@{'/usuarios/usuario/Cliente/' + ${p.cliente.id}}" class="empleado_link"
+                            th:text="${p.cliente.nombre} + ' ' + ${p.cliente.apellido}">
+                            Cliente Ejemplo
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Caso: No hay clientes -->
+                <tr th:if="${pedidos == null or pedidos.isEmpty()}">
+                    <td colspan="6" class="sin-clientes">
+                        Este servicio aún no tiene clientes registrados
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<style>
+    .servicio_cliente {
+        margin-top: 20px;
+    }
+
+    .servicio_cliente h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        color: var(--color-morado-fuerte);
+    }
+
+    .tabla_clientes_container {
+        overflow-x: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .tabla_clientes {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        background: #fff;
+    }
+    .tabla_clientes th {
+        font-size: 16px;
+    }
+    .tabla_clientes td {
+        font-size: 14px;
+    }
+    .tabla_clientes th,
+    .tabla_clientes td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .tabla_clientes th {
+        background: var(--color-white-tres);
+        font-weight: bold;
+    }
+
+    .tabla_clientes tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .tabla_clientes tbody tr:hover {
+        background: rgba(76, 175, 80, 0.05);
+    }
+
+    /* Estados */
+    .estado {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    .estado.pendiente {
+        background: rgba(255, 152, 0, 0.1);
+        color: #FF9800;
+        border: 1px solid #FF9800;
+    }
+
+    .estado.completado {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+        border: 1px solid #4CAF50;
+    }
+
+    .estado.cancelado {
+        background: rgba(229, 57, 53, 0.1);
+        color: #E53935;
+        border: 1px solid #E53935;
+    }
+
+    /* Texto cuando no hay clientes */
+    .sin-clientes {
+        text-align: center;
+        font-style: italic;
+        color: #777;
+        padding: 20px;
+    }
+</style>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogos | ADM</title>
+    <link rel="stylesheet" href="css/styleAdmin.css">
+    <style>
+        .headers {
+            height: 55px;
+        }
+
+        .catalogos_container {
+            display: flex;
+            height: calc(100vh - 55px);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <header class="headers" th:include="components/menu_admin"></header>
+
+    <div class="catalogos_container">
+        <aside class="catalogos_aside">
+
+        </aside>
+    
+        <section class="catalogos_section">
+            <div class="usuario_info" th:if="${activePage == 'catalogo_distritos'}">
+                <div th:replace="components/catalogo_distritos"></div>
+            </div>
+            <div class="usuario_info" th:if="${activePage == 'catalogo_especialidades'}">
+                <div th:replace="components/catalogo_especialidades"></div>
+            </div>
+            <div class="usuario_info" th:if="${activePage == 'catalogo_calificaciones'}">
+                <div th:replace="components/catalogo_calificaciones"></div>
+            </div>
+            <div class="usuario_info" th:if="${activePage == 'catalogo_roles'}">
+                <div th:replace="components/catalogo_calificaciones"></div>
+            </div>
+        </section>
+    </div>
+
+</body>
+</html>
