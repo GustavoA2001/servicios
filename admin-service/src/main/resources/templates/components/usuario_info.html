@@ -4,7 +4,6 @@
         <img th:src="@{${usuario.rutaFoto}}" alt="Foto de usuario" class="usuario_foto">
     </div>
 
-
     <div class="usuario_form_container">
         <form class="usuario-info-container">
             <h2 contenteditable="true" class="editable cabin" th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
@@ -50,6 +49,7 @@
         max-width: 900px;
         margin: auto auto;
         padding: 0;
+        animation: fadeIn 0.4s ease-out; /* Duración de 0.5 segundos */
     }
 
     /* Foto */
@@ -60,12 +60,11 @@
         border-radius: 20px;
         background: var(--color-gris-claro);
         z-index: 1;
-        /* por debajo del form */
         margin-right: -60px;
-        /* se superpone al form */
         display: flex;
         justify-content: center;
         align-items: center;
+        animation: fadeIn 0.4s ease-out; /* Duración de 0.5 segundos */
     }
 
     /* Formulario */
@@ -77,9 +76,7 @@
         background: #fff;
         box-shadow: 0 12px 24px rgb(0 0 0 / 14%);
         z-index: 2;
-        /* sobre la foto */
         padding: 30px;
-
     }
 
     /* Foto circular */
@@ -168,6 +165,19 @@
     .btn.volver:hover {
         background-color: #8b6ac8;
     }
+
+    /* Animación fadeIn */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 
 <script>
@@ -175,6 +185,6 @@
         p.classList.add('league-spartan');
     });
     document.querySelectorAll('.usuario_form_container p span').forEach(function (span) {
-        p.classList.add('cabin');  
+        span.classList.add('cabin');  /* Corregido para que se añada la clase "cabin" correctamente */
     });
 </script>
