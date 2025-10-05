@@ -1,0 +1,190 @@
+<div class="catalogo_especialidades space-grotesk">
+    <div class="header_especialidades">
+        <h2>Especialidades</h2>
+        <button class="btn-nuevo space-grotesk">+ Nueva Especialidad</button>
+    </div>
+
+    <!-- Si se quisiera agregar una tabla, similar a la anterior -->
+    <table class="tabla-especialidades">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Especialidad</th>
+                <th>Estado</th>
+                <th>Descripción</th>
+                <th>Cambiar estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="especialidad : ${especialidades}">
+                <td th:text="${especialidad.especialidadID}"></td>
+                <td th:text="${especialidad.nomb_especialidad}"></td>
+                <td>
+                    <span class="estado"
+                          th:text="${especialidad.estado_especialidad}"
+                          th:classappend="${especialidad.estado_especialidad == 'Habilitado'} ? 'habilitado' : 'inhabilitado'">
+                    </span>
+                </td>
+                <td th:text="${especialidad.descrip_especialidad}"></td>
+                <td>
+                    <button class="btn-estado"
+                            th:data-id="${especialidad.especialidadID}"
+                            th:data-estado="${especialidad.estado_especialidad}"
+                            th:text="${especialidad.estado_especialidad == 'Habilitado'} ? 'Inhabilitar' : 'Habilitar'">
+                    </button>
+                </td>
+            </tr>
+            
+        </tbody>
+        
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const botones = document.querySelectorAll(".btn-estado");
+
+        botones.forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const estadoActual = btn.textContent;
+                const nuevoEstado = estadoActual === "Habilitado" ? "Inhabilitado" : "Habilitado";
+
+                try {
+                    // Aquí va la lógica para hacer la petición al servidor si es necesario
+
+                    // Actualiza visualmente sin recargar toda la página
+                    btn.textContent = nuevoEstado === "Habilitado" ? "Inhabilitado" : "Habilitado";
+
+                    const estadoSpan = btn.closest("tr").querySelector(".estado");
+                    estadoSpan.textContent = nuevoEstado;
+                    estadoSpan.classList.toggle("habilitado", nuevoEstado === "Habilitado");
+                    estadoSpan.classList.toggle("inhabilitado", nuevoEstado === "Inhabilitado");
+                } catch (e) {
+                    console.error(e);
+                    alert("Error de conexión con el servidor.");
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .catalogo_especialidades {
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(180, 160, 255, 0.2);
+        padding: 25px;
+        box-sizing: border-box;
+        animation: fadeIn 0.4s ease-in;
+    }
+
+    /* Encabezado del bloque */
+    .header_especialidades {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 20px;
+    }
+
+    .header_especialidades h2 {
+        font-size: 22px;
+        color: #4a3c8a;
+        font-weight: 700;
+    }
+
+    .btn-nuevo {
+        background-color: #6c4ed9;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-nuevo:hover {
+        background-color: #7e5cf4;
+        transform: scale(1.03);
+    }
+
+    /* Tabla */
+    .tabla-especialidades {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tabla-especialidades thead {
+        background-color: #f3efff;
+    }
+
+    .tabla-especialidades th {
+        padding: 12px;
+        text-align: left;
+        color: #4a3c8a;
+        font-weight: 600;
+        border-bottom: 2px solid #e2dbff;
+    }
+
+    .tabla-especialidades td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+    }
+
+    /* Filas con hover */
+    .tabla-especialidades tr:hover {
+        background-color: #f9f7ff;
+    }
+
+    /* Estado visual */
+    .estado {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .estado.habilitado {
+        background-color: #e3f8e3;
+        color: #0c7b0c;
+    }
+
+    .estado.inhabilitado {
+        background-color: #ffe6e6;
+        color: #c0392b;
+    }
+
+    .btn-estado {
+        background-color: #f1f0ff;
+        border: 1px solid #d2c8ff;
+        color: #4a3c8a;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-estado:hover {
+        background-color: #e5ddff;
+        transform: scale(1.03);
+    }
+
+    /* Animación */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

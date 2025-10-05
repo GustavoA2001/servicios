@@ -1,0 +1,184 @@
+<div class="catalogo_roles space-grotesk">
+    <div class="header_roles">
+        <h3>Roles Registrados</h3>
+        <button class="btn-nuevo space-grotesk">+ Nuevo Rol</button>
+    </div>
+
+    <table class="tabla-roles">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Roles</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Cambiar estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="rol : ${roles}">
+                <td th:text="${rol.rolID}"></td>
+                <td th:text="${rol.nom_rol}"></td>
+                <td th:text="${rol.descrip_rol}"></td>
+                <td>
+                    <span class="estado" th:text="${rol.estado_rol}"
+                        th:classappend="${rol.estado_rol == 'Habilitado'} ? 'habilitado' : 'inhabilitado'">
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-estado" th:data-id="${rol.rolID}" th:data-estado="${rol.estado_rol}"
+                        th:text="${rol.estado_rol == 'Habilitado'} ? 'Inhabilitar' : 'Habilitar'">
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const botones = document.querySelectorAll(".catalogo_roles .btn-estado");
+
+        botones.forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id = btn.getAttribute("data-id");
+                const estadoActual = btn.getAttribute("data-estado");
+                const nuevoEstado = estadoActual === "Habilitado" ? "Inhabilitado" : "Habilitado";
+
+                try {
+                    const resp = await fetch(`/catalogos/roles/${id}/estado?nuevo=${nuevoEstado}`, {
+                        method: "POST"
+                    });
+
+                    if (resp.ok) {
+                        btn.setAttribute("data-estado", nuevoEstado);
+                        btn.textContent = nuevoEstado === "Habilitado" ? "Inhabilitar" : "Habilitar";
+
+                        const estadoSpan = btn.closest("tr").querySelector(".estado");
+                        estadoSpan.textContent = nuevoEstado;
+                        estadoSpan.classList.toggle("habilitado", nuevoEstado === "Habilitado");
+                        estadoSpan.classList.toggle("inhabilitado", nuevoEstado === "Inhabilitado");
+                    } else {
+                        alert("Error al cambiar estado.");
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Error de conexión.");
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .catalogo_roles {
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(180, 160, 255, 0.2);
+        padding: 25px;
+        box-sizing: border-box;
+        animation: fadeIn 0.4s ease-in;
+    }
+
+    .header_roles {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 20px;
+    }
+
+    .header_roles h3 {
+        font-size: 22px;
+        color: #4a3c8a;
+        font-weight: 700;
+    }
+
+    .btn-nuevo {
+        background-color: #6c4ed9;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-nuevo:hover {
+        background-color: #7e5cf4;
+        transform: scale(1.03);
+    }
+
+    .tabla-roles {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tabla-roles thead {
+        background-color: #f3efff;
+    }
+
+    .tabla-roles th {
+        padding: 12px;
+        text-align: left;
+        color: #4a3c8a;
+        font-weight: 600;
+        border-bottom: 2px solid #e2dbff;
+    }
+
+    .tabla-roles td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+    }
+
+    .tabla-roles tr:hover {
+        background-color: #f9f7ff;
+    }
+
+    .estado {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .estado.habilitado {
+        background-color: #e3f8e3;
+        color: #0c7b0c;
+    }
+
+    .estado.inhabilitado {
+        background-color: #ffe6e6;
+        color: #c0392b;
+    }
+
+    .btn-estado {
+        background-color: #f1f0ff;
+        border: 1px solid #d2c8ff;
+        color: #4a3c8a;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-estado:hover {
+        background-color: #e5ddff;
+        transform: scale(1.03);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

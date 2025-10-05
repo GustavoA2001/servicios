@@ -4,42 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalogos | ADM</title>
-    <link rel="stylesheet" href="css/styleAdmin.css">
+    <link rel="stylesheet" href="/css/styleAdmin.css">
     <style>
-        .headers {
-            height: 55px;
-        }
-
+        .headers { height: 55px; }
         .catalogos_container {
             display: flex;
             height: calc(100vh - 55px);
             overflow: hidden;
         }
+        aside.aside_catalogos {
+            width: 260px;
+            background-color: var(--color-white-uno);
+            padding: 20px;
+            height: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        aside.aside_catalogos h3 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        aside.aside_catalogos ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            flex-direction: column;
+        }
+        aside.aside_catalogos a {
+            text-decoration: none;
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            background-color: transparent;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 2px solid var(--color-morado-suave);
+            transition: background-color 1s ease, transform 0.15s ease;
+            font-weight: 500;
+            user-select: none;
+        }
+        aside.aside_catalogos li {
+            text-decoration: none;
+            color: var(--text-black);
+        }
+        aside.aside_catalogos a:hover,
+        .aside_catalogos a.active {
+            background-color: #b392e075;
+            color: var(--text-black);
+            transform: scale(1.02);
+            border-radius: 50px;
+        }
+        section.section_catalogos {
+            background-color: var(--color-white-tres);
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            display: flex;
+        }
+        aside.aside_catalogos,
+        section.section_catalogos {
+            margin: 10px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <header class="headers" th:include="components/menu_admin"></header>
+<header class="headers" th:replace="components/menu_admin"></header>
 
-    <div class="catalogos_container">
-        <aside class="catalogos_aside">
+<div class="catalogos_container">
 
-        </aside>
-    
-        <section class="catalogos_section">
-            <div class="usuario_info" th:if="${activePage == 'catalogo_distritos'}">
-                <div th:replace="components/catalogo_distritos"></div>
-            </div>
-            <div class="usuario_info" th:if="${activePage == 'catalogo_especialidades'}">
-                <div th:replace="components/catalogo_especialidades"></div>
-            </div>
-            <div class="usuario_info" th:if="${activePage == 'catalogo_calificaciones'}">
-                <div th:replace="components/catalogo_calificaciones"></div>
-            </div>
-            <div class="usuario_info" th:if="${activePage == 'catalogo_roles'}">
-                <div th:replace="components/catalogo_calificaciones"></div>
-            </div>
-        </section>
-    </div>
+    <aside class="aside_catalogos">
+        <h3 class="cabin">Lista de WA</h3>
+        <ul class="space-grotesk">
+            <a th:href="@{/catalogos/distritos}" th:classappend="${activeCatalogo == 'distritos'} ? 'active'">
+                <li>Distritos</li>
+            </a>
+            <a th:href="@{/catalogos/especialidades}" th:classappend="${activeCatalogo == 'especialidades'} ? 'active'">
+                <li>Especialidades</li>
+            </a>
+            <a th:href="@{/catalogos/calificaciones}" th:classappend="${activeCatalogo == 'calificaciones'} ? 'active'">
+                <li>Calificaciones</li>
+            </a>
+            <a th:href="@{/catalogos/roles}" th:classappend="${activeCatalogo == 'roles'} ? 'active'">
+                <li>Roles</li>
+            </a>
+        </ul>
+    </aside>
 
+    <section class="section_catalogos">
+        <!-- Distritos -->
+        <div th:if="${activeCatalogo == 'distritos'}">
+            <div th:replace="components/catalogo_distritos"></div>
+        </div>
+            
+        <!-- Especialidades -->
+        <div th:if="${activeCatalogo == 'especialidades'}">
+            <div th:replace="components/catalogo_especialidades"></div>
+        </div>
+
+        <!-- Calificaciones -->
+        <div th:if="${activeCatalogo == 'calificaciones'}">
+            <div th:replace="components/catalogo_calificaciones"></div>
+        </div>
+
+        <!-- Roles -->
+        <div th:if="${activeCatalogo == 'roles'}">
+            <div th:replace="components/catalogo_roles"></div>
+        </div>
+    </section>
+
+    <section class="section-cuenta-info">
+
+
+</div>
 </body>
 </html>
