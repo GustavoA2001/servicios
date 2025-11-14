@@ -2,12 +2,19 @@ package com.servicios.registro_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class RegistroServiceApplication {
+public class RegistroServiceApplication extends SpringBootServletInitializer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RegistroServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RegistroServiceApplication.class, args);
+    }
 
+    // necesario para empaquetar como WAR y desplegar en Tomcat externo
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(RegistroServiceApplication.class);
+    }
 }
