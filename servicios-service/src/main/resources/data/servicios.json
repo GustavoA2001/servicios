@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "titulo": "Instalación eléctrica residencial",
+    "categoria": "Electricidad",
+    "descripcionCorta": "Instalación y reparación de tableros, enchufes y cableado.",
+    "descripcionCompleta": "Realizamos instalaciones eléctricas residenciales completas: montaje de tableros, puntos de luz, tomas, sustitución de cableado viejo, protección con disyuntores y puestas a tierra. Trabajamos con normas de seguridad y materiales certificados.",
+    "precioEstimado": 120.0,
+    "duracionHoras": 3,
+    "telefonoContacto": "+51 987 654 321",
+    "imagen": "/images/electricidad.jpg",
+    "valoracion": 4.7,
+    "etiquetas": ["tableros","enchufes","seguridad"],
+    "disponible": true
+  },
+  {
+    "id": 2,
+    "titulo": "Reparación de fugas y desagües",
+    "categoria": "Gasfitería",
+    "descripcionCorta": "Detección y reparación de fugas, instalación de llaves y sifones.",
+    "descripcionCompleta": "Servicio integral de gasfitería: detección y reparación de fugas, desagües tapados, instalación de lavaderos, inodoros, sifones y cambio de accesorios. Garantía en trabajos y uso de repuestos de calidad.",
+    "precioEstimado": 80.0,
+    "duracionHoras": 2,
+    "telefonoContacto": "+51 944 332 110",
+    "imagen": "/images/gasfiteria.jpg",
+    "valoracion": 4.5,
+    "etiquetas": ["fugas","desagües","lavaderos"],
+    "disponible": true
+  },
+  {
+    "id": 3,
+    "titulo": "Mantenimiento preventivo de equipos eléctricos",
+    "categoria": "Mantenimiento",
+    "descripcionCorta": "Revisión y limpieza de equipos para evitar fallas futuras.",
+    "descripcionCompleta": "Inspección completa de instalaciones y equipos eléctricos y mecánicos, limpieza, ajuste de conexiones, verificación de protecciones y recomendaciones para mejorar la vida útil de los equipos.",
+    "precioEstimado": 60.0,
+    "duracionHoras": 1.5,
+    "telefonoContacto": "+51 912 210 987",
+    "imagen": "/images/mantenimiento.jpg",
+    "valoracion": 4.6,
+    "etiquetas": ["prevención","inspección","limpieza"],
+    "disponible": true
+  },
+  {
+    "id": 4,
+    "titulo": "Instalación de calefón y sistema de gas",
+    "categoria": "Gas",
+    "descripcionCorta": "Instalación segura de calefones y revisión de tuberías de gas.",
+    "descripcionCompleta": "Instalación y puesta en marcha de calefones, revisión y cambio de tuberías, detección de pérdidas de gas y certificación de seguridad. Técnicos certificados y cumplimiento de normativas.",
+    "precioEstimado": 150.0,
+    "duracionHoras": 4,
+    "telefonoContacto": "+51 999 777 666",
+    "imagen": "/images/gas.jpg",
+    "valoracion": 4.8,
+    "etiquetas": ["calefón","tuberías","seguridad"],
+    "disponible": true
+  }
+]

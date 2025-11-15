@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${servicio.titulo}">Detalle</title>
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
+</head>
+<body>
+<header class="header">
+    <div class="brand">
+        <div class="logo">ST</div>
+        <h1>Servicios Técnicos</h1>
+    </div>
+    <nav class="nav">
+        <a href="/servicios">Servicios</a>
+        <a href="#">Contacto</a>
+    </nav>
+</header>
+
+<div class="container">
+    <a class="back-link" href="/servicios">← Volver a servicios</a>
+
+    <div class="detail">
+        <div class="left">
+            <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
+            <div style="margin-top:12px">
+                <h2 th:text="${servicio.titulo}"></h2>
+                <p class="small" th:text="${servicio.categoria}"></p>
+                <p th:text="${servicio.descripcionCompleta}"></p>
+            </div>
+        </div>
+        <div class="right">
+            <div class="info-list">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <div>
+                        <div class="small">Precio estimado</div>
+                        <div class="price">S/ <span th:text="${servicio.precioEstimado}"></span></div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="small">Duración</div>
+                        <div><strong th:text="${servicio.duracionHoras}"></strong> hrs</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:8px">
+                    <div class="small">Contacto</div>
+                    <div th:text="${servicio.telefonoContacto}"></div>
+                </div>
+
+                <div style="margin-bottom:8px">
+                    <div class="small">Valoración</div>
+                    <div><strong th:text="${servicio.valoracion}"></strong> / 5</div>
+                </div>
+
+                <div style="margin-bottom:8px">
+                    <div class="small">Etiquetas</div>
+                    <div>
+                        <span th:each="tag : ${servicio.etiquetas}" class="tag" th:text="${tag}"></span>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:8px;margin-top:12px">
+                    <a href="#" class="btn-primary">Solicitar servicio</a>
+                    <a href="#" class="btn-outline">Contactar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
