@@ -1,0 +1,248 @@
+<div class="usuario_info" th:if="${usuario != null}"
+     th:attr="data-tipo=${tipo}, data-id=${usuario.id}">
+    <!-- Foto del usuario -->
+    <div class="usuario_foto_container">
+        <img th:src="@{${usuario.rutaFoto}}" alt="Foto de usuario" class="usuario_foto">
+    </div>
+
+    <div class="usuario_form_container">
+        <form class="usuario-info-container">
+            <h2 contenteditable="true" class="editable cabin"
+                th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
+
+            <p><strong>Miembro desde:</strong>
+                <span th:text="${usuario.fechaRegistro != null ? 
+                    #temporals.format(usuario.fechaRegistro, 'dd MMMM yyyy') : 
+                    'No registrado'}"></span>
+            </p>
+
+            <p><strong>Email:</strong>
+                <span contenteditable="true" class="editable" th:text="${usuario.email}"></span>
+            </p>
+
+            <p><strong>DNI:</strong>
+                <span contenteditable="true" class="editable" th:text="${usuario.DNI}"></span>
+            </p>
+
+            <p th:if="${tipo == 'Empleado' and usuario.telefono != null}">
+                <strong>Teléfono:</strong>
+                <span contenteditable="true" class="editable" th:text="${usuario.telefono}"></span>
+            </p>
+
+            <p><strong>Estado:</strong>
+                <span contenteditable="true" class="editable" th:text="${usuario.estado}"></span>
+            </p>
+
+            <p th:if="${tipo == 'Empleado'}">
+                <strong>Rol:</strong>
+                <span contenteditable="true" class="editable" th:text="${usuario.rolID}"></span>
+            </p>
+
+            <div class="usuario_acciones">
+                <button type="submit" class="btn editar">Guardar cambios</button>
+                <button type="button" class="btn eliminar">Eliminar</button>
+                <button type="button" class="btn suspender">Suspender</button>
+                <button type="button" class="btn mensaje">Enviar mensaje</button>
+                <button type="button" class="btn volver" onclick="cerrarUsuarioInfo()">Volver a la lista</button>
+            </div>
+
+            <p id="mensaje-accion" class="mensaje-accion"></p>
+        </form>
+    </div>
+</div>
+
+<style>
+    .usuario_info {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        max-width: 900px;
+        margin: 40px auto;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    /* Foto */
+    .usuario_foto_container {
+        width: 400px;
+        height: 600px;
+        border-radius: 20px;
+        background: var(--color-gris-claro, #f5f5f5);
+        z-index: 1;
+        margin-right: -60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    .usuario_foto {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--color-morado-suave, #b39ddb);
+        display: block;
+        margin: 20px 60px 20px 0px;
+    }
+
+    /* Formulario */
+    .usuario_form_container {
+        width: 400px;
+        height: 600px;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 12px 24px rgb(0 0 0 / 14%);
+        z-index: 2;
+        padding: 30px;
+        overflow-y: auto;
+    }
+
+    /* Campos editables */
+    .editable {
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: background 0.2s, border 0.2s;
+    }
+
+    .editable:hover {
+        background: #f4f4f4;
+        cursor: text;
+        border: 1px dashed #aaa;
+    }
+
+    /* Botones */
+    .usuario_acciones {
+        margin-top: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #fff;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn.editar { background-color: #388e3c; }
+    .btn.eliminar { background-color: #b71c1c; }
+    .btn.suspender { background-color: #e68900; }
+    .btn.mensaje { background-color: #0288d1; }
+    .btn.volver { background-color: #7e57c2; }
+
+    .btn.editar:hover { background-color: #2e7d32; }
+    .btn.eliminar:hover { background-color: #c62828; }
+    .btn.suspender:hover { background-color: #f57c00; }
+    .btn.mensaje:hover { background-color: #1976d2; }
+    .btn.volver:hover { background-color: #8e24aa; }
+
+    /* Mensaje */
+    .mensaje-accion {
+        margin-top: 15px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    /* Animación */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector(".usuario-info-container");
+    const contenedor = document.querySelector(".usuario_info");
+    const mensaje = document.getElementById("mensaje-accion");
+
+    if (!form || !contenedor) return;
+
+    const tipo = contenedor.dataset.tipo;
+    const id = contenedor.dataset.id;
+
+    // GUARDAR CAMBIOS
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const datos = {};
+        form.querySelectorAll(".editable").forEach(span => {
+            const key = span.previousSibling.textContent
+                .trim().toLowerCase().replace(":", "")
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            datos[key] = span.textContent.trim();
+        });
+
+        try {
+            const resp = await fetch(`/usuarios/actualizar/${tipo}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            });
+
+            const text = await resp.text();
+            mensaje.textContent = text;
+            mensaje.style.color = resp.ok ? "green" : "red";
+        } catch (err) {
+            mensaje.textContent = "Error al conectar con el servidor";
+            mensaje.style.color = "red";
+        }
+    });
+
+    // ELIMINAR USUARIO
+    document.querySelector(".btn.eliminar").addEventListener("click", async () => {
+        if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
+        try {
+            const resp = await fetch(`/usuarios/eliminar/${tipo}/${id}`, { method: "DELETE" });
+            const text = await resp.text();
+            mensaje.textContent = text;
+            mensaje.style.color = resp.ok ? "green" : "red";
+        } catch {
+            mensaje.textContent = "Error al eliminar el usuario.";
+            mensaje.style.color = "red";
+        }
+    });
+
+    // SUSPENDER USUARIO
+    document.querySelector(".btn.suspender").addEventListener("click", async () => {
+        if (!confirm("¿Suspender usuario temporalmente?")) return;
+
+        try {
+            const resp = await fetch(`/usuarios/actualizar/${tipo}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ estado: "Suspendido" })
+            });
+
+            const text = await resp.text();
+            mensaje.textContent = text;
+            mensaje.style.color = resp.ok ? "orange" : "red";
+        } catch {
+            mensaje.textContent = "Error al suspender el usuario.";
+            mensaje.style.color = "red";
+        }
+    });
+
+    // ENVIAR MENSAJE
+    document.querySelector(".btn.mensaje").addEventListener("click", () => {
+        alert("Función de mensajería en desarrollo 📨");
+    });
+});
+
+// Cerrar vista
+function cerrarUsuarioInfo() {
+    document.querySelector(".usuario_info").style.display = "none";
+    const lista = document.querySelector(".catalogo_distritos, .lista_usuarios");
+    if (lista) lista.style.display = "block";
+}
+</script>

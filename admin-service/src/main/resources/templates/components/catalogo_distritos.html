@@ -1,7 +1,7 @@
 <div class="catalogo_distritos space-grotesk">
     <div class="header_distritos">
         <h3>Distritos Registrados</h3>
-        <button class="btn-nuevo space-grotesk">+ Nuevo Distrito</button>
+        <button class="btn-nuevo space-grotesk" id="btnNuevoDistrito">+ Nuevo Distrito</button>
     </div>
 
     <table class="tabla-distritos">
@@ -10,7 +10,7 @@
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Estado</th>
-                <th>Cambiar estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -25,46 +25,117 @@
                 <td>
                     <button class="btn-estado" th:data-id="${distrito.distritoID}"
                         th:data-estado="${distrito.estado_Distrito}"
-                        th:text="${distrito.estado_Distrito == 'Habilitado'} ? 'Inhabilitar' : 'Habilitar'">
-                    </button>
+                        th:text="${distrito.estado_Distrito == 'Habilitado'} ? 'Inhabilitar' : 'Habilitar'"></button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
 
+<!-- MODAL NUEVO DISTRITO -->
+<div id="modalDistrito" class="modal">
+    <div class="modal-contenido cabin">
+        <h3>Nuevo Distrito</h3>
+
+        <form id="formNuevoDistrito">
+            <label>Nombre del Distrito:</label>
+            <input type="text" id="nombreDistrito" name="nombreDistrito" required />
+
+            <div class="modal-acciones">
+                <button type="button" class="btn-cancelar cabin" id="cerrarModal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-guardar cabin">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const botones = document.querySelectorAll(".btn-estado");
 
-        botones.forEach(btn => {
+        botones.forEach((btn) => {
             btn.addEventListener("click", async () => {
                 const id = btn.getAttribute("data-id");
                 const estadoActual = btn.getAttribute("data-estado");
-                const nuevoEstado = estadoActual === "Habilitado" ? "Inhabilitado" : "Habilitado";
+                const nuevoEstado =
+                    estadoActual === "Habilitado" ? "Inhabilitado" : "Habilitado";
 
                 try {
-                    const resp = await fetch(`/catalogos/distritos/${id}/estado?nuevo=${nuevoEstado}`, {
-                        method: "POST"
-                    });
+                    const resp = await fetch(
+                        `/catalogos/distritos/${id}/estado?nuevo=${nuevoEstado}`,
+                        {
+                            method: "POST",
+                        }
+                    );
 
                     if (resp.ok) {
                         // Actualiza visualmente sin recargar toda la página
                         btn.setAttribute("data-estado", nuevoEstado);
-                        btn.textContent = nuevoEstado === "Habilitado" ? "Inhabilitar" : "Habilitar";
+                        btn.textContent =
+                            nuevoEstado === "Habilitado" ? "Inhabilitar" : "Habilitar";
 
                         const estadoSpan = btn.closest("tr").querySelector(".estado");
                         estadoSpan.textContent = nuevoEstado;
-                        estadoSpan.classList.toggle("habilitado", nuevoEstado === "Habilitado");
-                        estadoSpan.classList.toggle("inhabilitado", nuevoEstado === "Inhabilitado");
+                        estadoSpan.classList.toggle(
+                            "habilitado",
+                            nuevoEstado === "Habilitado"
+                        );
+                        estadoSpan.classList.toggle(
+                            "inhabilitado",
+                            nuevoEstado === "Inhabilitado"
+                        );
                     } else {
-                        alert("Error al actualizar el estado del distrito.");
+                        console.error("Error al actualizar el estado del distrito.");
                     }
                 } catch (e) {
-                    console.error(e);
-                    alert("Error de conexión con el servidor.");
+                    console.error("Error de conexión con el servidor.", e);
                 }
             });
+        });
+
+        const modal = document.getElementById("modalDistrito");
+        const btnNuevo = document.querySelector(".btn-nuevo");
+        const cerrarModal = document.getElementById("cerrarModal");
+        const form = document.getElementById("formNuevoDistrito");
+
+        btnNuevo.addEventListener("click", () => {
+            modal.style.display = "flex";
+        });
+
+        cerrarModal.addEventListener("click", () => {
+            modal.style.display = "none";
+            form.reset();
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.style.display = "none";
+                form.reset();
+            }
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById("nombreDistrito").value;
+
+            try {
+                const resp = await fetch("/catalogos/distritos/nuevo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nomb_Distrito: nombre })
+                });
+
+                if (resp.ok) {
+                    location.reload();
+                } else {
+                    console.error("Error al guardar el distrito.");
+                }
+            } catch (err) {
+                console.error("Error de conexión al guardar", err);
+            }
         });
     });
 </script>
@@ -92,6 +163,93 @@
         font-size: 22px;
         color: #4a3c8a;
         font-weight: 700;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(30, 20, 60, 0.4);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-contenido {
+        background: #ffffff;
+        padding: 28px;
+        width: 420px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(120, 90, 200, 0.28);
+        animation: modalPop 0.25s ease-out;
+    }
+
+    .modal-contenido h3 {
+        margin-bottom: 18px;
+        color: #4a3c8a;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .modal-contenido label {
+        font-weight: 600;
+        color: #4a3c8a;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .modal-contenido input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #d2c8ff;
+        margin-bottom: 18px;
+        font-size: 15px;
+        outline: none;
+        transition: border 0.2s ease;
+    }
+
+    .modal-contenido input:focus {
+        border-color: #6c4ed9;
+    }
+
+    .modal-acciones {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn-cancelar {
+        background: #e4e0ff;
+        color: #4a3c8a;
+        padding: 8px 16px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-cancelar:hover {
+        background: #d4cdff;
+    }
+
+    .btn-guardar {
+        background: #6c4ed9;
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    .btn-guardar:hover {
+        background: #7e5cf4;
     }
 
     .btn-nuevo {

@@ -8,8 +8,8 @@
         <span class="close_modal_usuario" id="closeModalBtn">&times;</span>
 
         <h2 class="league-spartan">Nuevo Usuario</h2>
-        
-        <form id="userForm" enctype="multipart/form-data">
+
+        <form id="userForm">
             <input type="text" id="nombre" placeholder="Nombre" required>
             <input type="text" id="apellido" placeholder="Apellido" required>
             <input type="email" id="email" placeholder="Correo electrónico" required>
@@ -22,70 +22,78 @@
                 <option value="administrador">Administrador</option>
             </select>
 
-            <!-- Fecha de registro (Oculto, generado automáticamente en backend) -->
-            <input type="hidden" id="fechaRegistro" value="<?php echo date('Y-m-d H:i:s'); ?>">
-
+            <!-- El backend genera la fecha automáticamente -->
             <button type="submit">Registrar</button>
         </form>
     </div>
 </div>
 
+<!-- ===========================
+     SCRIPTS DEL MODAL Y ENVÍO
+=========================== -->
 <script>
     const openModalBtn = document.getElementById("openModalBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const modal = document.getElementById("userModal");
     const userForm = document.getElementById("userForm");
 
+    // Abrir modal
     openModalBtn.addEventListener("click", () => {
         modal.style.display = "flex";
     });
 
+    // Cerrar modal
     closeModalBtn.addEventListener("click", () => {
         modal.style.display = "none";
     });
 
+    // Cerrar modal al hacer clic fuera
     window.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.style.display = "none";
-        }
+        if (e.target === modal) modal.style.display = "none";
     });
 
-    userForm.addEventListener("submit", (event) => {
+    // Enviar formulario al backend REST
+    userForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const formData = new FormData(userForm);
-        // Aquí puedes agregar una llamada a un backend para registrar al usuario
-        console.log('Datos del formulario:', Object.fromEntries(formData.entries()));
+        const usuario = {
+            nombre: document.getElementById("nombre").value.trim(),
+            apellido: document.getElementById("apellido").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            pwd: document.getElementById("pwd").value,
+            rol: document.getElementById("rol").value
+        };
 
-        // Aquí agregamos código para procesar la imagen si la hay
-        if (formData.get('fotito')) {
-            const file = formData.get('fotito');
-            console.log("Archivo de foto:", file.name);
+        try {
+            const response = await fetch("/usuarios/registrar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(usuario)
+            });
+
+            if (response.ok) {
+                const text = await response.text();
+                console.log("Respuesta del backend:", text);
+                userForm.reset();
+                modal.style.display = "none";
+            } else {
+                const error = await response.text();
+                console.error("Error al registrar:", error);
+            }
+        } catch (err) {
+            console.error("Error de red:", err);
         }
-
-        // Luego de enviar el formulario, puedes cerrar el modal
-        modal.style.display = "none";
     });
+
+    // Añadir clase 'cabin' a inputs y selects
+    document.querySelectorAll('.modal_usuario_content form input, .modal_usuario_content form select')
+        .forEach(el => el.classList.add('cabin'));
 </script>
 
-<script>
-    // Asignar clase 'cabin' a los inputs y select
-    document.querySelectorAll('.modal_usuario_content form input').forEach(function (input) {
-        input.classList.add('cabin');
-    });
-
-    // Asignar clase 'cabin' a los options dentro del select
-    document.querySelectorAll('.modal_usuario_content form select option').forEach(function (option) {
-        option.classList.add('cabin');
-    });
-</script>
-
-
+<!-- ===========================
+          ESTILOS DEL MODAL
+=========================== -->
 <style>
-
-    /*===========
-    BOTON DEL MODAL
-    =============*/
     .btn_open {
         position: fixed;
         right: 40px;
@@ -107,9 +115,6 @@
         transform: scale(1.05);
     }
 
-    /* ==========
-    MODAL
-    ============ */
     .usuario_modal {
         display: none;
         position: fixed;
@@ -135,9 +140,6 @@
         animation: fadeIn 0.3s ease;
     }
 
-    /* ==========
-    CERRAR MODAL
-    ============ */
     .close_modal_usuario {
         position: absolute;
         top: 12px;
@@ -152,7 +154,6 @@
         color: #000;
     }
 
-    /* Título */
     .modal_usuario_content h2 {
         margin-top: 0;
         text-align: center;
@@ -160,7 +161,6 @@
         color: var(--color-morado-suave);
     }
 
-    /* Formulario */
     .modal_usuario_content form {
         display: flex;
         flex-direction: column;
@@ -190,7 +190,6 @@
         background: #7b57a6;
     }
 
-    /* Animación */
     @keyframes fadeIn {
         from {
             opacity: 0;
