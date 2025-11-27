@@ -17,7 +17,6 @@ public abstract class Usuario {
     // Constructor vacío
     public Usuario() {}
 
-    // Constructor con parámetros
     public Usuario(Long id, String nombre, String apellido, String email, String pwd, String estado, String DNI, String fotito, LocalDateTime fechaRegistro) {
         this.id = id;
         this.nombre = nombre;
@@ -27,8 +26,16 @@ public abstract class Usuario {
         this.estado = estado;
         this.DNI = DNI;
         this.fotito = fotito;
+        this.fechaRegistro = fechaRegistro;
     }
 
+
+    public Usuario(Long id, String nombre, String apellido, String email) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+    }
 
     // Getters y Setters
     public Long getId() {    return id;    }

@@ -204,7 +204,7 @@
             </div>
 
             <!-- Muestra al usuario seleccionado -->
-            <div class="usuario_info" th:if="${activePage == 'usuario_info'}">
+            <div th:if="${activePage == 'usuario_info'}">
                 <div th:replace="components/usuario_info"></div>
             </div>
         </section>
@@ -213,6 +213,63 @@
 
     <!--Componente usuario_model para crear un nuevo usuario-->
     <div th:replace="components/usuario_model"></div>
+
+  
 </body>
 
 </html>
+<script>
+    // Mostrar mensaje dinámicamente (llamado desde verificarMensajes)
+    function mostrarMensaje(texto, tipo) {
+        // Elimina cualquier mensaje anterior
+        const existente = document.getElementById('mensajeContainer');
+        if (existente) existente.remove();
+
+        // Crea el contenedor principal
+        const contenedor = document.createElement('div');
+        contenedor.id = 'mensajeContainer';
+        contenedor.className = 'mensaje-container';
+
+        // Crea el cuadro del mensaje
+        const box = document.createElement('div');
+        box.className = `mensaje-box ${tipo}`;
+        box.innerHTML = `
+            <span>${texto}</span>
+            <button type="button" class="cerrar-btn" onclick="cerrarMensaje()">×</button>
+        `;
+
+        contenedor.appendChild(box);
+        document.body.appendChild(contenedor);
+
+        // Desaparece automáticamente después de 5 segundos
+        setTimeout(() => {
+            contenedor.style.opacity = '0';
+            setTimeout(() => contenedor.remove(), 500);
+        }, 5000);
+    }
+
+    // Cerrar manualmente el mensaje
+    function cerrarMensaje() {
+        const contenedor = document.getElementById('mensajeContainer');
+        if (contenedor) contenedor.remove();
+    }
+
+    // Consulta periódica al backend
+    async function verificarMensajes() {
+        try {
+            const response = await fetch("/api/mensajes/ultimo");
+            if (response.ok) {
+                const texto = await response.text();
+                if (texto && texto.trim() !== "") {
+                    const tipo = texto.includes("Error") ? "error" : "exito";
+                    mostrarMensaje(texto, tipo);
+                }
+            }
+        } catch (err) {
+            console.error("Error al consultar mensajes:", err);
+        }
+    }
+
+    // Consulta cada 5 segundos (ajustable)
+    setInterval(verificarMensajes, 5000);
+</script>

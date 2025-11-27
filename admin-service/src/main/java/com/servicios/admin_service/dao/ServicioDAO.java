@@ -16,9 +16,7 @@ public class ServicioDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private String table_servicio() {
-        return "Servicio";
-    }
+    private String table_servicio() {    return "Servicio";    }
 
     /*
      * ============
@@ -137,6 +135,12 @@ public class ServicioDAO {
 
             return s;
         });
+    }
+
+    // === ACTUALIZAR ESTADO SERVICIO ===
+    public void actualizarEstadoServicio(int servicioId, String nuevoEstado) {
+        String sql = "UPDATE servicio SET EstadoServicio = ? WHERE ServicioID = ?";
+        jdbcTemplate.update(sql, nuevoEstado, servicioId);
     }
 
 }

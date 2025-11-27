@@ -1,0 +1,82 @@
+<!-- COMPONENTE: admin_confirmacion -->
+<div id="admin_modal_confirmacion" class="modal" style="display:none;">
+    <div class="modal-contenido">
+        <p id="modal-mensaje"></p>
+        <div class="modal-botones">
+            <button id="modal-cancelar" class="btn cancelar">Cancelar</button>
+            <button id="modal-confirmar" class="btn confirmar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.45);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-contenido {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px 30px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.25s ease-out;
+        max-width: 400px;
+    }
+
+    .modal-botones {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn.cancelar {
+        background-color: #9e9e9e;
+    }
+
+    .btn.confirmar {
+        background-color: #388e3c;
+    }
+
+    .btn.cancelar:hover {
+        background-color: #757575;
+    }
+
+    .btn.confirmar:hover {
+        background-color: #2e7d32;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    // === Componente de confirmación reutilizable ===
+    window.mostrarModalConfirmacion = function (mensajeTexto) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById("admin_modal_confirmacion");
+            const mensajeEl = document.getElementById("modal-mensaje");
+            const btnCancelar = document.getElementById("modal-cancelar");
+            const btnConfirmar = document.getElementById("modal-confirmar");
+
+            mensajeEl.textContent = mensajeTexto;
+            modal.style.display = "flex";
+
+            const cerrar = () => { modal.style.display = "none"; };
+            btnCancelar.onclick = () => { cerrar(); resolve(false); };
+            btnConfirmar.onclick = () => { cerrar(); resolve(true); };
+        });
+    };
+</script>
