@@ -51,6 +51,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JavaMail (javax.mail) -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+        <!-- Java Activation (JAF) -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        
         <!-- JSP API (provided by container) -->
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
