@@ -65,7 +65,6 @@
             <div class="row align-items-center justify-content-center center-vertical gx-4">
                 <!-- Logo -->
                 <div class="col-12 col-md-5 d-flex justify-content-center mb-4 mb-md-0 order-1">
-                    <img src="../Imagenes/novas_logo.png" class="login-logo" alt="NOVA'S TRAVELS Logo" onerror="this.src='../Imagenes/novas_logo.png'">
                 </div>
 
                 <!-- Form -->
@@ -74,7 +73,7 @@
                         <h3 class="text-center mb-3">Nueva contraseña</h3>
                         <p>Ingresa tu nueva contraseña.</p>
 
-                        <form method="post" action="../srvIniciarSesion?accion=cambiarPassword" id="formPass" novalidate>
+                        <form method="post" action="../LoginServlet?accion=cambiarPassword" id="formPass" novalidate>
                             <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
                                 <input name="password1" type="password" minlength="6" class="form-control" autocomplete="new-password" required>

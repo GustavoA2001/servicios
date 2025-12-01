@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>Recuperar contraseña | NOVA'S TRAVELS</title>
+        <title>Verificar código | NOVA'S TRAVELS</title>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -39,13 +39,13 @@
                     max-width:160px;
                 }
             }
-            .btn-login{
+            .btn-primary-custom{
                 background:#f5be0a;
                 border:none;
                 color:#fff;
                 font-weight:600;
             }
-            .btn-login:hover{
+            .btn-primary-custom:hover{
                 background:#e6a800;
             }
             .center-vertical{
@@ -63,27 +63,29 @@
         <div class="container-fluid">
             <div class="row align-items-center justify-content-center center-vertical gx-4">
                 <div class="col-12 col-md-5 d-flex justify-content-center mb-4 mb-md-0">
-                    <img src="../Imagenes/novas_logo.png" class="login-logo" alt="logo">
                 </div>
 
                 <div class="col-12 col-md-7 d-flex justify-content-center">
                     <div class="login-box">
-                        <h3 class="text-center mb-3">Recuperar contraseña</h3>
-                        <p>Introduce el correo asociado a tu cuenta. Te enviaremos un código de 6 dígitos.</p>
+                        <h3 class="text-center mb-3">Verificar código</h3>
+                        <p>Hemos enviado un código de 6 dígitos a tu correo.</p>
 
-                        <form method="post" action="../srvIniciarSesion?accion=solicitarRecuperacion" id="formRecup" novalidate>
+                        <form method="post" action="../LoginServlet?accion=verificarRecuperacion" id="formCod" novalidate>
                             <div class="mb-3">
-                                <label class="form-label">Correo</label>
-                                <input name="txtCorreoRecup" type="email" class="form-control" autocomplete="email" required>
+                                <label class="form-label">Código (6 dígitos)</label>
+                                <input name="txtCodigoRecup" type="text" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="form-control" required autofocus>
                             </div>
-                            <div class="d-grid">
-                                <button class="btn btn-login w-100" type="submit">Enviar código</button>
+                            <div class="d-grid mb-2">
+                                <button class="btn btn-primary-custom w-100" type="submit">Verificar</button>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="recuperar.jsp">Repetir correo</a>
+                                <form method="post" action="../LoginServlet?accion=solicitarRecuperacion" style="display:inline;">
+                                    <button type="submit" class="btn btn-link p-0">Reenviar código</button>
+                                </form>
                             </div>
                         </form>
-
-                        <div class="mt-3">
-                            <a href="login.jsp">Volver al inicio</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -93,16 +95,22 @@
             (function () {
                 const params = new URLSearchParams(window.location.search);
                 const err = params.get('error');
-                if (err === 'noexist')
-                    Swal.fire({icon: 'error', title: 'No existe', text: 'No encontramos una cuenta con ese correo.'});
+                if (err === 'cod')
+                    Swal.fire({icon: 'error', title: 'Código inválido', text: 'Código incorrecto o expirado.'});
                 if (err === 'mail')
-                    Swal.fire({icon: 'error', title: 'Error envío', text: 'No se pudo enviar el correo. Intenta más tarde.'});
-                if (err === 'ex')
-                    Swal.fire({icon: 'error', title: 'Error', text: 'Error inesperado. Revisa logs.'});
-                if (err === 'exp')
-                    Swal.fire({icon: 'warning', title: 'Código expirado', text: 'Solicita un nuevo código.'});
+                    Swal.fire({icon: 'error', title: 'Error envío', text: 'No se pudo enviar el correo.'});
                 if (err === 'blocked')
-                    Swal.fire({icon: 'warning', title: 'Bloqueado', text: 'Demasiados intentos. Solicita un nuevo código.'});
+                    Swal.fire({icon: 'warning', title: 'Bloqueado', text: 'Demasiados intentos.'});
+
+                const form = document.getElementById('formCod');
+                form.addEventListener('submit', function (e) {
+                    const val = form.querySelector('input[name="txtCodigoRecup"]').value.trim();
+                    if (!/^\d{6}$/.test(val)) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        Swal.fire({icon: 'warning', title: 'Código inválido', text: 'Ingresa 6 números.'});
+                    }
+                });
             })();
         </script>
     </body>

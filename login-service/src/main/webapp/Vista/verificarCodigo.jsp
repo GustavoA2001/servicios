@@ -63,7 +63,6 @@
         <div class="container-fluid">
             <div class="row align-items-center justify-content-center center-vertical gx-4">
                 <div class="col-12 col-md-5 d-flex justify-content-center mb-4 mb-md-0">
-                    <img src="../Imagenes/novas_logo.png" class="brand-logo" alt="logo">
                 </div>
 
                 <div class="col-12 col-md-7 d-flex justify-content-center">
@@ -71,7 +70,7 @@
                         <h3 class="text-center mb-3">Verificar código</h3>
                         <p>Hemos enviado un código de 6 dígitos a tu correo. Tiene validez 5 minutos.</p>
 
-                        <form method="post" action="../srvIniciarSesion?accion=confirmarCodigo" id="codigoForm" novalidate>
+                        <form method="post" action="../LoginServlet?accion=confirmarCodigo" id="codigoForm" novalidate>
                             <div class="mb-3">
                                 <label class="form-label">Código (6 dígitos)</label>
                                 <input name="txtCodigo" type="text" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" class="form-control" required autofocus>
@@ -83,7 +82,7 @@
                             <div class="d-flex justify-content-between">
                                 <a href="login.jsp" class="small-link">Volver al inicio</a>
 
-                                <form method="post" action="../srvIniciarSesion?accion=reenviarCodigo" style="display:inline;">
+                                <form method="post" action="../LoginServlet?accion=reenviarCodigo" style="display:inline;">
                                     <button type="submit" class="btn btn-link small-link p-0">Reenviar código</button>
                                 </form>
                             </div>
