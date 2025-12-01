@@ -79,6 +79,65 @@ body {
     border: 1px solid var(--text-purpura);
     border-radius: 50px;
 }
+/* ---------------------------------------------------------
+   USER DROPDOWN
+--------------------------------------------------------- */
+
+.user_dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user_dropdown_btn {
+    background-color: var(--color-morado-fuerte);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user_dropdown_btn:hover {
+    background-color: var(--color-morado-suave);
+}
+
+.user_dropdown_menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: white;
+    color: var(--color-dark);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px #0002;
+    min-width: 180px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.user_dropdown_menu a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--color-dark);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user_dropdown_menu a:hover {
+    background: #efefef;
+}
+/* Mostrar menú solo cuando tenga la clase `.open` */
+.user_dropdown.open .user_dropdown_menu {
+    display: flex;
+}
+
 
 @media (max-width: 768px) {
     .menu_admin {

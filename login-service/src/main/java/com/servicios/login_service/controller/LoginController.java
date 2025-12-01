@@ -1,4 +1,4 @@
-package com.servicios.login_service.conttroller;
+package com.servicios.login_service.controller;
 
 import com.servicios.login_service.Repository.*;
 import com.servicios.login_service.model.Empleado;

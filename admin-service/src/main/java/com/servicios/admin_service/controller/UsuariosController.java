@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.servicios.admin_service.model.*;
 import com.servicios.admin_service.service.UsuarioService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/usuarios")
-public class UsuariosController {
+public class UsuariosController extends BaseController{
 
     @Autowired
     private UsuarioService usuarioService;
@@ -36,7 +38,7 @@ public class UsuariosController {
     }
 
     @GetMapping("/clientes")
-    public String listarClientes(Model model) {
+    public String listarClientes(Model model, HttpServletRequest request) {
         List<Cliente> clientes = usuarioService.obtenerClientes();
         model.addAttribute("usuarios", clientes);
         model.addAttribute("tipo", "Cliente");
@@ -44,11 +46,14 @@ public class UsuariosController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);
+
         return "usuarios";
     }
 
     @GetMapping("/trabajadores")
-    public String listarTrabajadores(Model model) {
+    public String listarTrabajadores(Model model, HttpServletRequest request) {
         List<Empleado> trabajadores = usuarioService.obtenerEmpleadosPorRol(2);
         model.addAttribute("usuarios", trabajadores);
         model.addAttribute("tipo", "Trabajador");
@@ -56,11 +61,14 @@ public class UsuariosController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);        
+
         return "usuarios";
     }
 
     @GetMapping("/administradores")
-    public String listarAdministradores(Model model) {
+    public String listarAdministradores(Model model, HttpServletRequest request) {
         List<Empleado> administradores = usuarioService.obtenerEmpleadosPorRol(1);
         model.addAttribute("usuarios", administradores);
         model.addAttribute("tipo", "Administrador");
@@ -68,11 +76,14 @@ public class UsuariosController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);
+
         return "usuarios";
     }
 
     @GetMapping("/usuario/{tipo}/{id}")
-    public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model) {
+    public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model, HttpServletRequest request) {
         if (tipo.equalsIgnoreCase("Cliente")) {
             model.addAttribute("usuario", usuarioService.obtenerClientePorId(id));
         } else {
@@ -81,6 +92,9 @@ public class UsuariosController {
         model.addAttribute("tipo", tipo);
         model.addAttribute("activePage", "usuario_info");
         model.addAttribute("activeMenu", "usuarios");
+
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);
 
         return "usuarios";
     }

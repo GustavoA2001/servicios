@@ -10,7 +10,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "h38FJf93hf92HF93hf93HF93hf93Hf93hf93HF93hf93Hf";  // mínimo 32 chars
+    private final String SECRET = "h38FJf93hf92HF93hf93HF93hf93Hf93hf93HF93hf93Hf"; // CLAVE REPETIDA EN TODOS LOS JWT
     private final long EXPIRATION = 86400000; // 1 día
 
     public String generateToken(String email, String rol) {

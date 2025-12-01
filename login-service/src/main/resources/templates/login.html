@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>Login</title>
 
     <style>
@@ -21,13 +21,20 @@
             padding: 35px 40px;
             border-radius: 14px;
             width: 360px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             animation: fadeIn .4s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(.95); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h2 {
@@ -54,7 +61,7 @@
 
         input:focus {
             border-color: #4f6ef7;
-            box-shadow: 0 0 3px rgba(79,110,247,.4);
+            box-shadow: 0 0 3px rgba(79, 110, 247, .4);
         }
 
         button {
@@ -95,60 +102,72 @@
 
 <body>
 
-<div class="card">
-    <h2>Iniciar Sesión</h2>
+    <div class="card">
+        <h2>Iniciar Sesión</h2>
 
-    <label>Email</label>
-    <input id="email" type="text">
+        <label>Email</label>
+        <input id="email" type="text">
 
-    <label>Contraseña</label>
-    <input id="password" type="password">
+        <label>Contraseña</label>
+        <input id="password" type="password">
 
-    <button id="btnLogin">Ingresar</button>
+        <label>Ingresar como: </label>
+        <select id="tipo">
+            <option value="CLIENTE">Cliente</option>
+            <option value="EMPLEADO">Empleado</option>
+        </select>
 
-    <div id="msg"></div>
 
-    <p style="margin-top:15px; text-align:center;">
-        ¿No tienes cuenta?
-        <a href="http://localhost:8082/auth/registro">Regístrate aquí</a>
-    </p>
-</div>
+        <button id="btnLogin">Ingresar</button>
 
-<script>
-    const msg = document.getElementById("msg");
+        <div id="msg"></div>
 
-    document.getElementById("btnLogin").onclick = async () => {
-        msg.innerHTML = "";
-        msg.className = "msg";
+        <p style="margin-top:15px; text-align:center;">
+            ¿No tienes cuenta?
+            <a href="http://localhost:8082/auth/registro">Regístrate aquí</a>
+        </p>
+    </div>
 
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+    <script>
+        const msg = document.getElementById("msg");
 
-        const res = await fetch("/auth/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
+        document.getElementById("btnLogin").onclick = async () => {
+            msg.innerHTML = "";
+            msg.className = "msg";
 
-        const data = await res.json();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
 
-        if (res.ok) {
-            msg.classList.add("success");
-            msg.innerHTML = "¡Login exitoso! Redirigiendo...";
+            const res = await fetch("/auth/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    tipo: document.getElementById("tipo").value
+                })
+            });
 
-            // Guardar token en localStorage
-            localStorage.setItem("token", data.token);
+            const data = await res.json();
 
-            setTimeout(() => {
-                window.location.href = "/home"; // la ruta que tú decidas
-            }, 1200);
+            if (res.ok) {
+                msg.classList.add("success");
+                msg.innerHTML = "¡Login exitoso! Redirigiendo...";
 
-        } else {
-            msg.classList.add("error");
-            msg.innerHTML = data.message || "Error al iniciar sesión.";
+                // Guardar token
+                localStorage.setItem("token", data.token);
+
+                setTimeout(() => {
+                    window.location.href = "http://localhost:8087/?token=" + data.token;
+                }, 1200);
+            }
+            else {
+                msg.classList.add("error");
+                msg.innerHTML = data.message || "Error al iniciar sesión.";
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
+
 </html>

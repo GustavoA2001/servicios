@@ -161,7 +161,9 @@
 
 <body>
     <!-- Componenetes Header -->
-    <header th:replace="components/menu_admin" class="headers"></header>
+    <!--header th:replace="components/menu_admin" class="headers"></header-->
+    <header th:replace="~{components/menu_admin(activeMenu=${activeMenu}, usuarioEmail=${usuarioEmail}, usuarioRol=${usuarioRol})}"></header>
+
 
     <div class="usuarios_container">
         <!-- Eleccion de navegación -->
