@@ -6,29 +6,82 @@
     <title>Menú Administrador</title>
 </head>
 <body>
-    <nav class="menu_admin">
-        <div class="logo">Logo</div>
+    <nav class="menu_admin" th:fragment="menu_admin(activeMenu, usuarioEmail, usuarioRol)">
+
+        <!-- LOGO -->
+        <div class="logo">
+            <i class="fas fa-cogs"></i> AdminPanel
+        </div>
+    
+        <!-- MENÚ PRINCIPAL -->
         <ul class="league-spartan">
             <li th:class="${activeMenu == 'dashboard' ? 'active' : ''}">
-                <a href="#">Dashboard</a>
+                <a href="/"><i class="fas fa-home"></i> Dashboard</a>
             </li>
             <li th:class="${activeMenu == 'usuarios' ? 'active' : ''}">
-                <a href="/usuarios">Usuarios</a>
+                <a href="/usuarios"><i class="fas fa-users"></i> Usuarios</a>
             </li>
             <li th:class="${activeMenu == 'servicios' ? 'active' : ''}">
-                <a href="/servicios">Servicios</a>
+                <a href="/servicios"><i class="fas fa-concierge-bell"></i> Servicios</a>
             </li>
             <li th:class="${activeMenu == 'catalogos' ? 'active' : ''}">
-                <a href="/catalogos">Catálogos</a>
+                <a href="/catalogos"><i class="fas fa-folder"></i> Catálogos</a>
             </li>
             <li th:class="${activeMenu == 'informes' ? 'active' : ''}">
-                <a href="#">Informes</a>
+                <a href="/informes"><i class="fas fa-chart-line"></i> Informes</a>
             </li>
-        </ul>    
-        <div class="user_actions league-spartan">
-            <button>Perfil</button>
-            <button>Cerrar Sesión</button>
+        </ul>
+    
+        <!-- USUARIO (dropdown con clic) -->
+        <div class="user_dropdown league-spartan" id="userDropdown">
+            <button class="user_dropdown_btn" id="userDropdownBtn">
+                <i class="fas fa-user-circle"></i>
+                <span th:text="${usuarioEmail}">usuario@example.com</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+    
+            <div class="user_dropdown_menu">
+    
+                <!-- Información del rol -->
+                <div style="padding: 10px 15px; font-size:14px; color: var(--color-dark); opacity:.8;">
+                    <i class="fas fa-id-card"></i>
+                    <b th:text="${usuarioRol}" style="color: var(--color-morado-fuerte);">Administrador</b>
+                </div>
+    
+                <hr style="margin:0; border:none; border-top:1px solid #eee;">
+    
+                <a href="#">
+                    <i class="fas fa-id-badge"></i> Mi Perfil
+                </a>
+                <a href="#">
+                    <i class="fas fa-cog"></i> Configuración
+                </a>
+
+                <a href="http://localhost:8081/auth/logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+                
+            </div>
         </div>
+    
     </nav>
+    
+    
+    <script>
+        const dropdown = document.getElementById("userDropdown");
+        const btn = document.getElementById("userDropdownBtn");
+    
+        btn.addEventListener("click", () => {
+            dropdown.classList.toggle("open");
+        });
+    
+        // Cerrar si se hace clic fuera
+        document.addEventListener("click", (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove("open");
+            }
+        });
+    </script>
+    
 </body>
 </html>

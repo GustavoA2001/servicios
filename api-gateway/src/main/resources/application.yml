@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # --- LOGIN SERVICE ---
+        - id: login-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/login/**
+
+        # --- ADMIN SERVICE ---
+        - id: admin-service
+          uri: http://localhost:8087
+          predicates:
+            - Path=/usuarios, /usuarios/**
+
+
+
+      # --- CORS global ---
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Registro de Usuario</title>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            text-align: left;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #4285f4;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        .mensaje {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f0fe;
+            border-radius: 6px;
+            color: #1a73e8;
+        }
+
+        a {
+            color: #4285f4;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Registrar Usuario</h2>
+
+        <form th:action="@{/auth/registrar}" method="post">
+
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required />
+
+            <label>Apellido:</label>
+            <input type="text" name="apellido" required />
+
+            <label>Email:</label>
+            <input type="email" name="email" required />
+
+            <label>Password:</label>
+            <input type="password" name="password" required />
+
+            <label>DNI:</label>
+            <input type="text" name="dni" maxlength="8" required />
+
+            <label>Rol:</label>
+            <select name="rol">
+                <option value="CLIENTE">Cliente</option>
+                <option value="EMPLEADO">Empleado</option>
+            </select>
+
+            <button type="submit">Registrar</button>
+        </form>
+
+        <div th:if="${mensaje}" class="mensaje">
+            <p th:text="${mensaje}"></p>
+        </div>
+
+        <p style="margin-top: 15px;">
+            ¿Ya tienes cuenta?
+            <a href="http://localhost:8081/auth/login">Inicia sesión aquí</a>
+        </p>
+    </div>
+
+</body>
+
+</html>
+<script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const data = {
+            nombre: this.nombre.value,
+            apellido: this.apellido.value,
+            email: this.email.value,
+            password: this.password.value,
+            dni: this.dni.value,
+            rol: this.rol.value
+        };
+
+        fetch("/auth/registrar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.text())
+            .then(msg => alert(msg))
+            .catch(err => alert("Error: " + err));
+    });
+</script>

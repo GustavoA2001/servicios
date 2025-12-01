@@ -4,6 +4,8 @@ import com.servicios.admin_service.model.Servicio;
 import com.servicios.admin_service.model.Pedido;
 import com.servicios.admin_service.service.ServicioService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/servicios")
-public class ServiciosController {
+public class ServiciosController extends BaseController {
 
     private final ServicioService servicioService;
 
@@ -21,16 +23,21 @@ public class ServiciosController {
     }
 
     @GetMapping
-    public String listarServicios(@RequestParam(value = "search", required = false) String search, Model model) {
+    public String listarServicios(@RequestParam(value = "search", required = false) String search, Model model, HttpServletRequest request) {
         List<Servicio> servicios = servicioService.buscarServicios(search);
 
         model.addAttribute("activeMenu", "servicios");
         model.addAttribute("servicios", servicios);
+
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);
+
+
         return "servicios";
     }
 
     @GetMapping("/{id}/clientes")
-    public String obtenerClientesServicio(@PathVariable int id, Model model) {
+    public String obtenerClientesServicio(@PathVariable int id, Model model, HttpServletRequest request) {
         List<Pedido> pedidos = servicioService.obtenerClientesServicio(id);
         List<Servicio> servicios = servicioService.obtenerServicios();
 
@@ -38,6 +45,10 @@ public class ServiciosController {
         model.addAttribute("servicios", servicios);
         model.addAttribute("activePage", "servicio_cliente");
         model.addAttribute("activeMenu", "servicios");
+
+        // Método heredado de BASECONTROLLER
+        agregarDatosUsuario(model, request);
+
 
         return "servicios";
     }

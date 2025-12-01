@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -57,8 +58,11 @@ public class UsuarioService {
                 c.setNombre(usuarioRequest.getNombre());
                 c.setApellido(usuarioRequest.getApellido());
                 c.setEmail(usuarioRequest.getEmail());
-                c.setPwd(usuarioRequest.getPwd());
-                c.setEstado("Activo");
+                
+                String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
+                c.setPwd(hash);
+                
+                c.setEstado("ACTIVO");
                 c.setFechaRegistro(ahora);
 
                 int filas = usuarioDAO.insertarCliente(c);
@@ -69,8 +73,11 @@ public class UsuarioService {
                 e.setNombre(usuarioRequest.getNombre());
                 e.setApellido(usuarioRequest.getApellido());
                 e.setEmail(usuarioRequest.getEmail());
-                e.setPwd(usuarioRequest.getPwd());
-                e.setEstado("Activo");
+                
+                String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
+                e.setPwd(hash);
+
+                e.setEstado("ACTIVO");
                 e.setFechaRegistro(ahora);
                 e.setRolID(rol.equals("administrador") ? 1 : 2);
 

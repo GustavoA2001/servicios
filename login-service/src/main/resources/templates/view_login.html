@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Login</title></head>
+<body>
+<h2>Iniciar Sesión</h2>
+<form th:action="@{/auth/login}" method="post">
+    <label>Email:</label><input type="text" name="email" required /><br/>
+    <label>Password:</label><input type="password" name="password" required /><br/>
+    <button type="submit">Login</button>
+</form>
+
+<div th:if="${token}">
+    <p>Token generado:</p>
+    <textarea th:text="${token}" readonly></textarea>
+</div>
+
+<div th:if="${error}">
+    <p style="color:red;" th:text="${error}"></p>
+</div>
+
+<p>¿No tienes cuenta? <a href="http://localhost:8082/register">Regístrate aquí</a></p>
+</body>
+</html>

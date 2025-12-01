@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef1f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 35px 40px;
+            border-radius: 14px;
+            width: 360px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            animation: fadeIn .4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #444;
+            font-size: 24px;
+        }
+
+        label {
+            margin-top: 15px;
+            display: block;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #4f6ef7;
+            box-shadow: 0 0 3px rgba(79, 110, 247, .4);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 12px;
+            background: #4f6ef7;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #3c57d6;
+        }
+
+        .msg {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .msg.error {
+            background: #ffe0df;
+            color: #d63031;
+        }
+
+        .msg.success {
+            background: #e0f3ff;
+            color: #0984e3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Iniciar Sesión</h2>
+
+        <label>Email</label>
+        <input id="email" type="text">
+
+        <label>Contraseña</label>
+        <input id="password" type="password">
+
+        <label>Ingresar como: </label>
+        <select id="tipo">
+            <option value="CLIENTE">Cliente</option>
+            <option value="EMPLEADO">Empleado</option>
+        </select>
+
+
+        <button id="btnLogin">Ingresar</button>
+
+        <div id="msg"></div>
+
+        <p style="margin-top:15px; text-align:center;">
+            ¿No tienes cuenta?
+            <a href="http://localhost:8082/auth/registro">Regístrate aquí</a>
+        </p>
+    </div>
+
+    <script>
+        const msg = document.getElementById("msg");
+
+        document.getElementById("btnLogin").onclick = async () => {
+            msg.innerHTML = "";
+            msg.className = "msg";
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            const res = await fetch("/auth/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    tipo: document.getElementById("tipo").value
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                msg.classList.add("success");
+                msg.innerHTML = "¡Login exitoso! Redirigiendo...";
+
+                // Guardar token
+                localStorage.setItem("token", data.token);
+
+                setTimeout(() => {
+                    window.location.href = "http://localhost:8087/?token=" + data.token;
+                }, 1200);
+            }
+            else {
+                msg.classList.add("error");
+                msg.innerHTML = data.message || "Error al iniciar sesión.";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
