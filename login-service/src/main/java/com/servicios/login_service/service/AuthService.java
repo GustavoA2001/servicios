@@ -27,41 +27,41 @@ public class AuthService {
     
         if (tipo.equalsIgnoreCase("CLIENTE")) {
     
-            System.out.println("🔎 Buscando en tabla CLIENTE...");
+            System.out.println("Buscando en tabla CLIENTE...");
             u = usuarioDAO.findClienteByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     
-            System.out.println("✔ Cliente encontrado: " + u.getEmail());
+            System.out.println("Cliente encontrado: " + u.getEmail());
             System.out.println("Rol asignado (cliente fijo): " + u.getRol());
     
         } else if (tipo.equalsIgnoreCase("EMPLEADO")) {
     
-            System.out.println("🔎 Buscando en tabla EMPLEADO...");
+            System.out.println("Buscando en tabla EMPLEADO...");
             u = usuarioDAO.findEmpleadoByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     
-            System.out.println("✔ Empleado encontrado: " + u.getEmail());
+            System.out.println("Empleado encontrado: " + u.getEmail());
             System.out.println("Rol obtenido desde DB: " + u.getRol());
     
         } else {
-            System.out.println("❌ Tipo inválido: " + tipo);
+            System.out.println("Tipo inválido: " + tipo);
             throw new RuntimeException("Tipo inválido");
         }
     
         System.out.println("Validando contraseña...");
         if (!new BCryptPasswordEncoder().matches(rawPassword, u.getPassword())) {
-            System.out.println("❌ CONTRASEÑA INCORRECTA");
+            System.out.println("CONTRASEÑA INCORRECTA");
             throw new RuntimeException("Credenciales inválidas");
         }
     
-        System.out.println("✔ Contraseña correcta");
+        System.out.println("Contraseña correcta");
     
         String token = jwtUtil.generateToken(u.getEmail(), u.getRol());
     
-        System.out.println("🔑 TOKEN GENERADO:");
+        System.out.println("TOKEN GENERADO:");
         System.out.println(token);  // <-- Aquí verás el JWT completo
         
-        System.out.println("🔐 Token generado con rol: " + u.getRol());
+        System.out.println("Token generado con rol: " + u.getRol());
         System.out.println("=== LOGIN FINALIZADO ===");
     
         return token;

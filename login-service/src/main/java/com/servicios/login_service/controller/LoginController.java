@@ -26,26 +26,26 @@ public class LoginController {
         String email = datos.get("email");
         String password = datos.get("password");
 
-        System.out.println(">>> Recibido email: [" + email + "] len=" + (email == null ? 0 : email.length()));
+        System.out.println("Recibido email: [" + email + "] len=" + (email == null ? 0 : email.length()));
         System.out
-                .println(">>> Recibido password: [" + password + "] len=" + (password == null ? 0 : password.length()));
+                .println("Recibido password: [" + password + "] len=" + (password == null ? 0 : password.length()));
         if (password != null) {
-            System.out.println(">>> password bytes: " + Arrays.toString(password.getBytes(StandardCharsets.UTF_8)));
-            System.out.print(">>> password char codes: ");
+            System.out.println("password bytes: " + Arrays.toString(password.getBytes(StandardCharsets.UTF_8)));
+            System.out.print("password char codes: ");
             for (char c : password.toCharArray())
                 System.out.print((int) c + " ");
             System.out.println();
         }
 
         Empleado empleado = empleadoRepository.findByEmail(email).orElse(null);
-        System.out.println(">>> Empleado encontrado?: " + (empleado != null));
+        System.out.println("Empleado encontrado?: " + (empleado != null));
         if (empleado != null) {
             String dbPass = empleado.getPassword();
-            System.out.println(">>> DB password raw: [" + dbPass + "] len=" + (dbPass == null ? 0 : dbPass.length()));
+            System.out.println("DB password raw: [" + dbPass + "] len=" + (dbPass == null ? 0 : dbPass.length()));
             if (dbPass != null) {
                 System.out
-                        .println(">>> DB password bytes: " + Arrays.toString(dbPass.getBytes(StandardCharsets.UTF_8)));
-                System.out.print(">>> DB password char codes: ");
+                        .println("DB password bytes: " + Arrays.toString(dbPass.getBytes(StandardCharsets.UTF_8)));
+                System.out.print("DB password char codes: ");
                 for (char c : dbPass.toCharArray())
                     System.out.print((int) c + " ");
                 System.out.println();

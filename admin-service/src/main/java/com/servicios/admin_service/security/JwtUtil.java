@@ -10,8 +10,8 @@ public class JwtUtil {
     private final String SECRET = "h38FJf93hf92HF93hf93HF93hf93Hf93hf93HF93hf93Hf"; // CLAVE REPETIDA EN TODOS LOS JWT
      
     public Claims validateToken(String token) {
-        System.out.println("======= 🟦 JwtUtil.validateToken() =======");
-        System.out.println("🟦 Token a validar:");
+        System.out.println("======= JwtUtil.validateToken() =======");
+        System.out.println("Token a validar:");
         System.out.println(token);
     
         try {
@@ -22,11 +22,11 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
     
-            System.out.println("✔ LOG: Firma y estructura válidas.");
+            System.out.println("LOG: Firma y estructura válidas.");
             return c;
     
         } catch (Exception e) {
-            System.out.println("❌ ERROR EN TOKEN: " + e.getMessage());
+            System.out.println("ERROR EN TOKEN: " + e.getMessage());
             throw new RuntimeException("Token inválido");
         }
     }
