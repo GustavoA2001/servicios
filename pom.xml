@@ -148,6 +148,7 @@
         /chat/** → enruta a chat-service (si está activo).
         port: 8089
         -->
+       <module>empleado-service</module>
 
     </modules>
 
