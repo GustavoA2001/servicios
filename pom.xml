@@ -149,7 +149,12 @@
         port: 8089
         -->
        <module>empleado-service</module>
+       <!--
+        empleado service
+        
 
+        port: 8090
+        -->
     </modules>
 
 
