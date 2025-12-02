@@ -71,9 +71,9 @@ public abstract class Usuario {
 
     public String getRutaFoto() {
         if (fotito != null && !fotito.trim().isEmpty()) {
-            return "/upload/usuarios/" + fotito;
+            return "http://localhost:8090/uploads/usuarios/" + fotito;
         }
-        return "/img/default-user.png";
+        return "http://localhost:8090/defaults/usuarios/default.jpg";
     }
     
 }

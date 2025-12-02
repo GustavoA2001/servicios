@@ -62,7 +62,7 @@ public class UsuarioService {
                 String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
                 c.setPwd(hash);
                 
-                c.setEstado("ACTIVO");
+                c.setEstado("Activo");
                 c.setFechaRegistro(ahora);
 
                 int filas = usuarioDAO.insertarCliente(c);
@@ -77,7 +77,7 @@ public class UsuarioService {
                 String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
                 e.setPwd(hash);
 
-                e.setEstado("ACTIVO");
+                e.setEstado("Activo");
                 e.setFechaRegistro(ahora);
                 e.setRolID(rol.equals("administrador") ? 1 : 2);
 
@@ -149,7 +149,7 @@ public class UsuarioService {
         // Según el tipo, actualizamos el estado
         if (tipo.equalsIgnoreCase("Cliente")) {
             filasActualizadas = usuarioDAO.cambiarEstadoCliente(id, nuevoEstado);
-        } else if (tipo.equalsIgnoreCase("Empleado") || tipo.equalsIgnoreCase("Trabajador")) {
+        } else if (tipo.equalsIgnoreCase("Empleado") || tipo.equalsIgnoreCase("Trabajador") || tipo.equalsIgnoreCase("Administrador")) {
             filasActualizadas = usuarioDAO.cambiarEstadoEmpleado(id, nuevoEstado);
         } else {
             throw new IllegalArgumentException("Tipo de usuario no válido: " + tipo);

@@ -149,6 +149,15 @@
         port: 8089
         -->
 
+        <module>imagen-service</module>
+        <!--
+        10: imagen-service
+
+        -Funcionalidades:
+        Gestión de imágenes de usuarios.
+        
+        -->
+
     </modules>
 
 

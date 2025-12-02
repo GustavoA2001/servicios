@@ -1,16 +1,16 @@
 package com.servicios.registro_service.model;
 
 public class Usuario {
-    private Long id;         // generado automáticamente, no enviado desde frontend
+    private Long id;         
     private String nombre;
     private String apellido;
     private String email;
     private String password;
     private String dni;
-    private String estado;   // ACTIVO / INACTIVO
+    private String estado;   
     private String fechaRegistro;
 
-    private Long id_rol;     // se asigna según el rol
+    private Long id_rol;    
     private String rol;      // CLIENTE, EMPLEADO, ADMIN
 
     // Getters y Setters

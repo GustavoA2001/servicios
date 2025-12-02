@@ -85,7 +85,7 @@
             overflow-y: auto;
             display: flex;
         }
-        
+
         section.section_usuarios .usuarios_content {
             display: block;
             width: 100%;
@@ -150,6 +150,42 @@
             color: #888;
         }
 
+        .usuario-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .estado {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 12px;
+            color: #fff !important;
+        }
+
+        .estado-activo {
+            background-color: #388e3c;
+            /* verde, como .modificar */
+        }
+
+        .estado-suspendido {
+            background-color: #e68900;
+            /* naranja, como .suspender */
+        }
+
+        .estado-inactivo {
+            background-color: #00897b;
+            /* gris azulado, como .ocultar */
+        }
+
+        .estado-eliminado {
+            background-color: #b71c1c;
+            /* rojo, como .eliminar */
+        }
+
+
         aside.aside_usuarios,
         section.section_usuarios {
             margin: 10px;
@@ -161,8 +197,9 @@
 
 <body>
     <!-- Componenetes Header -->
-    <!--header th:replace="components/menu_admin" class="headers"></header-->
-    <header th:replace="~{components/menu_admin(activeMenu=${activeMenu}, usuarioEmail=${usuarioEmail}, usuarioRol=${usuarioRol})}"></header>
+    <header
+        th:replace="~{components/menu_admin(activeMenu=${activeMenu}, usuarioEmail=${usuarioEmail}, usuarioRol=${usuarioRol})}">
+    </header>
 
 
     <div class="usuarios_container">
@@ -185,21 +222,31 @@
         <!-- Sección de contenido donde se muestran los usuarios -->
         <section class="section_usuarios">
             <!-- Muestra los usuarios según los tipos de usuarios -->
-            <div class="usuarios_content"  th:if="${activePage != 'usuario_info'}">
+            <div class="usuarios_content" th:if="${activePage != 'usuario_info'}">
                 <h2 class="cabin">
-                    Lista de&nbsp;<span th:text="${tipo}"></span> 
+                    Lista de&nbsp;<span th:text="${tipo}"></span>
                     &nbsp;(<span th:text="${contador}"></span>)
                 </h2>
                 <div class="list_usuarios space-grotesk">
 
-                    
+
                     <a th:each="usuario : ${usuarios}"
                         th:href="@{/usuarios/usuario/{tipo}/{id}(tipo=${tipo}, id=${usuario.id})}" class="usuario-link">
                         <div class="usuario-card">
                             <img th:src="@{${usuario.rutaFoto}}" alt="Foto de usuario" class="usuario-foto">
                             <h3 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h3>
                             <p>Email: <span th:text="${usuario.email}"></span></p>
-                            <p class="usuario-id">ID: <span th:text="${usuario.id}"></span></p>
+
+                            <div class="usuario-info">
+                                <p class="usuario-id">ID: <span th:text="${usuario.id}"></span></p>
+                                <!-- Estado con color distintivo -->
+                                <p th:class="'estado ' + (${usuario.estado} == 'Activo' ? 'estado-activo' : 
+                                    (${usuario.estado} == 'Inactivo' ? 'estado-inactivo' : 
+                                    (${usuario.estado} == 'Suspendido' ? 'estado-suspendido' : 'estado-eliminado')))">
+                                    <span th:text="${usuario.estado}"></span>
+                                </p>
+                            </div>
+
                         </div>
                     </a>
                 </div>
@@ -216,7 +263,7 @@
     <!--Componente usuario_model para crear un nuevo usuario-->
     <div th:replace="components/usuario_model"></div>
 
-  
+
 </body>
 
 </html>
