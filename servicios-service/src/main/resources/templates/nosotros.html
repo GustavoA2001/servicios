@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nosotros | Servicios Técnicos</title>
+
+    <!-- Importar los estilos comunes -->
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
+
+    <style>
+        /* Paleta morada - azul moderna */
+        :root {
+            --bg: #0f1724;
+            --card: #0f1930;
+            --primary: #5A2D9C;
+            --primary-2: #7B4FDB;
+            --secondary: #2A5D8B;
+            --accent: #4BC1E8;
+            --muted: #94A3B8;
+            --text: #E6EEF8;
+            --glass: rgba(255, 255, 255, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #081021 0%, #071029 40%, #021025 100%);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1100px;
+            margin: 100px auto;
+            padding: 0 20px;
+            position: relative;
+            /* Para posicionar figuras absolutas */
+        }
+
+        /* Figuras decorativas */
+        .shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .shapes div {
+            position: absolute;
+            opacity: 0.15;
+        }
+
+        .circle {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            border-radius: 50%;
+            top: -58px;
+            right: -128px;
+        }
+
+        .small-circle {
+            width: 100px;
+            height: 100px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .small-circle-1 {
+            bottom: 20px;
+            right: 40px;
+        }
+
+        .small-circle-2 {
+            top: 250px;
+            right: 15%;
+        }
+
+        .small-circle-3 {
+            bottom: 400px;
+            left: 20%;
+        }
+
+        .diamond {
+            width: 280px;
+            height: 280px;
+            background: var(--primary-2);
+            transform: rotate(45deg);
+        }
+
+        .diamond-1 {
+            top: 600px;
+            left: -10%;
+        }
+
+        .diamond-2 {
+            bottom: 300px;
+            right: -11%;
+        }
+
+        /* Sección de Introducción */
+        .intro {
+            background: var(--card);
+            display: flex;
+            justify-content: space-between;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            margin-bottom: 50px;
+        }
+
+        .intro .left {
+            flex: 1;
+            max-width: 55%;
+        }
+
+        .intro .right {
+            flex: 1;
+            max-width: 40%;
+            padding-left: 20px;
+        }
+
+        .intro h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* Historia, Misión, Visión y Valores */
+        .company-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 50px;
+            justify-content: space-between;
+        }
+
+        .company-info .card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 15px;
+            color: var(--text);
+            width: 48%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .company-info .card:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .company-info .card h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .company-info .card p,
+        .company-info .card ul li {
+            font-size: 1rem;
+            color: var(--muted);
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .company-info .card ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .company-info .card ul li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            padding-right: 12px;
+        }
+
+        /* Sección de Servicios Técnicos */
+        .services-explanation {
+            background: var(--card);
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            margin-bottom: 50px;
+        }
+
+        .services-explanation h2 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .services-explanation p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg);
+            color: var(--text);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilos responsive */
+        @media (max-width: 1000px) {
+            .company-info .card {
+                width: 100%;
+            }
+
+            .intro .left,
+            .intro .right {
+                max-width: 100%;
+                padding-left: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .intro {
+                flex-direction: column;
+                padding: 30px;
+            }
+
+            .company-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <div class="logo">ST</div>
+            <h1>Servicios Técnicos</h1>
+        </div>
+    
+        <nav class="nav">
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/nosotros">Nosotros</a>
+        </nav>
+    
+        <!-- Bloque de usuario -->
+        <div class="user_dropdown" id="userDropdown">
+            <button class="user_dropdown_btn" id="userDropdownBtn">
+                <i class="fas fa-user-circle"></i>
+                <span th:text="${usuarioEmail}">cliente@example.com</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+    
+            <div class="user_dropdown_menu">
+                <div style="padding: 10px 15px; font-size:14px; opacity:.8;">
+                    <i class="fas fa-id-card"></i>
+                    <b th:text="${usuarioRol}" style="color: var(--accent);">Cliente</b>
+                </div>
+                <hr style="margin:0; border:none; border-top:1px solid rgba(255,255,255,0.1);">
+                <a href="/perfil"><i class="fas fa-id-badge"></i> Mi Perfil</a>
+                <a href="/configuracion"><i class="fas fa-cog"></i> Configuración</a>
+                <a href="http://localhost:8081/auth/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>  
+
+    <!-- Contenedor Principal -->
+    <div class="container">
+
+        <!-- Figuras decorativas -->
+        <div class="shapes">
+            <div class="circle"></div>
+            <div class="diamond diamond-1"></div>
+            <div class="diamond diamond-2"></div>
+            <div class="small-circle small-circle-1"></div>
+            <div class="small-circle small-circle-2"></div>
+            <div class="small-circle small-circle-3"></div>
+        </div>
+
+        <!-- Sección de Introducción -->
+        <section class="intro">
+            <div class="left">
+                <h2>Bienvenido a Servicios Técnicos</h2>
+                <p>En Servicios Técnicos nos especializamos en ofrecer soluciones rápidas y eficientes para el hogar y
+                    la empresa. A través de nuestra plataforma, tanto los técnicos como los clientes pueden interactuar,
+                    registrar y solicitar una amplia gama de servicios. Desde reparaciones hasta instalaciones
+                    especializadas, somos tu aliado para garantizar el buen funcionamiento de tus equipos y sistemas.
+                </p>
+            </div>
+            <div class="right">
+                <img src="https://via.placeholder.com/400" alt="Imagen ilustrativa"
+                    style="width:100%; border-radius: 10px;">
+            </div>
+        </section>
+
+        <!-- Historia, Misión, Visión y Valores -->
+        <section class="company-info">
+            <div class="card">
+                <h3>Historia</h3>
+                <p>Fundada en 2010, Servicios Técnicos nació con el objetivo de ofrecer soluciones rápidas y eficientes
+                    para las necesidades técnicas del hogar y las empresas. A lo largo de los años, hemos crecido y
+                    ampliado nuestros servicios, siempre con un enfoque en la calidad y la satisfacción del cliente.</p>
+            </div>
+            <div class="card">
+                <h3>Misión</h3>
+                <p>Brindar un servicio técnico de alta calidad, accesible y confiable, para garantizar el funcionamiento
+                    óptimo de los sistemas y equipos de nuestros clientes. Nos esforzamos por mantenernos a la
+                    vanguardia de la tecnología para ofrecer soluciones innovadoras.</p>
+            </div>
+            <div class="card">
+                <h3>Visión</h3>
+                <p>Ser la empresa líder en el sector de servicios técnicos, conocida por su profesionalismo,
+                    confiabilidad y capacidad para adaptarse a las nuevas necesidades del mercado, expandiéndonos a
+                    nivel nacional e internacional.</p>
+            </div>
+            <div class="card">
+                <h3>Valores</h3>
+                <ul>
+                    <li><strong>Compromiso:</strong> Nos comprometemos con la calidad y la satisfacción del cliente en
+                        todo momento.</li>
+                    <li><strong>Innovación:</strong> Buscamos siempre nuevas soluciones para los problemas técnicos de
+                        nuestros clientes.</li>
+                    <li><strong>Confianza:</strong> Nos ganamos la confianza de nuestros clientes a través de un
+                        servicio transparente y eficiente.</li>
+                    <li><strong>Responsabilidad:</strong> Actuamos con responsabilidad y profesionalismo en cada
+                        servicio que ofrecemos.</li>
+                    <li><strong>Trabajo en equipo:</strong> Creemos que un buen equipo es la clave del éxito, por eso
+                        fomentamos el trabajo colaborativo.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Explicación de los Servicios Técnicos -->
+        <section class="services-explanation">
+            <h2>¿Qué son los Servicios Técnicos?</h2>
+            <p>Los servicios técnicos son soluciones especializadas para el mantenimiento, reparación e instalación de
+                una amplia variedad de equipos y sistemas. Esto puede incluir desde reparaciones de electrodomésticos
+                hasta instalaciones de sistemas eléctricos, de fontanería y gas. En nuestra plataforma, cualquier
+                trabajador calificado puede registrarse y ofrecer sus servicios, mientras que los clientes pueden
+                solicitarlos a través de un sistema fácil e intuitivo.</p>
+            <p>Los servicios disponibles no se limitan a una categoría específica. Si tienes alguna necesidad técnica en
+                tu hogar o empresa, puedes registrar tu servicio o buscar uno disponible que se ajuste a lo que
+                necesitas. Ya sea para una reparación urgente o para un trabajo especializado, ¡estamos aquí para
+                ayudarte!</p>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Servicios Técnicos | Todos los derechos reservados | <a href="#">Política de privacidad</a></p>
+    </footer>
+
+</body>
+
+</html>
+
+<script>
+    const dropdown = document.getElementById("userDropdown");
+    const btn = document.getElementById("userDropdownBtn");
+
+    btn.addEventListener("click", () => {
+        dropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove("open");
+        }
+    });
+</script>

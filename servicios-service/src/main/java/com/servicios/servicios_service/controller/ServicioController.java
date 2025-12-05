@@ -1,7 +1,8 @@
 package com.servicios.servicios_service.controller;
 
 import com.servicios.servicios_service.model.Servicio;
-import com.servicios.servicios_service.repository.ServicioRepository;
+import com.servicios.servicios_service.repository.ServicioRepository;  
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-public class ServicioController {
+public class ServicioController extends BaseController {
 
     @Autowired
     private ServicioRepository servicioRepository;
@@ -30,4 +31,3 @@ public class ServicioController {
         return "detalle_servicios";
     }
 }
-

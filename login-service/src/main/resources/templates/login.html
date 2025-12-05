@@ -130,43 +130,50 @@
 
     <script>
         const msg = document.getElementById("msg");
-
+    
         document.getElementById("btnLogin").onclick = async () => {
             msg.innerHTML = "";
             msg.className = "msg";
-
+    
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
-
+            const tipo = document.getElementById("tipo").value;
+    
             const res = await fetch("/auth/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    tipo: document.getElementById("tipo").value
-                })
+                body: JSON.stringify({ email, password, tipo })
             });
-
+    
             const data = await res.json();
-
+    
             if (res.ok) {
                 msg.classList.add("success");
                 msg.innerHTML = "¡Login exitoso! Redirigiendo...";
-
-                // Guardar token
-                localStorage.setItem("token", data.token);
-
+    
+                // 👉 Usar el rol real que devuelve el backend
+                const rol = data.rol;
+    
                 setTimeout(() => {
-                    window.location.href = "http://localhost:8087/?token=" + data.token;
+                    if (rol === "Cliente") {
+                        window.location.href = "http://localhost:8085/";
+                    } else if (rol === "Trabajador") {
+                        window.location.href = "http://localhost:8086/";
+                    } else if (rol === "Administrador") {
+                        window.location.href = "http://localhost:8087/";
+                    } else {
+                        msg.classList.add("error");
+                        msg.innerHTML = "Rol no reconocido.";
+                    }
                 }, 1200);
-            }
-            else {
+            } else {
                 msg.classList.add("error");
                 msg.innerHTML = data.message || "Error al iniciar sesión.";
             }
         }
     </script>
+    
+    
 
 </body>
 

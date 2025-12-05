@@ -1,61 +1,100 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8" />
     <title>Servicios - Empresa Técnica</title>
     <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
 </head>
+
 <body>
-<header class="header">
-    <div class="brand">
-        <div class="logo">ST</div>
-        <h1>Servicios Técnicos</h1>
-    </div>
-    <nav class="nav">
-        <a href="/servicios">Servicios</a>
-        <a href="#">Contacto</a>
-        <a href="#">Nosotros</a>
-    </nav>
-</header>
-
-<div class="container">
-    <div class="hero">
-        <div class="title">
-            <h2>Encuentra el técnico que necesitas</h2>
-            <p>Servicios profesionales de electricidad, gasfitería, mantenimiento y más.</p>
+    <header class="header">
+        <div class="brand">
+            <div class="logo">ST</div>
+            <h1>Servicios Técnicos</h1>
         </div>
-        <div class="search">
-            <input type="text" placeholder="Buscar por servicio o categoría..." />
-            <button>Buscar</button>
-        </div>
-    </div>
-
-    <div class="grid">
-        <div th:each="servicio : ${servicios}" class="card">
-            <div class="img">
-                <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
-            </div>
-            <div>
-                <span class="pill" th:text="${servicio.categoria}"></span>
-            </div>
-            <h3 th:text="${servicio.titulo}"></h3>
-            <p th:text="${servicio.descripcionCorta}"></p>
-            <div class="meta">
-                <div>
-                    <div class="small">Duración: <span th:text="${servicio.duracionHoras}"></span> hrs</div>
-                    <div class="small">Tel: <span th:text="${servicio.telefonoContacto}"></span></div>
+    
+        <nav class="nav">
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/nosotros">Nosotros</a>
+        </nav>
+    
+        <!-- Bloque de usuario -->
+        <div class="user_dropdown" id="userDropdown">
+            <button class="user_dropdown_btn" id="userDropdownBtn">
+                <i class="fas fa-user-circle"></i>
+                <span th:text="${usuarioEmail}">cliente@example.com</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+    
+            <div class="user_dropdown_menu">
+                <div style="padding: 10px 15px; font-size:14px; opacity:.8;">
+                    <i class="fas fa-id-card"></i>
+                    <b th:text="${usuarioRol}" style="color: var(--accent);">Cliente</b>
                 </div>
-                <div style="text-align:right">
-                    <div class="price">S/ <span th:text="${servicio.precioEstimado}"></span></div>
-                    <div style="margin-top:8px">
-                        <a th:href="@{'/servicios/' + ${servicio.id}}" class="btn-primary">Ver más</a>
-                        <a href="#" class="btn-outline" style="margin-left:8px">Solicitar</a>
+                <hr style="margin:0; border:none; border-top:1px solid rgba(255,255,255,0.1);">
+                <a href="/perfil"><i class="fas fa-id-badge"></i> Mi Perfil</a>
+                <a href="/configuracion"><i class="fas fa-cog"></i> Configuración</a>
+                <a href="http://localhost:8081/auth/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>        
+
+    <div class="container">
+        <div class="hero">
+            <div class="title">
+                <h2>Encuentra el técnico que necesitas</h2>
+                <p>Servicios profesionales de electricidad, gasfitería, mantenimiento y más.</p>
+            </div>
+            <div class="search">
+                <input type="text" placeholder="Buscar por servicio o categoría..." />
+                <button>Buscar</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div th:each="servicio : ${servicios}" class="card">
+                <div class="img">
+                    <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
+                </div>
+                <div>
+                    <span class="pill" th:text="${servicio.categoria}"></span>
+                </div>
+                <h3 th:text="${servicio.titulo}"></h3>
+                <p th:text="${servicio.descripcionCorta}"></p>
+                <div class="meta">
+                    <div>
+                        <div class="small">Duración: <span th:text="${servicio.duracionHoras}"></span> hrs</div>
+                        <div class="small">Tel: <span th:text="${servicio.telefonoContacto}"></span></div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="price">S/ <span th:text="${servicio.precioEstimado}"></span></div>
+                        <div style="margin-top:8px">
+                            <a th:href="@{'/servicios/' + ${servicio.id}}" class="btn-primary">Ver más</a>
+                            <a href="#" class="btn-outline" style="margin-left:8px">Solicitar</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 </body>
+
 </html>
+
+<script>
+    const dropdown = document.getElementById("userDropdown");
+    const btn = document.getElementById("userDropdownBtn");
+
+    btn.addEventListener("click", () => {
+        dropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove("open");
+        }
+    });
+</script>

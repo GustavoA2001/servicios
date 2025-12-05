@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
         this.authValidator = authValidator;
     }
 
+    @SuppressWarnings("null")
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         AdminAuthInterceptor interceptor = new AdminAuthInterceptor(authValidator);

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.servicios.login_service.security.JwtUtil;
 import com.servicios.login_service.service.AuthService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,9 +22,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthRestController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil; // inyectamos también JwtUtil
 
-    public AuthRestController(AuthService authService) {
+    public AuthRestController(AuthService authService, JwtUtil jwtUtil) {
         this.authService = authService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -35,24 +38,29 @@ public class AuthRestController {
 
             String token = authService.login(email, password, tipo);
 
-            // Crear cookie HttpOnly
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
                     .path("/")
-                    .maxAge(3600) // 1 hora
+                    .maxAge(3600)
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
+            // ahora usamos directamente jwtUtil
+            String rol = jwtUtil.getRolFromToken(token);
+
             return ResponseEntity.ok(Map.of(
                     "status", "OK",
                     "message", "Inicio de sesión exitoso",
-                    "token", token));
+                    "token", token,
+                    "rol", rol
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     Map.of("status", "ERROR", "message", e.getMessage()));
         }
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {

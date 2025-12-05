@@ -57,3 +57,81 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .small{font-size:13px;color:var(--muted)}
 .center{text-align:center}
 
+/* ---------------------------------------------------------
+   USER DROPDOWN (menú de usuario con email y rol)
+--------------------------------------------------------- */
+.user_dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.user_dropdown_btn {
+    background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.user_dropdown_btn:hover {
+    background: var(--secondary);
+}
+
+.user_dropdown_btn span {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Menú desplegable */
+.user_dropdown_menu {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: var(--card);
+    color: var(--text);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    border: 1px solid var(--glass);
+}
+
+.user_dropdown_menu a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.user_dropdown_menu a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Mostrar menú solo cuando tenga la clase `.open` */
+.user_dropdown.open .user_dropdown_menu {
+    display: flex;
+}
+
+/* Responsive: que no se rompa en pantallas pequeñas */
+@media (max-width:600px) {
+    .user_dropdown {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

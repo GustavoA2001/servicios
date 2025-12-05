@@ -25,7 +25,7 @@ public class UsuarioDAO {
                 user.setId(rs.getLong("ClienteID"));
                 user.setEmail(rs.getString("Email_Cliente"));
                 user.setPassword(rs.getString("Password_Cliente"));
-                user.setRol("CLIENTE");
+                user.setRol("Cliente");
 
                 System.out.println("DAO: Cliente encontrado -> rol CLIENTE");
 
