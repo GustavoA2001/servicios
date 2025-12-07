@@ -185,6 +185,10 @@
             /* rojo, como .eliminar */
         }
 
+        .usuario-email {
+            word-break: break-word;
+        }
+
 
         aside.aside_usuarios,
         section.section_usuarios {
@@ -235,7 +239,11 @@
                         <div class="usuario-card">
                             <img th:src="@{${usuario.rutaFoto}}" alt="Foto de usuario" class="usuario-foto">
                             <h3 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h3>
-                            <p>Email: <span th:text="${usuario.email}"></span></p>
+                            <p>Email:
+                                <span class="usuario-email"
+                                    th:utext="${#strings.replace(usuario.email, '@', '&#8203;@')}">
+                                </span>
+                            </p>
 
                             <div class="usuario-info">
                                 <p class="usuario-id">ID: <span th:text="${usuario.id}"></span></p>
@@ -263,62 +271,50 @@
     <!--Componente usuario_model para crear un nuevo usuario-->
     <div th:replace="components/usuario_model"></div>
 
+    <div th:replace="components/mensajes"></div>
 
 </body>
 
 </html>
 <script>
-    // Mostrar mensaje dinámicamente (llamado desde verificarMensajes)
-    function mostrarMensaje(texto, tipo) {
-        // Elimina cualquier mensaje anterior
-        const existente = document.getElementById('mensajeContainer');
-        if (existente) existente.remove();
+    function mostrarToast(msg) {
+        const template = document.getElementById("toast-template");
+        const contenedor = template.content.firstElementChild.cloneNode(true);
 
-        // Crea el contenedor principal
-        const contenedor = document.createElement('div');
-        contenedor.id = 'mensajeContainer';
-        contenedor.className = 'mensaje-container';
+        // Asignar tipo según contenido
+        if (msg.includes("ERROR")) contenedor.classList.add("error");
+        else if (msg.includes("ENVIADO")) contenedor.classList.add("success");
+        else contenedor.classList.add("info");
 
-        // Crea el cuadro del mensaje
-        const box = document.createElement('div');
-        box.className = `mensaje-box ${tipo}`;
-        box.innerHTML = `
-            <span>${texto}</span>
-            <button type="button" class="cerrar-btn" onclick="cerrarMensaje()">×</button>
-        `;
+        // Insertar el mensaje
+        contenedor.querySelector(".toast-message").textContent = msg;
 
-        contenedor.appendChild(box);
         document.body.appendChild(contenedor);
 
-        // Desaparece automáticamente después de 5 segundos
+        // Activar animación
+        setTimeout(() => contenedor.classList.add("mostrar"), 50);
+
+        // Quitar automáticamente después de 5 segundos
         setTimeout(() => {
-            contenedor.style.opacity = '0';
+            contenedor.classList.remove("mostrar");
             setTimeout(() => contenedor.remove(), 500);
         }, 5000);
     }
 
-    // Cerrar manualmente el mensaje
-    function cerrarMensaje() {
-        const contenedor = document.getElementById('mensajeContainer');
-        if (contenedor) contenedor.remove();
-    }
-
-    // Consulta periódica al backend
     async function verificarMensajes() {
         try {
-            const response = await fetch("/api/mensajes/ultimo");
+            const response = await fetch("/api/mensajes/todos");
             if (response.ok) {
-                const texto = await response.text();
-                if (texto && texto.trim() !== "") {
-                    const tipo = texto.includes("Error") ? "error" : "exito";
-                    mostrarMensaje(texto, tipo);
-                }
+                const mensajes = await response.json();
+                mensajes.forEach(msg => mostrarToast(msg));
             }
         } catch (err) {
             console.error("Error al consultar mensajes:", err);
         }
     }
 
-    // Consulta cada 5 segundos (ajustable)
+    // cada 5 segundos
     setInterval(verificarMensajes, 5000);
+
+
 </script>

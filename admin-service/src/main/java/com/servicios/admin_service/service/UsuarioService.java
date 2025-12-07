@@ -52,69 +52,62 @@ public class UsuarioService {
         try {
             LocalDateTime ahora = LocalDateTime.now();
             String rol = usuarioRequest.getRol().toLowerCase();
-
+    
             if (rol.equals("cliente")) {
                 Cliente c = new Cliente();
                 c.setNombre(usuarioRequest.getNombre());
                 c.setApellido(usuarioRequest.getApellido());
                 c.setEmail(usuarioRequest.getEmail());
-                
-                String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
-                c.setPwd(hash);
-                
+                c.setPwd(new BCryptPasswordEncoder().encode(usuarioRequest.getPwd()));
                 c.setEstado("Activo");
                 c.setFechaRegistro(ahora);
-
+    
                 int filas = usuarioDAO.insertarCliente(c);
                 if (filas == 0) throw new Exception("No se pudo insertar cliente en la base de datos");
-
+    
             } else {
                 Empleado e = new Empleado();
                 e.setNombre(usuarioRequest.getNombre());
                 e.setApellido(usuarioRequest.getApellido());
                 e.setEmail(usuarioRequest.getEmail());
-                
-                String hash = new BCryptPasswordEncoder().encode(usuarioRequest.getPwd());
-                e.setPwd(hash);
-
+                e.setPwd(new BCryptPasswordEncoder().encode(usuarioRequest.getPwd()));
                 e.setEstado("Activo");
                 e.setFechaRegistro(ahora);
                 e.setRolID(rol.equals("administrador") ? 1 : 2);
-
+    
                 int filas = usuarioDAO.insertarEmpleado(e);
                 if (filas == 0) throw new Exception("No se pudo insertar empleado en la base de datos");
             }
-
-            //  Si se registró bien, enviamos notificación
-            String respuesta = enviarNotificacionCorreo(usuarioRequest);
-            return "Usuario registrado correctamente.\n" + respuesta;
-
+    
+            // Enviar notificación de bienvenida
+            enviarNotificacionCorreo(usuarioRequest);
+    
+            return "Usuario registrado correctamente";
+    
         } catch (Exception ex) {
             throw new Exception("Error durante el registro: " + ex.getMessage());
         }
     }
 
-    private String enviarNotificacionCorreo(UsuarioRequest usuario) throws Exception {
+    private void enviarNotificacionCorreo(UsuarioRequest usuario) throws Exception {
         String url = "http://localhost:8086/api/notificaciones/enviarCorreo";
         RestTemplate restTemplate = new RestTemplate();
-
+    
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+    
         String mensaje = String.format(
-            "Hola %s %s,\n\nTu registro fue exitoso.\nRol: %s\nCorreo: %s\n\n¡Bienvenido a ADM!",
+            "Hola %s %s,\n\nTu registro fue exitoso.\nRol: %s\nCorreo: %s\n\n¡Bienvenido!",
             usuario.getNombre(), usuario.getApellido(), usuario.getRol(), usuario.getEmail()
         );
-
+    
         String json = String.format(
             "{\"destinatario\":\"%s\",\"asunto\":\"Registro exitoso\",\"mensaje\":\"%s\"}",
             usuario.getEmail(), mensaje.replace("\n", "\\n")
         );
-
+    
         HttpEntity<String> request = new HttpEntity<>(json, headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-        return "Respuesta del servicio de notificaciones: " + response.getBody();
+        restTemplate.postForEntity(url, request, String.class);
     }
 
     /**

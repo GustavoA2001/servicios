@@ -23,12 +23,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.servicios.admin_service.service.MensajeService;
+
 @Controller
 @RequestMapping("/usuarios")
-public class UsuariosController extends BaseController{
+public class UsuariosController extends BaseController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private MensajeService mensajeService;
 
     // Redirección al entrar a /usuarios
     @GetMapping
@@ -62,7 +67,7 @@ public class UsuariosController extends BaseController{
         model.addAttribute("activeMenu", "usuarios");
 
         // Método heredado de BASECONTROLLER
-        agregarDatosUsuario(model, request);        
+        agregarDatosUsuario(model, request);
 
         return "usuarios";
     }
@@ -83,7 +88,8 @@ public class UsuariosController extends BaseController{
     }
 
     @GetMapping("/usuario/{tipo}/{id}")
-    public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model, HttpServletRequest request) {
+    public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model,
+            HttpServletRequest request) {
         if (tipo.equalsIgnoreCase("Cliente")) {
             model.addAttribute("usuario", usuarioService.obtenerClientePorId(id));
         } else {
@@ -146,81 +152,99 @@ public class UsuariosController extends BaseController{
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    
+
             Usuario usuarioExistente;
             Usuario usuarioParcial;
-    
+
             switch (tipo.toLowerCase()) {
                 case "cliente" -> {
                     usuarioExistente = usuarioService.obtenerClientePorId(id);
                     if (usuarioExistente == null)
                         return ResponseEntity.badRequest().body("Cliente no encontrado");
-    
+
                     usuarioParcial = mapper.convertValue(body, Cliente.class);
                 }
                 case "empleado", "trabajador", "administrador" -> {
                     usuarioExistente = usuarioService.obtenerEmpleadoPorId(id);
                     if (usuarioExistente == null)
                         return ResponseEntity.badRequest().body("Empleado no encontrado");
-    
+
                     Empleado parcial = mapper.convertValue(body, Empleado.class);
-    
+
                     // Si el tipo es administrador o trabajador, asignamos el rol explícitamente
-                    if (tipo.equalsIgnoreCase("administrador")) parcial.setRolID(1);
-                    if (tipo.equalsIgnoreCase("trabajador")) parcial.setRolID(2);
-    
+                    if (tipo.equalsIgnoreCase("administrador"))
+                        parcial.setRolID(1);
+                    if (tipo.equalsIgnoreCase("trabajador"))
+                        parcial.setRolID(2);
+
                     usuarioParcial = parcial;
                 }
                 default -> {
                     return ResponseEntity.badRequest().body("Tipo de usuario no reconocido");
                 }
             }
-    
+
             // Combinar datos del existente y parcial
             Usuario usuarioFinal = combinarUsuarios(usuarioExistente, usuarioParcial);
-    
+
+            mensajeService.guardarMensaje("Usuario actualizado correctamente"); // <-- guardar mensaje
             // Persistir cambios
             usuarioService.actualizarUsuario(usuarioFinal);
-    
-            return ResponseEntity.ok("Usuario actualizado correctamente");
-    
+
+            return ResponseEntity.ok().build();
+
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError()
-                    .body("Error al actualizar el usuario: " + e.getMessage());
+            mensajeService.guardarMensaje("Error al registrar el usuario: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-    }
-    
-    
-    private Usuario combinarUsuarios(Usuario original, Usuario nuevo) {
-        if (original instanceof Cliente o && nuevo instanceof Cliente n) {
-            if (n.getNombre() != null) o.setNombre(n.getNombre());
-            if (n.getApellido() != null) o.setApellido(n.getApellido());
-            if (n.getEmail() != null) o.setEmail(n.getEmail());
-            if (n.getPwd() != null) o.setPwd(n.getPwd());
-            if (n.getDNI() != null) o.setDNI(n.getDNI());
-            if (n.getFotito() != null) o.setFotito(n.getFotito());
-            if (n.getEstado() != null) o.setEstado(n.getEstado());
-            return o;
-        }
-    
-        if (original instanceof Empleado o && nuevo instanceof Empleado n) {
-            if (n.getNombre() != null) o.setNombre(n.getNombre());
-            if (n.getApellido() != null) o.setApellido(n.getApellido());
-            if (n.getEmail() != null) o.setEmail(n.getEmail());
-            if (n.getPwd() != null) o.setPwd(n.getPwd());
-            if (n.getDNI() != null) o.setDNI(n.getDNI());
-            if (n.getTelefono() != null) o.setTelefono(n.getTelefono());
-            if (n.getEstado() != null) o.setEstado(n.getEstado());
-            if (n.getRolID() != 0) o.setRolID(n.getRolID());
-            if (n.getFotito() != null) o.setFotito(n.getFotito());
-            if (n.getUbicacionPartida() != null) o.setUbicacionPartida(n.getUbicacionPartida());
-            return o;
-        }
-    
-        return original;
     }
 
+    private Usuario combinarUsuarios(Usuario original, Usuario nuevo) {
+        if (original instanceof Cliente o && nuevo instanceof Cliente n) {
+            if (n.getNombre() != null)
+                o.setNombre(n.getNombre());
+            if (n.getApellido() != null)
+                o.setApellido(n.getApellido());
+            if (n.getEmail() != null)
+                o.setEmail(n.getEmail());
+            if (n.getPwd() != null)
+                o.setPwd(n.getPwd());
+            if (n.getDNI() != null)
+                o.setDNI(n.getDNI());
+            if (n.getFotito() != null)
+                o.setFotito(n.getFotito());
+            if (n.getEstado() != null)
+                o.setEstado(n.getEstado());
+            return o;
+        }
+
+        if (original instanceof Empleado o && nuevo instanceof Empleado n) {
+            if (n.getNombre() != null)
+                o.setNombre(n.getNombre());
+            if (n.getApellido() != null)
+                o.setApellido(n.getApellido());
+            if (n.getEmail() != null)
+                o.setEmail(n.getEmail());
+            if (n.getPwd() != null)
+                o.setPwd(n.getPwd());
+            if (n.getDNI() != null)
+                o.setDNI(n.getDNI());
+            if (n.getTelefono() != null)
+                o.setTelefono(n.getTelefono());
+            if (n.getEstado() != null)
+                o.setEstado(n.getEstado());
+            if (n.getRolID() != 0)
+                o.setRolID(n.getRolID());
+            if (n.getFotito() != null)
+                o.setFotito(n.getFotito());
+            if (n.getUbicacionPartida() != null)
+                o.setUbicacionPartida(n.getUbicacionPartida());
+            return o;
+        }
+
+        return original;
+    }
 
     @PutMapping("/estado/{tipo}/{id}")
     @ResponseBody
@@ -228,11 +252,12 @@ public class UsuariosController extends BaseController{
             @PathVariable String tipo,
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
-    
+
         try {
             String nuevoEstado = body.get("estado");
             usuarioService.cambiarEstadoUsuario(tipo, id, nuevoEstado);
-            return ResponseEntity.ok("Estado cambiado a " + nuevoEstado + " correctamente.");
+            mensajeService.guardarMensaje("Estado cambiado a " + nuevoEstado + " correctamente.");
+            return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
@@ -240,7 +265,5 @@ public class UsuariosController extends BaseController{
                     .body("Error al actualizar el estado: " + e.getMessage());
         }
     }
-    
-    
 
 }

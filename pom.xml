@@ -158,6 +158,15 @@
         
         -->
 
+        <module>auditoria-service</module>
+
+        <!--
+        10: auditoria-service
+
+        -Funcionalidades:
+        Registrar datos
+        Port: 8091
+        -->
     </modules>
 
 

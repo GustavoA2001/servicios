@@ -1,16 +1,16 @@
 <!-- ============================== -->
-<!-- Componente de mensajes moderno -->
+<!-- Plantilla estática de toast moderno -->
 <!-- ============================== -->
-<div class="toast-container" 
-     th:if="${mensaje != null}" 
-     th:classappend="${active == 'error'} ? ' error' : (${active == 'success'} ? ' success' : (${active == 'warning'} ? ' warning' : ' info'))">
-    <div class="toast-content">
-        <div class="toast-icon"></div>
-        <div class="toast-message" th:text="${mensaje}"></div>
-        <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+<template id="toast-template">
+    <div class="toast-container">
+        <div class="toast-content">
+            <div class="toast-icon"></div>
+            <div class="toast-message"></div>
+            <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+        <div class="toast-progress"></div>
     </div>
-    <div class="toast-progress"></div>
-</div>
+</template>
 
 <style>
     /* ============================== */
@@ -108,7 +108,6 @@
 
     /* ============================== */
     /* TIPOS */
-    /* ============================== */
     .toast-container.success .toast-icon {
         background: #dcfce7;
         color: #15803d;
@@ -153,18 +152,3 @@
         content: "ℹ";
     }
 </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toast = document.querySelector(".toast-container");
-        if (toast && toast.textContent.trim() !== "") {
-            toast.classList.add("mostrar");
-
-            // Quitar automáticamente después de 5 segundos
-            setTimeout(() => {
-                toast.classList.remove("mostrar");
-                setTimeout(() => toast.remove(), 500);
-            }, 5000);
-        }
-    });
-</script>

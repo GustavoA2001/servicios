@@ -10,25 +10,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final AuthValidator authValidator;
+    private final MensajeInterceptor mensajeInterceptor;
 
-    public WebConfig(AuthValidator authValidator) {
+    public WebConfig(AuthValidator authValidator, MensajeInterceptor mensajeInterceptor) {
         this.authValidator = authValidator;
+        this.mensajeInterceptor = mensajeInterceptor;
     }
 
-    @SuppressWarnings("null")
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        AdminAuthInterceptor interceptor = new AdminAuthInterceptor(authValidator);
-        registry.addInterceptor(interceptor)
-                .addPathPatterns("/**") // Proteger todo
-                .excludePathPatterns("/no-autorizado")   // Excepto estas rutas
-                .excludePathPatterns("/css/**")
-                .excludePathPatterns("/js/**")
-                .excludePathPatterns("/images/**")
-                .excludePathPatterns("/admin/api/verificar-admin"); // Excluida para prueba
-    
-        System.out.println("=== WebConfig: interceptor registrado ===");
-        System.out.println("Rutas excluidas: /no-autorizado, /css/**, /js/**, /images/**, /admin/api/verificar-admin");
+        // Seguridad por token
+        AdminAuthInterceptor authInterceptor = new AdminAuthInterceptor(authValidator);
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/no-autorizado", 
+                "/css/**", 
+                "/js/**", 
+                "/images/**", 
+                "/admin/api/verificar-admin")
+                .excludePathPatterns("/api/callback/**"); // <-- excluye los callbacks
+
+        // Mensajes (solo vistas de usuarios)
+        registry.addInterceptor(mensajeInterceptor)
+                .addPathPatterns("/usuarios/**");
+
+        System.out.println("=== WebConfig: interceptores registrados ===");
     }
-    
 }
