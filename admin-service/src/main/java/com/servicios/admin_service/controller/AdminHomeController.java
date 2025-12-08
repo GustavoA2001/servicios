@@ -11,8 +11,7 @@ public class AdminHomeController {
     @GetMapping("/")
     public String inicio() {
         return "index";
-    }
-    
+    }    
 
     @GetMapping("/no-autorizado")
     public String noAutorizado() {

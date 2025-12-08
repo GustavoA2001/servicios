@@ -5,46 +5,113 @@
     <meta charset="UTF-8" />
     <title th:text="${servicio.titulo}">Detalle</title>
     <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
+    <style>
+        .reviews {
+            margin-top: 30px;
+        }
+
+        .review-card {
+            background: #1e1e2f;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        .star {
+            margin-right: 2px;
+            color: #ccc;
+        }
+
+        .star.filled {
+            color: #edc73e;
+            /* amarillo dorado */
+        }
+
+        .review-date {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .review-body {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .detail {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .left {
+            flex: 1;
+        }
+
+        .right {
+            flex: 1;
+        }
+
+        .worker-card {
+            display: flex;
+            align-items: flex-start;
+            background: #1e1e2f;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .worker-photo {
+            border: 2px solid;
+            width: 180px;
+            height: 200px;
+            border-radius: 25px;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+
+        .worker-info h4 {
+            margin: 0;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .specialties h5 {
+            margin: 8px 0 4px;
+            font-size: 14px;
+            color: #edc73e;
+        }
+
+        .specialties ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        
+    </style>
 </head>
 
 <body>
-    <header class="header">
-        <div class="brand">
-            <div class="logo">ST</div>
-            <h1>Servicios Técnicos</h1>
-        </div>
-    
-        <nav class="nav">
-            <a href="/servicios">Servicios</a>
-            <a href="/contacto">Contacto</a>
-            <a href="/nosotros">Nosotros</a>
-        </nav>
-    
-        <!-- Bloque de usuario -->
-        <div class="user_dropdown" id="userDropdown">
-            <button class="user_dropdown_btn" id="userDropdownBtn">
-                <i class="fas fa-user-circle"></i>
-                <span th:text="${usuarioEmail}">cliente@example.com</span>
-                <i class="fas fa-chevron-down"></i>
-            </button>
-    
-            <div class="user_dropdown_menu">
-                <div style="padding: 10px 15px; font-size:14px; opacity:.8;">
-                    <i class="fas fa-id-card"></i>
-                    <b th:text="${usuarioRol}" style="color: var(--accent);">Cliente</b>
-                </div>
-                <hr style="margin:0; border:none; border-top:1px solid rgba(255,255,255,0.1);">
-                <a href="/perfil"><i class="fas fa-id-badge"></i> Mi Perfil</a>
-                <a href="/configuracion"><i class="fas fa-cog"></i> Configuración</a>
-                <a href="http://localhost:8081/auth/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
-        </div>
-    </header>   
+    <header th:replace="components/menu_cliente"></header>
 
     <div class="container">
         <a class="back-link" href="/servicios">← Volver a servicios</a>
 
+        <!-- Bloque principal: servicio + trabajadores -->
         <div class="detail">
+            <!-- Columna izquierda: detalle del servicio -->
             <div class="left">
                 <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
                 <div style="margin-top:12px">
@@ -53,6 +120,8 @@
                     <p th:text="${servicio.descripcionCompleta}"></p>
                 </div>
             </div>
+
+            <!-- Columna derecha: info del servicio + trabajadores -->
             <div class="right">
                 <div class="info-list">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -84,29 +153,64 @@
                     </div>
 
                     <div style="display:flex;gap:8px;margin-top:12px">
-                        <a href="#" class="btn-primary">Solicitar servicio</a>
+                        <a th:href="@{'/pedidos/nuevo/' + ${servicio.id}}" class="btn-primary">Solicitar servicio</a>
                         <a href="#" class="btn-outline">Contactar</a>
+                    </div>
+                </div>
+
+                <!-- Trabajadores asignados -->
+                <div class="workers">
+                    <h3>Trabajadores asignados</h3>
+                    <div th:if="${#lists.isEmpty(servicio.empleados)}">
+                        <p>No hay trabajadores asignados a este servicio.</p>
+                    </div>
+                    <div th:each="e : ${servicio.empleados}" class="worker-card">
+                        <img th:src="@{${e.fotito}}" alt="Foto trabajador" class="worker-photo" />
+                        <div class="worker-info">
+                            <h4 th:text="${e.nombre} + ' ' + ${e.apellido}"></h4>
+                            <p>Email: <span th:text="${e.email}"></span></p>
+                            <p>Teléfono: <span th:text="${e.telefono}"></span></p>
+                            <p th:text="${e.estado}"></p>
+
+                            <!-- Especialidades -->
+                            <div class="specialties">
+                                <h5>Especialidades:</h5>
+                                <div>
+                                    <span class="tag" th:each="esp : ${e.especialidades}" 
+                                          th:text="${esp.nombre}"></span>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Calificaciones debajo de ambos -->
+        <div class="reviews">
+            <h3>Calificaciones</h3>
+            <div th:if="${#lists.isEmpty(calificaciones)}" class="no-reviews">
+                <p>No hay calificaciones registradas para este servicio.</p>
+            </div>
+
+            <div th:each="c : ${calificaciones}" class="review-card">
+                <div class="review-header">
+                    <div class="stars">
+                        <span th:each="i : ${#numbers.sequence(1,5)}"
+                            th:classappend="${i <= c.calificacion} ? 'star filled' : 'star'">★</span>
+                    </div>
+                    <span class="review-date"
+                        th:text="${#temporals.format(c.fechaCalificacion, 'dd MMMM yyyy')}"></span>
+                </div>
+                <div class="review-body">
+                    <p th:text="${c.comentario}"></p>
+                </div>
+            </div>
+        </div>
     </div>
+
+
 </body>
 
 </html>
-
-<script>
-    const dropdown = document.getElementById("userDropdown");
-    const btn = document.getElementById("userDropdownBtn");
-
-    btn.addEventListener("click", () => {
-        dropdown.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove("open");
-        }
-    });
-</script>

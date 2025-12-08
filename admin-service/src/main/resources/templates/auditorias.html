@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditorias | ADM</title>
+    <link rel="stylesheet" href="/css/styleAdmin.css">
+
+    <style>
+        .auditorias_contenedor {
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(180, 160, 255, 0.2);
+            padding: 25px;
+            box-sizing: border-box;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .auditorias_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .auditorias_header h3 {
+            font-size: 22px;
+            color: #4a3c8a;
+            font-weight: 700;
+        }
+
+        .auditorias_tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .auditorias_tabla thead {
+            background-color: #f3efff;
+        }
+
+        .auditorias_tabla th {
+            padding: 12px;
+            text-align: left;
+            color: #4a3c8a;
+            font-weight: 600;
+            border-bottom: 2px solid #e2dbff;
+        }
+
+        .auditorias_tabla td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            vertical-align: top;
+        }
+
+        .auditorias_tabla tr:hover {
+            background-color: #f9f7ff;
+        }
+
+        .auditorias_filtros {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auditorias_filtros select,
+        .auditorias_filtros input,
+        .auditorias_filtros button {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .auditorias_filtros button {
+            background-color: #4a3c8a;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .auditorias_filtros button:hover {
+            background-color: #372b6a;
+        }
+
+        /* Botones Antes/Después */
+        .btn-auditoria {
+            background-color: #4a3c8a;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-auditoria:hover {
+            background-color: #372b6a;
+        }
+
+        /* Estilo resaltado */
+        .auditorias_json {
+            background: #f7f5ff;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #e2dbff;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .calendar-input {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            background-color: #f7f5ff;
+            color: #4a3c8a;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .calendar-input:hover {
+            border-color: #4a3c8a;
+        }
+
+        .auditorias_tabla_contenedor {
+            max-height: 700px;
+            overflow-y: auto;
+            border: 1px solid #e2dbff;
+            border-radius: 8px;
+        }
+
+        .auditorias_tabla thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f3efff;
+            z-index: 2;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header
+        th:replace="~{components/menu_admin(activeMenu=${activeMenu}, usuarioEmail=${usuarioEmail}, usuarioRol=${usuarioRol})}">
+    </header>
+
+    <div class="auditorias_contenedor space-grotesk">
+        <div class="auditorias_header">
+            <h3>Auditorías Registradas</h3>
+
+            <!-- Filtros y ordenamiento -->
+            <form method="get" action="/auditorias" class="auditorias_filtros">
+                <label>Fecha:</label>
+                <!--input type="date" name="fecha" th:value="${fechaSeleccionada}" class="calendar-input" /-->
+                <input type="text" id="fecha" th:value="${fechaSeleccionada}" name="fecha" class="calendar-input" />
+                <button type="submit">Aplicar</button>
+            </form>
+
+            <!-- Mostrar fecha seleccionada -->
+            <div th:if="${fechaSeleccionada != null}" style="margin-top:10px; font-size:14px; color:#4a3c8a;">
+                Mostrando auditorías del día:
+                <strong th:text="${#temporals.format(fechaSeleccionada, 'dd/MM/yyyy')}"></strong>
+            </div>
+
+
+        </div>
+
+        <div class="auditorias_tabla_contenedor">
+            <table class="auditorias_tabla">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario Tipo</th>
+                        <th>Usuario ID</th>
+                        <th>Servicio</th>
+                        <th>Acción</th>
+                        <th>Entidad</th>
+                        <th>Entidad ID</th>
+                        <th>Endpoint</th>
+                        <th>Fecha</th>
+                        <th>Antes</th>
+                        <th>Después</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="aud : ${auditorias}">
+                        <td th:text="${aud.auditoriaId}"></td>
+                        <td th:text="${aud.usuarioTipo}"></td>
+                        <td th:text="${aud.usuarioId}"></td>
+                        <td th:text="${aud.servicio}"></td>
+                        <td th:text="${aud.accion}"></td>
+                        <td th:text="${aud.entidad}"></td>
+                        <td th:text="${aud.entidadId}"></td>
+                        <td th:text="${aud.endpoint}"></td>
+                        <td th:text="${#dates.format(aud.fecha, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td>
+                            <button type="button" class="btn-auditoria" onclick="toggleContent(this)">Ver Antes</button>
+                            <pre class="auditorias_json" th:text="${aud.antes}"></pre>
+                        </td>
+                        <td>
+                            <button type="button" class="btn-auditoria" onclick="toggleContent(this)">Ver
+                                Después</button>
+                            <pre class="auditorias_json" th:text="${aud.despues}"></pre>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleContent(button) {
+            const content = button.nextElementSibling;
+            content.style.display = (content.style.display === "none" || content.style.display === "") ? "block" : "none";
+        }
+
+
+        flatpickr("#fecha", {
+            dateFormat: "Y-m-d",
+            locale: "es",
+            allowInput: true,
+            defaultDate: "{{fechaSeleccionada}}",
+        });
+
+    </script>
+
+</body>
+
+</html>

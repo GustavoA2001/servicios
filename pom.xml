@@ -127,7 +127,6 @@
         -->
 
         <!-- OPCIONAL -->
-        <module>api-gateway</module>
         <!--
         9: api-gateway
         

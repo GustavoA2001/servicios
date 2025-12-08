@@ -16,19 +16,22 @@
         <!-- MENÚ PRINCIPAL -->
         <ul class="league-spartan">
             <li th:class="${activeMenu == 'dashboard' ? 'active' : ''}">
-                <a href="/"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/"><i class="fas fa-home"></i>Dashboard</a>
             </li>
             <li th:class="${activeMenu == 'usuarios' ? 'active' : ''}">
-                <a href="/usuarios"><i class="fas fa-users"></i> Usuarios</a>
+                <a href="/usuarios"><i class="fas fa-users"></i>Usuarios</a>
             </li>
             <li th:class="${activeMenu == 'servicios' ? 'active' : ''}">
-                <a href="/servicios"><i class="fas fa-concierge-bell"></i> Servicios</a>
+                <a href="/servicios"><i class="fas fa-concierge-bell"></i>Servicios</a>
             </li>
             <li th:class="${activeMenu == 'catalogos' ? 'active' : ''}">
-                <a href="/catalogos"><i class="fas fa-folder"></i> Catálogos</a>
+                <a href="/catalogos"><i class="fas fa-folder"></i>Catálogos</a>
             </li>
             <li th:class="${activeMenu == 'informes' ? 'active' : ''}">
-                <a href="/informes"><i class="fas fa-chart-line"></i> Informes</a>
+                <a href="/informes"><i class="fas fa-chart-line"></i>Informes</a>
+            </li>
+            <li th:class="${activeMenu == 'auditorias' ? 'active' : ''}">
+                <a href="/auditorias"><i class="fas fa-chart-line"></i>Auditorias</a>
             </li>
         </ul>
     

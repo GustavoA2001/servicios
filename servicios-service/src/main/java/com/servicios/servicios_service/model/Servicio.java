@@ -2,13 +2,19 @@ package com.servicios.servicios_service.model;
 
 import java.util.List;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public class Servicio {
-    private Integer id;
-    private String titulo;
-    private String categoria;
-    private String descripcionCorta;
-    private String descripcionCompleta;
-    private Double precioEstimado;
+    private Integer id;                     // ServicioID
+    private String titulo;                  // Nomb_Servicio
+    private String descripcionCorta;        // Descrip_Servicio
+    private String descripcionCompleta;     // opcional, extendido
+    private Double precioEstimado;          // Precio_Servicio
+    private Integer categoriaServicioId;    // FK a categoriaservicio
+    private String categoria;               // nombre de la categoría (join opcional)
+
+    // Campos extendidos (no están en BD, pero útiles en la vista)
     private Double duracionHoras;
     private String telefonoContacto;
     private String imagen;
@@ -16,6 +22,9 @@ public class Servicio {
     private List<String> etiquetas;
     private Boolean disponible;
 
+    private List<Empleado> empleados;                  // trabajadores asignados
+    private List<CalificacionServicio> calificaciones; // calificaciones del servicio
+   
     public Servicio() {}
 
     public Integer getId() { return id; }
@@ -23,6 +32,9 @@ public class Servicio {
 
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public Integer getCategoriaServicioId() { return categoriaServicioId; }
+    public void setCategoriaServicioId(Integer categoriaServicioId) { this.categoriaServicioId = categoriaServicioId; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
@@ -53,5 +65,20 @@ public class Servicio {
 
     public Boolean getDisponible() { return disponible; }
     public void setDisponible(Boolean disponible) { this.disponible = disponible; }
+    
+    
+    public List<Empleado> getEmpleados() {
+        return empleados;
+    }
+    public void setEmpleados(List<Empleado> empleados) {
+        this.empleados = empleados;
+    }
+
+    public List<CalificacionServicio> getCalificaciones() {
+        return calificaciones;
+    }
+    public void setCalificaciones(List<CalificacionServicio> calificaciones) {
+        this.calificaciones = calificaciones;
+    }
 }
 

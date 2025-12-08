@@ -15,13 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.servicios.admin_service.service.MensajeService;
 
@@ -35,11 +29,14 @@ public class UsuariosController extends BaseController {
     @Autowired
     private MensajeService mensajeService;
 
-    // Redirección al entrar a /usuarios
+    // =============
+    // MVC: Vistas HTML
+    // =============
+
     @GetMapping
     public String UsuariosHTML(Model model) {
         model.addAttribute("activeMenu", "usuarios");
-        return "redirect:/usuarios/clientes";
+        return "redirect:/usuarios/clientes"; 
     }
 
     @GetMapping("/clientes")
@@ -51,8 +48,8 @@ public class UsuariosController extends BaseController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
-        // Método heredado de BASECONTROLLER
-        agregarDatosUsuario(model, request);
+        // Método de BaseController para datos del usuario
+        agregarDatosUsuario(model, request); 
 
         return "usuarios";
     }
@@ -66,10 +63,9 @@ public class UsuariosController extends BaseController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
-        // Método heredado de BASECONTROLLER
+        // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
-
-        return "usuarios";
+        return "usuarios"; 
     }
 
     @GetMapping("/administradores")
@@ -81,15 +77,15 @@ public class UsuariosController extends BaseController {
         model.addAttribute("activePage", "lista");
         model.addAttribute("activeMenu", "usuarios");
 
-        // Método heredado de BASECONTROLLER
+        // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
 
-        return "usuarios";
+        return "usuarios"; 
     }
 
     @GetMapping("/usuario/{tipo}/{id}")
     public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model,
-            HttpServletRequest request) {
+                                      HttpServletRequest request) {
         if (tipo.equalsIgnoreCase("Cliente")) {
             model.addAttribute("usuario", usuarioService.obtenerClientePorId(id));
         } else {
@@ -99,15 +95,19 @@ public class UsuariosController extends BaseController {
         model.addAttribute("activePage", "usuario_info");
         model.addAttribute("activeMenu", "usuarios");
 
-        // Método heredado de BASECONTROLLER
+        // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
 
-        return "usuarios";
+        return "usuarios"; 
     }
 
-    // Endpoints REST
+    // ===========
+    // REST y JSON 
+    // ===========
+
+    // Lista de clientes
     @GetMapping("/api/clientes")
-    @ResponseBody
+    @ResponseBody // Indica que la respuesta no es una vista, sino datos JSON
     public ResponseEntity<List<Cliente>> apiClientes() {
         return ResponseEntity.ok(usuarioService.obtenerClientes());
     }
@@ -130,9 +130,11 @@ public class UsuariosController extends BaseController {
         return ResponseEntity.ok(usuarioService.obtenerEmpleadoPorId(id));
     }
 
+    // Registrar un nuevo usuario
     @PostMapping("/registrar")
     @ResponseBody
     public ResponseEntity<String> registrarUsuario(@RequestBody UsuarioRequest nuevoUsuario) {
+        // @RequestBody: convierte el JSON recibido en un objeto UsuarioRequest
         try {
             usuarioService.registrarUsuario(nuevoUsuario);
             return ResponseEntity.ok("Usuario registrado exitosamente");
@@ -143,12 +145,12 @@ public class UsuariosController extends BaseController {
         }
     }
 
+    // Actualizar usuario
     @PutMapping("/actualizar/{tipo}/{id}")
     @ResponseBody
-    public ResponseEntity<String> actualizarUsuario(
-            @PathVariable String tipo,
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body) {
+    public ResponseEntity<String> actualizarUsuario(@PathVariable String tipo,
+                                                    @PathVariable Long id,
+                                                    @RequestBody Map<String, Object> body) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -156,27 +158,21 @@ public class UsuariosController extends BaseController {
             Usuario usuarioExistente;
             Usuario usuarioParcial;
 
+            // Dependiendo del tipo, convertimos el JSON recibido a la clase correspondiente
             switch (tipo.toLowerCase()) {
                 case "cliente" -> {
                     usuarioExistente = usuarioService.obtenerClientePorId(id);
                     if (usuarioExistente == null)
                         return ResponseEntity.badRequest().body("Cliente no encontrado");
-
                     usuarioParcial = mapper.convertValue(body, Cliente.class);
                 }
                 case "empleado", "trabajador", "administrador" -> {
                     usuarioExistente = usuarioService.obtenerEmpleadoPorId(id);
                     if (usuarioExistente == null)
                         return ResponseEntity.badRequest().body("Empleado no encontrado");
-
                     Empleado parcial = mapper.convertValue(body, Empleado.class);
-
-                    // Si el tipo es administrador o trabajador, asignamos el rol explícitamente
-                    if (tipo.equalsIgnoreCase("administrador"))
-                        parcial.setRolID(1);
-                    if (tipo.equalsIgnoreCase("trabajador"))
-                        parcial.setRolID(2);
-
+                    if (tipo.equalsIgnoreCase("administrador")) parcial.setRolID(1);
+                    if (tipo.equalsIgnoreCase("trabajador")) parcial.setRolID(2);
                     usuarioParcial = parcial;
                 }
                 default -> {
@@ -184,77 +180,27 @@ public class UsuariosController extends BaseController {
                 }
             }
 
-            // Combinar datos del existente y parcial
             Usuario usuarioFinal = combinarUsuarios(usuarioExistente, usuarioParcial);
 
-            mensajeService.guardarMensaje("Usuario actualizado correctamente"); // <-- guardar mensaje
-            // Persistir cambios
+            mensajeService.guardarMensaje("Usuario actualizado correctamente");
             usuarioService.actualizarUsuario(usuarioFinal);
 
             return ResponseEntity.ok().build();
-
         } catch (Exception e) {
             e.printStackTrace();
-            mensajeService.guardarMensaje("Error al registrar el usuario: " + e.getMessage());
+            mensajeService.guardarMensaje("Error al actualizar usuario: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    private Usuario combinarUsuarios(Usuario original, Usuario nuevo) {
-        if (original instanceof Cliente o && nuevo instanceof Cliente n) {
-            if (n.getNombre() != null)
-                o.setNombre(n.getNombre());
-            if (n.getApellido() != null)
-                o.setApellido(n.getApellido());
-            if (n.getEmail() != null)
-                o.setEmail(n.getEmail());
-            if (n.getPwd() != null)
-                o.setPwd(n.getPwd());
-            if (n.getDNI() != null)
-                o.setDNI(n.getDNI());
-            if (n.getFotito() != null)
-                o.setFotito(n.getFotito());
-            if (n.getEstado() != null)
-                o.setEstado(n.getEstado());
-            return o;
-        }
-
-        if (original instanceof Empleado o && nuevo instanceof Empleado n) {
-            if (n.getNombre() != null)
-                o.setNombre(n.getNombre());
-            if (n.getApellido() != null)
-                o.setApellido(n.getApellido());
-            if (n.getEmail() != null)
-                o.setEmail(n.getEmail());
-            if (n.getPwd() != null)
-                o.setPwd(n.getPwd());
-            if (n.getDNI() != null)
-                o.setDNI(n.getDNI());
-            if (n.getTelefono() != null)
-                o.setTelefono(n.getTelefono());
-            if (n.getEstado() != null)
-                o.setEstado(n.getEstado());
-            if (n.getRolID() != 0)
-                o.setRolID(n.getRolID());
-            if (n.getFotito() != null)
-                o.setFotito(n.getFotito());
-            if (n.getUbicacionPartida() != null)
-                o.setUbicacionPartida(n.getUbicacionPartida());
-            return o;
-        }
-
-        return original;
-    }
-
+    // Cambiar estado segun el tipo que envie
     @PutMapping("/estado/{tipo}/{id}")
     @ResponseBody
-    public ResponseEntity<String> cambiarEstadoUsuario(
-            @PathVariable String tipo,
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
-
+    public ResponseEntity<String> cambiarEstadoUsuario(@PathVariable String tipo,
+                                                       @PathVariable Long id,
+                                                       @RequestBody Map<String, String> body) {
         try {
-            String nuevoEstado = body.get("estado");
+            String nuevoEstado = body.get("estado"); 
             usuarioService.cambiarEstadoUsuario(tipo, id, nuevoEstado);
             mensajeService.guardarMensaje("Estado cambiado a " + nuevoEstado + " correctamente.");
             return ResponseEntity.ok().build();
@@ -266,4 +212,32 @@ public class UsuariosController extends BaseController {
         }
     }
 
+
+    private Usuario combinarUsuarios(Usuario original, Usuario nuevo) {
+        // Combina los datos existentes con los recibidos parcialmente (JSON)
+        if (original instanceof Cliente o && nuevo instanceof Cliente n) {
+            if (n.getNombre() != null) o.setNombre(n.getNombre());
+            if (n.getApellido() != null) o.setApellido(n.getApellido());
+            if (n.getEmail() != null) o.setEmail(n.getEmail());
+            if (n.getPwd() != null) o.setPwd(n.getPwd());
+            if (n.getDNI() != null) o.setDNI(n.getDNI());
+            if (n.getFotito() != null) o.setFotito(n.getFotito());
+            if (n.getEstado() != null) o.setEstado(n.getEstado());
+            return o;
+        }
+        if (original instanceof Empleado o && nuevo instanceof Empleado n) {
+            if (n.getNombre() != null) o.setNombre(n.getNombre());
+            if (n.getApellido() != null) o.setApellido(n.getApellido());
+            if (n.getEmail() != null) o.setEmail(n.getEmail());
+            if (n.getPwd() != null) o.setPwd(n.getPwd());
+            if (n.getDNI() != null) o.setDNI(n.getDNI());
+            if (n.getTelefono() != null) o.setTelefono(n.getTelefono());
+            if (n.getEstado() != null) o.setEstado(n.getEstado());
+            if (n.getRolID() != 0) o.setRolID(n.getRolID());
+            if (n.getFotito() != null) o.setFotito(n.getFotito());
+            if (n.getUbicacionPartida() != null) o.setUbicacionPartida(n.getUbicacionPartida());
+            return o;
+        }
+        return original;
+    }
 }

@@ -4,13 +4,11 @@ import com.servicios.login_service.Repository.*;
 import com.servicios.login_service.model.Empleado;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/login")

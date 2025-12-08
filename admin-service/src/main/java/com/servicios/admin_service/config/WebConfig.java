@@ -11,28 +11,45 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthValidator authValidator;
     private final MensajeInterceptor mensajeInterceptor;
+    private final AuditoriaInterceptor auditoriaInterceptor;
 
-    public WebConfig(AuthValidator authValidator, MensajeInterceptor mensajeInterceptor) {
+    public WebConfig(AuthValidator authValidator,
+                     MensajeInterceptor mensajeInterceptor,
+                     AuditoriaInterceptor auditoriaInterceptor) {
         this.authValidator = authValidator;
         this.mensajeInterceptor = mensajeInterceptor;
+        this.auditoriaInterceptor = auditoriaInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // ==========================
         // Seguridad por token
+        // ==========================
         AdminAuthInterceptor authInterceptor = new AdminAuthInterceptor(authValidator);
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/no-autorizado", 
-                "/css/**", 
-                "/js/**", 
-                "/images/**", 
-                "/admin/api/verificar-admin")
-                .excludePathPatterns("/api/callback/**"); // <-- excluye los callbacks
+                .excludePathPatterns("/no-autorizado", "/css/**", "/js/**", "/images/**", "/admin/api/verificar-admin")
+                .excludePathPatterns("/api/callback/**");
 
-        // Mensajes (solo vistas de usuarios)
+        // ==========================
+        // Interceptor de mensajes
+        // ==========================
         registry.addInterceptor(mensajeInterceptor)
                 .addPathPatterns("/usuarios/**");
+
+        // ==========================
+        // Auditoría
+        // ==========================
+        registry.addInterceptor(auditoriaInterceptor)
+                .addPathPatterns(
+                        "/usuarios/**",
+                        "/catalogos/**",
+                        "/servicios/**",
+                        "/login"
+                )
+                // excluidos
+                .excludePathPatterns("/usuarios/mensajes/**");
 
         System.out.println("=== WebConfig: interceptores registrados ===");
     }
