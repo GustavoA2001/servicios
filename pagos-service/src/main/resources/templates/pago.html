@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pago - Servicio</title>
+
+  <style>
+    :root{
+      --primary:#5e2ca5;
+      --primary-2:#7a4bd8;
+      --accent:#0480F4;
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --muted:#f3f2fb;
+      --text:#222;
+      --radius:12px;
+      --shadow: 0 12px 30px rgba(16,24,64,0.06);
+    }
+    body{ font-family:Inter, system-ui, Arial; background:var(--bg); color:var(--text); margin:0; padding:0; }
+    .container{ max-width:1180px; margin:30px auto; padding:0 16px; }
+    .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; }
+    .pay-grid{ display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
+    h1{ color:var(--primary); margin:0 0 8px 0; font-size:1.25rem; }
+    .muted{ color:#6b7280; font-size:0.9rem; }
+
+    .field{ margin-bottom:12px; }
+    .field label{ display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem; }
+    .input{ display:flex; align-items:center; gap:10px; background:#fff; border-radius:10px; padding:10px 12px; border:1px solid #eef2ff; }
+    .input input, .input select, .input textarea{ border:0; outline:none; font-size:0.95rem; width:100%; }
+
+    .payment-methods{ display:flex; gap:8px; margin:8px 0; }
+    .pm{ flex:1; border-radius:10px; padding:10px; text-align:center; background:#fff; border:1px solid transparent; cursor:pointer; font-weight:600; }
+    .pm input{ margin-right:8px; }
+
+    .btn-primary{ display:inline-block; width:100%; padding:12px; border-radius:10px; border:0; color:white; font-weight:700;
+      background: linear-gradient(90deg,var(--primary),var(--primary-2)); cursor:pointer; box-shadow:0 8px 20px rgba(94,44,165,0.15);
+    }
+
+    .summary h3{ margin-top:0; color:var(--primary); }
+    .row{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed #f0eefb; }
+
+    @media(max-width:980px){ .pay-grid{ grid-template-columns:1fr; } .summary{ order:2; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <h1>Pagar servicio</h1>
+          <div class="muted">Pago seguro — completa los datos del cliente y método de pago.</div>
+        </div>
+        <div class="muted">Servicio: <strong th:text="${servicioNombre != null ? servicioNombre : 'Servicio'}">Servicio</strong></div>
+      </div>
+
+      <div class="pay-grid">
+        <form th:action="@{/pago/submit}" method="post" class="card" style="padding:18px;">
+          <input type="hidden" name="servicioId" th:value="${servicioId}" />
+
+          <div class="field">
+            <label for="titular">Nombre del cliente</label>
+            <div class="input"><input id="titular" name="titular" placeholder="Nombre completo" required/></div>
+          </div>
+
+          <div class="field">
+            <label for="telefono">Teléfono</label>
+            <div class="input"><input id="telefono" name="telefono" placeholder="999-999-999" required/></div>
+          </div>
+
+          <div class="field">
+            <label for="email">Correo</label>
+            <div class="input"><input id="email" name="email" type="email" placeholder="tu@correo.com" required/></div>
+          </div>
+
+          <div class="field">
+            <label for="notas">Notas / Instrucciones (opcional)</label>
+            <div class="input"><textarea id="notas" name="notas" rows="2" placeholder="Detalles para el proveedor (ej. piso 3, timbre 7)"></textarea></div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #f0eefb;margin:10px 0;" />
+
+          <div class="field">
+            <label>Número de tarjeta (solo visual)</label>
+            <div class="input"><input id="numero" name="numero" inputmode="numeric" maxlength="19" placeholder="#### #### #### ####" /></div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 120px 100px; gap:10px;">
+            <div class="field">
+              <label for="fecha">Expiración</label>
+              <div class="input"><input id="fecha" name="fecha" placeholder="MM/AA" /></div>
+            </div>
+            <div class="field">
+              <label for="cvv">CVV</label>
+              <div class="input"><input id="cvv" name="cvv" maxlength="4" placeholder="###" /></div>
+            </div>
+            <div class="field">
+              <label for="metodo">Método</label>
+              <div class="input">
+                <select id="metodo" name="metodo">
+                  <option value="card">Tarjeta</option>
+                  <option value="plin">Plin / Yape</option>
+                  <option value="efectivo">PagoEfectivo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <button type="submit" class="btn-primary">Confirmar y pagar</button>
+          </div>
+
+          <div class="muted" style="margin-top:10px; font-size:0.85rem;">
+            * Este formulario es visual. Integra tokenización y gateway (Stripe/PayU/Culqi) en backend.
+          </div>
+        </form>
+        <aside class="card summary">
+          <h3>Resumen del servicio</h3>
+          <div class="row"><div>Servicio</div><div th:text="${servicioNombre != null ? servicioNombre : '—'}">Electricista</div></div>
+          <div class="row"><div>Proveedor</div><div th:text="${proveedorNombre != null ? proveedorNombre : '—'}">Proveedor</div></div>
+          <div class="row"><div>Dirección</div><div th:text="${direccion != null ? direccion : '—'}">Direccion</div></div>
+          <div class="row"><div>Fecha</div><div th:text="${fechaServicio != null ? fechaServicio : 'Pendiente'}">Fecha</div></div>
+          <div class="row"><div>Duración</div><div th:text="${duracion != null ? duracion : '—'}">Duración</div></div>
+          <div class="row"><div>Contacto</div><div th:text="${contactoProveedor != null ? contactoProveedor : '—'}">999-000-000</div></div>
+          <div class="row"><div>Precio</div><div th:text="${precioPresentacion != null ? precioPresentacion : 'S/ 0'}">S/ 0</div></div>
+          <div class="row" style="border-bottom:0;"><strong>Total</strong><strong th:text="${precioPresentacion != null ? precioPresentacion : 'S/ 0'}">S/ 0</strong></div>
+          <div style="margin-top:14px;"><button class="btn-primary" type="button" th:text="${'Pagar ' + (precioPresentacion != null ? precioPresentacion : 'S/ 0')}">Pagar</button></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

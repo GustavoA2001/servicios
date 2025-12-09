@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pago confirmado</title>
+  <style>
+    body{ font-family:Inter, Arial, sans-serif; background:#f6f8ff; margin:0; }
+    .container{ max-width:780px; margin:60px auto; padding:16px; }
+    .card{ background:#fff; padding:20px; border-radius:12px; box-shadow:0 12px 30px rgba(16,24,64,0.06); }
+    .btn{ display:inline-block; margin-top:14px; padding:10px 14px; background:#5e2ca5; color:#fff; border-radius:8px; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Pago recibido</h2>
+      <p>Gracias, <strong th:text="${nombreCliente != null ? nombreCliente : (nombre != null ? nombre : 'Cliente')}">Cliente</strong>.</p>
+      <p>Su pago por <strong th:text="${total != null ? total : 'S/ 0'}">S/ 0</strong> para el servicio <strong th:text="${servicioNombre != null ? servicioNombre : 'Servicio'}">Servicio</strong> ha sido procesado.</p>
+      <p>ID de transacción: <strong th:text="${txId != null ? txId : 'MOCK-123'}">MOCK-123</strong></p>
+      <p>Proveedor: <strong th:text="${proveedorNombre != null ? proveedorNombre : 'Proveedor'}">Proveedor</strong> — Contacto: <strong th:text="${contactoProveedor != null ? contactoProveedor : '—'}">999-000-000</strong></p>
+      <a th:href="@{/' }" class="btn">Volver al inicio</a>
+    </div>
+  </div>
+</body>
+</html>
