@@ -4,31 +4,222 @@
 <head>
     <meta charset="UTF-8" />
     <title>Formulario de Pedido</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: #1e1e2f;
+            color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            color: #edc73e;
+        }
+
+        .pedido-container {
+            display: flex;
+            gap: 25px;
+            margin: 20px;
+        }
+
+        /* Columnas estilo tarjeta */
+        .col {
+            flex: 1;
+            background: #2a2a40;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .col h2,
+        .col h3 {
+            margin-top: 0;
+            color: #edc73e;
+        }
+
+        /* Formularios */
+        .direccion-form,
+        .pedido-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #1e1e2f;
+            color: #fff;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #edc73e;
+        }
+
+        button,
+        .btn-azul {
+            padding: 12px;
+            border: none;
+            background: #edc73e;
+            color: #1e1e2f;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover,
+        .btn-azul:hover {
+            background: #d4b63a;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        textarea {
+            min-height: 80px;
+        }
+
+        /* Imagen servicio */
+        .servicio-info img {
+            border-radius: 8px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 280px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .servicio-info p {
+            margin: 6px 0;
+        }
+    </style>
 </head>
 
 <body>
+
     <h1>Solicitar Servicio</h1>
 
-    <form th:action="@{/pedidos/guardar}" method="post">
-        <input type="hidden" name="servicioId" th:value="${servicioId}" />
+    <div class="pedido-container">
 
-        <p>Servicio: <span th:text="${tituloServicio}"></span></p>
-        <p>Precio estimado: S/ <span th:text="${precioEstimado}"></span></p>
+        <!-- COLUMNA 1: Servicio -->
+        <div class="col servicio-info">
+            <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
+            <h2 th:text="${servicio.titulo}"></h2>
 
-        <label>Dirección:</label>
-        <input type="text" name="direccion" required />
+            <p><strong>Categoría:</strong> <span th:text="${servicio.categoria}"></span></p>
+            <p><strong>Precio por hora:</strong> S/ <span th:text="${servicio.precioEstimado}"></span></p>
+            <p><strong>Contacto:</strong> <span th:text="${servicio.telefonoContacto}"></span></p>
+        </div>
 
-        <label>Fecha:</label>
-        <input type="date" name="fecha" required />
+        <!-- COLUMNA 2: Direcciones -->
+        <div class="col">
+            <h3>Dirección de atención</h3>
 
-        <label>Días de atención:</label>
-        <input type="text" name="dias" placeholder="Ej: Lunes a Viernes" />
+            <!-- Seleccionar dirección existente -->
+            <form th:action="@{/checkout/seleccionarDireccion}" method="post" class="direccion-form">
+                <input type="hidden" name="servicioId" th:value="${servicio.id}">
+                <label for="idDireccion">Seleccionar dirección existente:</label>
+                <select name="idDireccion" id="idDireccion" required>
+                    <option value="">-- Seleccionar --</option>
+                    <option th:each="dir : ${direcciones}" th:value="${dir.idDireccion}"
+                        th:text="${dir.direccion + ' (' + dir.distrito + ')'}"></option>
+                </select>
+                <button type="submit" class="btn-azul">Usar dirección</button>
+            </form>
 
-        <label>Observaciones:</label>
-        <textarea name="observaciones"></textarea>
+            <div class="divider">O agrega una nueva</div>
 
-        <button type="submit">Confirmar Pedido</button>
-    </form>
+            <!-- Agregar nueva dirección -->
+            <form th:action="@{/checkout/agregarDireccion}" method="post" class="direccion-form">
+                <input type="hidden" name="servicioId" th:value="${servicio.id}">
+                <label for="direccionCompleta">Dirección completa:</label>
+                <input type="text" id="direccionCompleta" name="direccionCompleta" required>
+
+                <label for="referencia">Referencia:</label>
+                <input type="text" id="referencia" name="referencia">
+
+                <label for="idDistrito">Distrito:</label>
+                <select id="idDistrito" name="idDistrito" required>
+                    <option value="">-- Seleccionar distrito --</option>
+                    <option th:each="dist : ${distritos}" th:value="${dist.idDistrito}" th:text="${dist.nomDistrito}">
+                    </option>
+                </select>
+
+                <button type="submit" class="btn-azul">Agregar dirección</button>
+            </form>
+        </div>
+
+        <!-- COLUMNA 3: Pedido -->
+        <!-- COLUMNA 3: Pedido -->
+        <div class="col pedido-section">
+            <h3>Datos del pedido</h3>
+            <form th:action="@{/pedidos/guardar}" method="post">
+                <input type="hidden" name="servicioId" th:value="${servicio.id}" />
+
+                <!-- Fecha -->
+                <label for="fechaServicio">Día de inicio:</label>
+                <input type="date" id="fechaServicio" name="fechaServicio" required />
+
+                <!-- Hora -->
+                <label for="horaServicio">Hora de inicio:</label>
+                <select id="horaServicio" name="horaServicio" required>
+                    <option value="">-- Seleccionar hora --</option>
+                </select>
+
+                <label>Horas de servicio:</label>
+                <input type="number" name="horasServicio" min="1" required />
+
+                <label>Días de atención:</label>
+                <input type="number" name="diasServicio" min="1" required />
+
+                <label>Observaciones:</label>
+                <textarea name="observaciones"></textarea>
+
+                <button type="submit">Confirmar Pedido</button>
+            </form>
+        </div>
+
+
+    </div>
+
 </body>
 
 </html>
+
+</select>
+
+<script>
+(function cargarHoras() {
+  const select = document.getElementById('horaServicio');
+  const inicio = 8;   // 08:00
+  const fin = 21;     // 22:00
+
+  for (let h = inicio; h <= fin; h++) {
+    ['00','30'].forEach(m => {
+      const label = `${String(h).padStart(2,'0')}:${m}`;
+      const opt = document.createElement('option');
+      opt.value = label;
+      opt.textContent = label;
+      select.appendChild(opt);
+    });
+  }
+})();
+</script>

@@ -30,13 +30,12 @@ public class PedidoController {
     @GetMapping("/nuevo/{servicioId}")
     public String nuevoPedido(@PathVariable("servicioId") Integer servicioId, Model model) {
         Servicio servicio = servicioService.obtenerServicioPorId(servicioId);
-
-        model.addAttribute("servicioId", servicio.getId());
-        model.addAttribute("tituloServicio", servicio.getTitulo());
-        model.addAttribute("precioEstimado", servicio.getPrecioEstimado());
-
-        return "form_pedido"; // tu formulario Thymeleaf
+    
+        model.addAttribute("servicio", servicio);
+    
+        return "solicitar_servicio";
     }
+    
 
     // Guardar pedido
     @PostMapping("/guardar")
