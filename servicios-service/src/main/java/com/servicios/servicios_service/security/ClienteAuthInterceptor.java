@@ -17,6 +17,7 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
         this.jwtUtil = jwtUtil;
     }
 
+    @SuppressWarnings("null")
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,

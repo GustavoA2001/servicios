@@ -2,8 +2,6 @@ package com.servicios.servicios_service.model;
 
 import java.util.List;
 
-import java.math.BigDecimal;
-import java.util.List;
 
 public class Servicio {
     private Integer id;                     // ServicioID

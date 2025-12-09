@@ -18,7 +18,7 @@ public class ServiciosDAO {
 
     private static class ServicioRowMapper implements RowMapper<Servicio> {
         @Override
-        public Servicio mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Servicio mapRow(@SuppressWarnings("null") ResultSet rs, int rowNum) throws SQLException {
             Servicio s = new Servicio();
             s.setId(rs.getInt("ServicioID"));
             s.setTitulo(rs.getString("Nomb_Servicio"));

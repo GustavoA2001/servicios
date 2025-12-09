@@ -17,10 +17,17 @@ public class ServicioService {
     @Autowired
     private ServiciosDAO serviciosDAO;
 
+    @Autowired
+    private CalificacionDAO calificacionDAO;
+
+    @Autowired
+    private EmpleadoDAO empleadoDAO;
+
+    /** LISTAR SERVICIOS */
     public List<Servicio> listarServicios() {
         List<Servicio> servicios = serviciosDAO.listarServicios();
+
         if (servicios == null || servicios.isEmpty()) {
-            // Fallback estático
             Servicio demo = new Servicio();
             demo.setId(1);
             demo.setTitulo("Servicio Técnico de Electricidad");
@@ -32,6 +39,7 @@ public class ServicioService {
         return servicios;
     }
 
+    /** OBTENER SERVICIO POR ID (BÁSICO) */
     public Servicio obtenerServicioPorId(int id) {
         try {
             return serviciosDAO.obtenerServicioPorId(id);
@@ -47,35 +55,10 @@ public class ServicioService {
         }
     }
 
-    @Autowired
-    private CalificacionDAO calificacionDAO;
-
-    public Servicio obtenerServicioConCalificaciones(int id) {
+    /** OBTENER SERVICIO COMPLETO (CON TRABAJADORES Y CALIFICACIONES) */
+    public Servicio obtenerServicioCompleto(int id) {
         Servicio servicio = serviciosDAO.obtenerServicioPorId(id);
-        servicio.setEtiquetas(List.of("Demo", "Ejemplo")); // opcional
-        servicio.setValoracion(calcularPromedio(id));
-        return servicio;
-    }
 
-    public List<CalificacionServicio> obtenerCalificaciones(int servicioId) {
-        return calificacionDAO.listarPorServicio(servicioId);
-    }
-
-    private Double calcularPromedio(int servicioId) {
-        List<CalificacionServicio> calificaciones = calificacionDAO.listarPorServicio(servicioId);
-        if (calificaciones.isEmpty())
-            return null;
-        return calificaciones.stream()
-                .mapToInt(CalificacionServicio::getCalificacion)
-                .average()
-                .orElse(0.0);
-    }
-
-    @Autowired
-    private EmpleadoDAO empleadoDAO;
-
-    public Servicio obtenerServicioConTrabajadores(int id) {
-        Servicio servicio = serviciosDAO.obtenerServicioPorId(id);
         // trabajadores
         List<Empleado> trabajadores = empleadoDAO.listarTrabajadoresPorServicio(id);
         servicio.setEmpleados(trabajadores);
@@ -84,10 +67,21 @@ public class ServicioService {
         List<CalificacionServicio> calificaciones = calificacionDAO.listarPorServicio(id);
         servicio.setCalificaciones(calificaciones);
 
-        return servicio;
-    }
+        // promedio calificación
+        double promedio = calificaciones.stream()
+                .mapToInt(CalificacionServicio::getCalificacion)
+                .average()
+                .orElse(0.0);
+        servicio.setValoracion(promedio);
 
-    public List<Empleado> obtenerTrabajadoresPorServicio(int servicioId) {
-        return empleadoDAO.listarTrabajadoresPorServicio(servicioId);
+        // etiquetas opcionales
+        servicio.setEtiquetas(List.of("Demo", "Ejemplo"));
+
+        // datos extra opcionales
+        servicio.setDuracionHoras(2.0);
+        servicio.setTelefonoContacto("999-888-777");
+        servicio.setDisponible(true);
+
+        return servicio;
     }
 }

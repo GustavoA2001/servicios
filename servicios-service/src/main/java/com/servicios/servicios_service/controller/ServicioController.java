@@ -1,11 +1,9 @@
 package com.servicios.servicios_service.controller;
 
-import com.servicios.servicios_service.model.CalificacionServicio;
-import com.servicios.servicios_service.model.Empleado;
+
 import com.servicios.servicios_service.model.Servicio;
 import com.servicios.servicios_service.service.ServicioService;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,17 +24,9 @@ public class ServicioController extends BaseController {
 
     @GetMapping("/servicios/{id}")
     public String detalleServicio(@PathVariable("id") Integer id, Model model) {
-        // primero el servicio base
-        Servicio servicio = servicioService.obtenerServicioConCalificaciones(id);
-    
-        // luego le agregamos los trabajadores
-        List<Empleado> trabajadores = servicioService.obtenerTrabajadoresPorServicio(id);
-        servicio.setEmpleados(trabajadores);
-    
-        // ya tienes calificaciones dentro del servicio, pero si quieres pasarlas aparte:
+        Servicio servicio = servicioService.obtenerServicioCompleto(id);
         model.addAttribute("servicio", servicio);
         model.addAttribute("calificaciones", servicio.getCalificaciones());
-    
         return "detalle_servicios";
     }
     

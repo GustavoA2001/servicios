@@ -18,13 +18,14 @@ public class CalificacionDAO {
 
     private static class CalificacionRowMapper implements RowMapper<CalificacionServicio> {
         @Override
-        public CalificacionServicio mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public CalificacionServicio mapRow(@SuppressWarnings("null") ResultSet rs, int rowNum) throws SQLException {
             CalificacionServicio c = new CalificacionServicio();
             c.setId(rs.getInt("CalificacionID"));
             c.setPedidoId(rs.getInt("PedidoID"));
             c.setCalificacion(rs.getInt("Calificacion"));
             c.setComentario(rs.getString("Comentario"));
             c.setFechaCalificacion(rs.getTimestamp("FechaCalificacion").toLocalDateTime());
+            
             return c;
         }
     }
