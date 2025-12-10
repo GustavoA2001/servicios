@@ -4,108 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Nosotros | Servicios Técnicos</title>
 
-    <!-- Importar los estilos comunes -->
     <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
 
     <style>
-        /* Paleta morada - azul moderna */
+        /* Paleta clara - moderna */
         :root {
-            --bg: #0f1724;
-            --card: #0f1930;
+            --bg: #f7f8fb;
+            --card: #ffffff;
             --primary: #5A2D9C;
             --primary-2: #7B4FDB;
             --secondary: #2A5D8B;
-            --accent: #4BC1E8;
-            --muted: #94A3B8;
-            --text: #E6EEF8;
-            --glass: rgba(255, 255, 255, 0.04);
+            --accent: #0ea5e9;
+            --muted: #6b7280;
+            --text: #0f172a;
+            --glass: rgba(2, 6, 23, 0.06);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #081021 0%, #071029 40%, #021025 100%);
+            background: var(--bg);
             color: var(--text);
             margin: 0;
             padding: 0;
         }
 
-        /* Contenedor principal */
         .container {
             max-width: 1100px;
             margin: 100px auto;
             padding: 0 20px;
             position: relative;
-            /* Para posicionar figuras absolutas */
-        }
-
-        /* Figuras decorativas */
-        .shapes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .shapes div {
-            position: absolute;
-            opacity: 0.15;
-        }
-
-        .circle {
-            width: 300px;
-            height: 300px;
-            background: var(--primary);
-            border-radius: 50%;
-            top: -58px;
-            right: -128px;
-        }
-
-        .small-circle {
-            width: 100px;
-            height: 100px;
-            background: var(--accent);
-            border-radius: 50%;
-        }
-
-        .small-circle-1 {
-            bottom: 20px;
-            right: 40px;
-        }
-
-        .small-circle-2 {
-            top: 250px;
-            right: 15%;
-        }
-
-        .small-circle-3 {
-            bottom: 400px;
-            left: 20%;
-        }
-
-        .diamond {
-            width: 280px;
-            height: 280px;
-            background: var(--primary-2);
-            transform: rotate(45deg);
-        }
-
-        .diamond-1 {
-            top: 600px;
-            left: -10%;
-        }
-
-        .diamond-2 {
-            bottom: 300px;
-            right: -11%;
         }
 
         /* Sección de Introducción */
@@ -115,20 +46,12 @@
             justify-content: space-between;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 15px rgba(15, 23, 42, 0.12);
             margin-bottom: 50px;
         }
 
-        .intro .left {
-            flex: 1;
-            max-width: 55%;
-        }
-
-        .intro .right {
-            flex: 1;
-            max-width: 40%;
-            padding-left: 20px;
-        }
+        .intro .left { flex: 1; max-width: 55%; }
+        .intro .right { flex: 1; max-width: 40%; padding-left: 20px; }
 
         .intro h2 {
             font-size: 2.5rem;
@@ -137,11 +60,7 @@
             text-align: left;
         }
 
-        .intro p {
-            font-size: 1.1rem;
-            color: var(--muted);
-            line-height: 1.6;
-        }
+        .intro p { font-size: 1.1rem; color: var(--muted); line-height: 1.6; }
 
         /* Historia, Misión, Visión y Valores */
         .company-info {
@@ -158,12 +77,12 @@
             border-radius: 15px;
             color: var(--text);
             width: 48%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
             transition: all 0.3s ease;
         }
 
         .company-info .card:hover {
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
         }
 
         .company-info .card h3 {
@@ -197,7 +116,7 @@
             background: var(--card);
             padding: 40px 30px;
             border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 15px rgba(15, 23, 42, 0.12);
             margin-bottom: 50px;
         }
 
@@ -218,10 +137,11 @@
         /* Footer */
         footer {
             background: var(--bg);
-            color: var(--text);
+            color: var(--muted);
             text-align: center;
             padding: 20px 0;
             font-size: 0.9rem;
+            border-top: 1px solid var(--glass);
         }
 
         footer a {
@@ -229,53 +149,28 @@
             text-decoration: none;
         }
 
-        footer a:hover {
-            text-decoration: underline;
-        }
+        footer a:hover { text-decoration: underline; }
 
-        /* Estilos responsive */
+        /* Responsive */
         @media (max-width: 1000px) {
-            .company-info .card {
-                width: 100%;
-            }
-
-            .intro .left,
-            .intro .right {
-                max-width: 100%;
-                padding-left: 0;
-            }
+            .company-info .card { width: 100%; }
+            .intro .left, .intro .right { max-width: 100%; padding-left: 0; }
         }
 
         @media (max-width: 600px) {
-            .intro {
-                flex-direction: column;
-                padding: 30px;
-            }
-
-            .company-info {
-                flex-direction: column;
-            }
+            .intro { flex-direction: column; padding: 30px; }
+            .company-info { flex-direction: column; }
         }
     </style>
 </head>
 
 <body>
-
     <header th:replace="components/menu_cliente"></header>
 
-    <!-- Contenedor Principal -->
+
     <div class="container">
 
-        <!-- Figuras decorativas -->
-        <div class="shapes">
-            <div class="circle"></div>
-            <div class="diamond diamond-1"></div>
-            <div class="diamond diamond-2"></div>
-            <div class="small-circle small-circle-1"></div>
-            <div class="small-circle small-circle-2"></div>
-            <div class="small-circle small-circle-3"></div>
-        </div>
-
+        <div th:replace="components/figuras"></div>
         <!-- Sección de Introducción -->
         <section class="intro">
             <div class="left">
@@ -283,8 +178,7 @@
                 <p>En Servicios Técnicos nos especializamos en ofrecer soluciones rápidas y eficientes para el hogar y
                     la empresa. A través de nuestra plataforma, tanto los técnicos como los clientes pueden interactuar,
                     registrar y solicitar una amplia gama de servicios. Desde reparaciones hasta instalaciones
-                    especializadas, somos tu aliado para garantizar el buen funcionamiento de tus equipos y sistemas.
-                </p>
+                    especializadas, somos tu aliado para garantizar el buen funcionamiento de tus equipos y sistemas.</p>
             </div>
             <div class="right">
                 <img src="https://via.placeholder.com/400" alt="Imagen ilustrativa"
@@ -315,16 +209,11 @@
             <div class="card">
                 <h3>Valores</h3>
                 <ul>
-                    <li><strong>Compromiso:</strong> Nos comprometemos con la calidad y la satisfacción del cliente en
-                        todo momento.</li>
-                    <li><strong>Innovación:</strong> Buscamos siempre nuevas soluciones para los problemas técnicos de
-                        nuestros clientes.</li>
-                    <li><strong>Confianza:</strong> Nos ganamos la confianza de nuestros clientes a través de un
-                        servicio transparente y eficiente.</li>
-                    <li><strong>Responsabilidad:</strong> Actuamos con responsabilidad y profesionalismo en cada
-                        servicio que ofrecemos.</li>
-                    <li><strong>Trabajo en equipo:</strong> Creemos que un buen equipo es la clave del éxito, por eso
-                        fomentamos el trabajo colaborativo.</li>
+                    <li><strong>Compromiso:</strong> Nos comprometemos con la calidad y la satisfacción del cliente en todo momento.</li>
+                    <li><strong>Innovación:</strong> Buscamos siempre nuevas soluciones para los problemas técnicos de nuestros clientes.</li>
+                    <li><strong>Confianza:</strong> Nos ganamos la confianza de nuestros clientes a través de un servicio transparente y eficiente.</li>
+                    <li><strong>Responsabilidad:</strong> Actuamos con responsabilidad y profesionalismo en cada servicio que ofrecemos.</li>
+                    <li><strong>Trabajo en equipo:</strong> Creemos que un buen equipo es la clave del éxito, por eso fomentamos el trabajo colaborativo.</li>
                 </ul>
             </div>
         </section>
@@ -342,28 +231,10 @@
                 necesitas. Ya sea para una reparación urgente o para un trabajo especializado, ¡estamos aquí para
                 ayudarte!</p>
         </section>
-
     </div>
 
     <footer>
         <p>&copy; 2025 Servicios Técnicos | Todos los derechos reservados | <a href="#">Política de privacidad</a></p>
     </footer>
-
 </body>
-
 </html>
-
-<script>
-    const dropdown = document.getElementById("userDropdown");
-    const btn = document.getElementById("userDropdownBtn");
-
-    btn.addEventListener("click", () => {
-        dropdown.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove("open");
-        }
-    });
-</script>

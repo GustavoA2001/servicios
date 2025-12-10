@@ -19,6 +19,7 @@ public class Servicio {
     private Double valoracion;
     private List<String> etiquetas;
     private Boolean disponible;
+    
 
     private List<Empleado> empleados;                  // trabajadores asignados
     private List<CalificacionServicio> calificaciones; // calificaciones del servicio

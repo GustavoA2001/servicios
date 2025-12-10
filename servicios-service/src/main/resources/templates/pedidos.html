@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Mis Pedidos</title>
     <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
-
     <style>
         :root {
-            --bg: #0f1724;
-            --card: #0f1930;
+            --bg: #f7f8fb;
+            --card: #ffffff;
             --primary: #5A2D9C;
             --primary-2: #7B4FDB;
             --secondary: #2A5D8B;
-            --accent: #4BC1E8;
-            --muted: #94A3B8;
-            --text: #E6EEF8;
-            --glass: rgba(255, 255, 255, 0.04);
+            --accent: #0ea5e9;
+            --muted: #6b7280;
+            --text: #0f172a;
+            --glass: rgba(2,6,23,0.06);
         }
 
         body {
-            font-family: Inter, system-ui, Arial;
-            background: linear-gradient(180deg, #081021 0%, #071029 40%, #021025 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
             margin: 0;
             color: var(--text);
             padding-bottom: 60px;
@@ -51,9 +49,9 @@
             padding: 10px 20px;
             border-radius: 999px;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0,0,0,0.03);
             color: var(--muted);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(0,0,0,0.1);
             font-weight: 700;
             transition: 0.25s;
         }
@@ -72,11 +70,11 @@
         }
 
         .order-card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--card);
+            border: 1px solid var(--glass);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+            box-shadow: 0 6px 15px rgba(15,23,42,0.12);
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -85,6 +83,7 @@
         .order-title {
             font-size: 20px;
             font-weight: 800;
+            color: var(--primary);
         }
 
         .order-meta {
@@ -99,11 +98,12 @@
         }
 
         .bloque-item {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--glass);
             padding: 6px 10px;
             border-radius: 8px;
             font-size: 13px;
             margin-bottom: 6px;
+            color: var(--text);
         }
 
         /* Botón pagar */
@@ -116,16 +116,26 @@
             color: white;
             text-decoration: none;
             font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-pay:hover {
+            background-color: var(--secondary);
         }
 
         .pedido-seccion {
             display: none;
         }
+
+        @media (max-width: 1000px) {
+            .order-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
 <body>
-
     <header th:replace="components/menu_cliente"></header>
 
     <h1>Mis Pedidos</h1>
@@ -139,126 +149,64 @@
             <div class="status-tab" onclick="openTab('activos', this)">Activos</div>
         </div>
 
-        <!-- ---------------------- PENDIENTES ---------------------- -->
+        <!-- PENDIENTES -->
         <div id="pendientes" class="pedido-seccion" style="display:block;">
             <div class="order-grid">
-
                 <div th:each="p : ${pendientes}" class="order-card">
-
                     <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
-
-                    <div class="order-meta">
-                        <strong>Fecha pedido:</strong>
-                        <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span>
-                    </div>
-
-                    <div class="order-meta">
-                        <strong>Servicio:</strong> <span th:text="${p.servicioID}"></span>
-                    </div>
-
-                    <div class="order-meta"><strong>Duración:</strong>
-                        <span th:text="${p.diasServicio}"></span>d /
-                        <span th:text="${p.horasServicio}"></span>h
-                    </div>
-
-                    <!-- BLOQUES -->
+                    <div class="order-meta"><strong>Fecha pedido:</strong> <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span></div>
+                    <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+                    <div class="order-meta"><strong>Duración:</strong> <span th:text="${p.diasServicio}"></span>d / <span th:text="${p.horasServicio}"></span>h</div>
                     <div class="bloque-list" th:data-json="${p.bloques}"></div>
-
-                    <div class="order-meta" th:if="${p.observaciones}">
-                        <strong>Observaciones:</strong> <span th:text="${p.observaciones}"></span>
-                    </div>
-
-                    <div class="order-price">
-                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
-                    </div>
-
+                    <div class="order-meta" th:if="${p.observaciones}"><strong>Observaciones:</strong> <span th:text="${p.observaciones}"></span></div>
+                    <div class="order-price">S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span></div>
                 </div>
-
             </div>
         </div>
 
-        <!-- ---------------------- CONFIRMADOS ---------------------- -->
+        <!-- CONFIRMADOS -->
         <div id="confirmados" class="pedido-seccion">
             <div class="order-grid">
-
                 <div th:each="p : ${confirmados}" class="order-card">
-
                     <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
-
-                    <div class="order-meta">
-                        <strong>Fecha pedido:</strong>
-                        <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span>
-                    </div>
-
+                    <div class="order-meta"><strong>Fecha pedido:</strong> <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span></div>
                     <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
-
-                    <div class="order-meta"><strong>Duración:</strong>
-                        <span th:text="${p.diasServicio}"></span>d /
-                        <span th:text="${p.horasServicio}"></span>h
-                    </div>
-
-                    <!-- BLOQUES -->
+                    <div class="order-meta"><strong>Duración:</strong> <span th:text="${p.diasServicio}"></span>d / <span th:text="${p.horasServicio}"></span>h</div>
                     <div class="order-meta"><strong>Bloques:</strong></div>
                     <div class="bloque-list" th:data-json="${p.bloques}"></div>
-
-                    <div class="order-price">
-                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
-                    </div>
-
-                    <!-- BOTÓN PAGAR -->
-                    <a class="btn-pay"
-                        th:href="@{'http://localhost:8083/pagos/checkout?pedidoId=' + ${p.pedidoID} + '&costo=' + ${p.costoTotal}}">
-                        Pagar
-                    </a>
+                    <div class="order-price">S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span></div>
+                    <a class="btn-pay" th:href="@{'http://localhost:8083/pagos/checkout?pedidoId=' + ${p.pedidoID} + '&costo=' + ${p.costoTotal}}">Pagar</a>
                 </div>
             </div>
         </div>
 
-        <!-- ---------------------- ACTIVOS ---------------------- -->
+        <!-- ACTIVOS -->
         <div id="activos" class="pedido-seccion">
             <div class="order-grid">
-
                 <div th:each="p : ${activos}" class="order-card">
-
                     <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
-
                     <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
-
-                    <div class="order-meta"><strong>Días/Horas:</strong>
-                        <span th:text="${p.diasServicio}"></span>d /
-                        <span th:text="${p.horasServicio}"></span>h
-                    </div>
-
-                    <!-- BLOQUES -->
+                    <div class="order-meta"><strong>Días/Horas:</strong> <span th:text="${p.diasServicio}"></span>d / <span th:text="${p.horasServicio}"></span>h</div>
                     <div class="order-meta"><strong>Bloques:</strong></div>
                     <div class="bloque-list" th:data-json="${p.bloques}"></div>
-
-                    <div class="order-price">
-                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
-                    </div>
-
+                    <div class="order-price">S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span></div>
                 </div>
-
             </div>
         </div>
 
     </div>
 
-    <!-- ================= SCRIPT ================= -->
     <script>
         function openTab(sectionId, btn) {
             document.querySelectorAll('.pedido-seccion').forEach(s => s.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
-
             document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
         }
 
-        /* ======== Procesar JSON de bloques ======== */
         document.querySelectorAll('.bloque-list').forEach(el => {
             let raw = el.dataset.json;
             if (!raw) return;
-
             let bloques;
             try { bloques = JSON.parse(raw); }
             catch { el.innerHTML = "<div>Error de formato de bloques</div>"; return; }
@@ -266,15 +214,11 @@
             el.innerHTML = bloques.map(b => {
                 const d = new Date(b.dia);
                 const dia = d.toLocaleDateString('es-ES', { day: "2-digit", month: "short", year: "numeric" });
-
                 const inicio = new Date(b.inicio).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
                 const fin = new Date(b.fin).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
-
                 return `<div class="bloque-item">${dia} — ${inicio} a ${fin}</div>`;
             }).join('');
         });
     </script>
-
 </body>
-
 </html>

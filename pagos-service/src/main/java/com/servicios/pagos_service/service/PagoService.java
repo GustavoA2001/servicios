@@ -1,12 +1,16 @@
 package com.servicios.pagos_service.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.servicios.pagos_service.client.PedidoClient;
 import com.servicios.pagos_service.dao.PagoDAO;
+import com.servicios.pagos_service.model.InformePagoDTO;
+import com.servicios.pagos_service.model.Pago;
 
 @Service
 public class PagoService {
@@ -38,15 +42,13 @@ public class PagoService {
                 costo,
                 "USD",
                 "CREADO",
-                orden.get("id")
-        );
+                orden.get("id"));
 
         pagoDAO.insertarTransaccion(
                 orden.get("id"),
                 "CREACION",
                 "CREADO",
-                orden.toString()
-        );
+                orden.toString());
 
         return orden;
     }
@@ -72,19 +74,16 @@ public class PagoService {
                         orderId,
                         "COMPLETADO",
                         (String) capture.get("captureId"),
-                        detallesJson
-                );
+                        detallesJson);
 
                 String transaccionJson = mapper.writeValueAsString(
-                        Map.of("paypal_status", capture.get("status"))
-                );
+                        Map.of("paypal_status", capture.get("status")));
 
                 pagoDAO.insertarTransaccion(
                         orderId,
                         "CAPTURA",
                         "COMPLETADO",
-                        transaccionJson
-                );
+                        transaccionJson);
 
                 // ACTIVAR PEDIDO EN BACKEND
                 System.out.println("[SERVICE] Activando pedido ID=" + pedidoId);
@@ -97,15 +96,13 @@ public class PagoService {
                 pagoDAO.actualizarPago(orderId, "FALLIDO", null, detallesJson);
 
                 String transaccionJson = mapper.writeValueAsString(
-                        Map.of("paypal_status", capture.get("status"))
-                );
+                        Map.of("paypal_status", capture.get("status")));
 
                 pagoDAO.insertarTransaccion(
                         orderId,
                         "CAPTURA",
                         "FALLIDO",
-                        transaccionJson
-                );
+                        transaccionJson);
 
                 return false;
             }
@@ -114,4 +111,25 @@ public class PagoService {
             throw new RuntimeException("Error serializando detalles captura", e);
         }
     }
+
+    // =========
+    // Para el cliente (CRUD básico)
+    // =========
+    public List<Pago> findAll() {
+        return pagoDAO.findAll();
+    }
+    public List<Pago> findByPedidoId(Integer pedidoId) {
+        return pagoDAO.findByPedidoId(pedidoId);
+    }
+    public Optional<Pago> findById(Long pagoId) {
+        return pagoDAO.findById(pagoId);
+    }
+
+    // =========
+    // Para informes (JOIN con cliente, servicio, empleado)
+    // =========
+    public List<InformePagoDTO> findAllInformes() {
+        return pagoDAO.findAllInformes();
+    }
+
 }

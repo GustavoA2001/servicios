@@ -71,17 +71,7 @@ public class PagoController {
 
         return ResponseEntity.ok(orden);
     }
-    
-    // =================== CAPTURAR ORDEN ===================
-    /*
-    @PostMapping("/paypal/capture")
-    public ResponseEntity<?> capturar(@RequestParam String orderId,
-                                      @RequestParam Integer pedidoId) {
-        boolean ok = pagoService.capturarOrden(orderId, pedidoId);
-        return ok ? ResponseEntity.ok(Map.of("status", "COMPLETADO"))
-                  : ResponseEntity.status(400).body(Map.of("status", "FALLIDO"));
-    }
-    */
+
     @PostMapping("/paypal/capture")
     public ResponseEntity<?> capturar(@RequestParam String orderId,
                                       @RequestParam Integer pedidoId) {
@@ -111,7 +101,6 @@ public class PagoController {
         System.out.println(">>> MOSTRANDO VISTA: cancelado.html");
         return "cancelado";
     }
-    
-
-    
+   
 }
+

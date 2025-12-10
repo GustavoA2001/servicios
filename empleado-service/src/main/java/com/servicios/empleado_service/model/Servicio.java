@@ -24,6 +24,9 @@ public class Servicio {
     @Column(name = "CategoriaServicioID")
     private Integer categoriaServicioID;
 
+    @Column(name = "FotoServicio")
+    private String fotoServicio; // Nuevo campo
+
     public Integer getServicioID() { return servicioID; }
     public void setServicioID(Integer servicioID) { this.servicioID = servicioID; }
 
@@ -38,4 +41,7 @@ public class Servicio {
 
     public Integer getCategoriaServicioID() { return categoriaServicioID; }
     public void setCategoriaServicioID(Integer categoriaServicioID) { this.categoriaServicioID = categoriaServicioID; }
+
+    public String getFotoServicio() { return fotoServicio; }
+    public void setFotoServicio(String fotoServicio) { this.fotoServicio = fotoServicio; }
 }

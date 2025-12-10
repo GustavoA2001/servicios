@@ -25,7 +25,9 @@
         <div class="grid">
             <div th:each="servicio : ${servicios}" class="card">
                 <div class="img">
-                    <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
+                    <!--img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" /-->
+                    <img th:src="${servicio.imagen}" th:alt="${servicio.titulo}" />
+
                 </div>
                 <div>
                     <span class="pill" th:text="${servicio.categoria}"></span>
@@ -41,7 +43,7 @@
                         <div class="price">S/ <span th:text="${servicio.precioEstimado}"></span></div>
                         <div style="margin-top:8px">
                             <a th:href="@{'/servicios/' + ${servicio.id}}" class="btn-primary">Ver más</a>
-                            <a href="#" class="btn-outline" style="margin-left:8px">Solicitar</a>
+                            <a th:href="@{'/pedidos/nuevo/' + ${servicio.id}}" class="btn-outline" style="margin-left:8px">Solicitar</a>
                         </div>
                     </div>
                 </div>

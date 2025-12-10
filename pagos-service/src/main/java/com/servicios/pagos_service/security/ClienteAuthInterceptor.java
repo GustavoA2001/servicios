@@ -19,7 +19,6 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
         this.jwtUtil = jwtUtil;
     }
 
-    @SuppressWarnings("null")
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
@@ -49,16 +48,28 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
             Claims claims = jwtUtil.validateToken(token);
             String rol = claims.get("rol", String.class);
 
-            if (!"Cliente".equals(rol)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Solo clientes");
-                return false;
+            // --- MICROSERVICIOS INTERNOS ---
+            if ("SYSTEM".equalsIgnoreCase(rol)) {
+                System.out.println("Pago-Service: acceso SISTEMA");
+                return true;
             }
 
-            Integer clienteId = claims.get("usuarioId", Integer.class);
-            request.setAttribute("clienteId", clienteId);
-            System.out.println("Pago-Service: acceso Cliente con clienteId=" + clienteId);
+            // --- CLIENTE ---
+            if ("Cliente".equalsIgnoreCase(rol)) {
+                Integer clienteId = claims.get("usuarioId", Integer.class);
+                request.setAttribute("clienteId", clienteId);
+                System.out.println("Pago-Service: acceso Cliente con clienteId=" + clienteId);
+                return true;
+            }
 
-            return true;
+            // --- ADMIN ---
+            if ("Admin".equalsIgnoreCase(rol)) {
+                System.out.println("Pago-Service: acceso Admin");
+                return true;
+            }
+
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Rol no permitido");
+            return false;
 
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");

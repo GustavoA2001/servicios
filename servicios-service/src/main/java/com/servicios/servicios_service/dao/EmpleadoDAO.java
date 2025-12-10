@@ -30,25 +30,30 @@ public class EmpleadoDAO {
             WHERE ee.ServicioID = ? AND e.RolID = 2
             """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Empleado e = new Empleado();
-            int empleadoId = rs.getInt("EmpleadoID");
-            e.setId(rs.getLong("EmpleadoID"));
-            e.setNombre(rs.getString("Nomb_Empleado"));
-            e.setApellido(rs.getString("Apel_Empleado"));
-            e.setEmail(rs.getString("Email_Empleado"));
-            e.setTelefono(rs.getString("telefono"));
-            e.setEstado(rs.getString("EstadoEmpleado"));
-            e.setFotito(rs.getString("FotoEmpleado"));
-            e.setRolID(rs.getInt("RolID"));
-
-            // obtener ruta desde imagenes-service
-            e.setFotito(imagenesClient.obtenerRutaImagen("trabajadores", e.getFotito()));
-
-            // cargar especialidades
-            e.setEspecialidades(especialidadDAO.listarPorEmpleadoYServicio(empleadoId, servicioId));
-            return e;
-        }, servicioId);
+            return jdbcTemplate.query(sql, (rs, rowNum) -> {
+                Empleado e = new Empleado();
+                int empleadoId = rs.getInt("EmpleadoID");
+                e.setId(rs.getLong("EmpleadoID"));
+                e.setNombre(rs.getString("Nomb_Empleado"));
+                e.setApellido(rs.getString("Apel_Empleado"));
+                e.setEmail(rs.getString("Email_Empleado"));
+                e.setTelefono(rs.getString("telefono"));
+                e.setEstado(rs.getString("EstadoEmpleado"));
+                e.setFotito(rs.getString("FotoEmpleado"));
+                e.setRolID(rs.getInt("RolID"));
+            
+                // obtener ruta desde imagenes-service con fallback a default
+                String nombreFoto = e.getFotito();
+                if (nombreFoto == null || nombreFoto.isBlank()) {
+                    nombreFoto = "default.jpg";
+                }
+                e.setFotito(imagenesClient.obtenerRutaImagen("trabajadores", nombreFoto));
+            
+                // cargar especialidades
+                e.setEspecialidades(especialidadDAO.listarPorEmpleadoYServicio(empleadoId, servicioId));
+                return e;
+            }, servicioId);
+            
     }
 }
 

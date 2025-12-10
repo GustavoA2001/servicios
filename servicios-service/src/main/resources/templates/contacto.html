@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Contacto | Servicios Técnicos</title>
 
-    <!-- Importar los estilos del menú -->
     <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
 
     <style>
-        /* Aquí solo incluirías los estilos específicos de la página de contacto, como el formulario y otros elementos */
+        :root {
+            --bg: #f7f8fb;
+            --card: #ffffff;
+            --primary: #5A2D9C;
+            --primary-2: #7B4FDB;
+            --secondary: #2A5D8B;
+            --accent: #0ea5e9;
+            --muted: #6b7280;
+            --text: #0f172a;
+        }
+
         body {
-            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-            background: linear-gradient(180deg, #081021 0%, #071029 40%, #021025 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
             color: var(--text);
             margin: 0;
             padding: 0;
@@ -23,7 +31,6 @@
             max-width: 1100px;
             margin: 120px auto 0;
             padding: 0 20px;
-            height: 100vh;
         }
 
         .contact-info {
@@ -35,16 +42,15 @@
 
         .info-item {
             background-color: var(--card);
-            border: 1px solid #ddd;
             border-radius: 12px;
             padding: 20px;
             flex: 1;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(15,23,42,0.1);
         }
 
         .info-item h2 {
             font-size: 1.5rem;
-            color: var(--text);
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
@@ -57,12 +63,12 @@
             background-color: var(--card);
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(15,23,42,0.1);
         }
 
         .form-container h2 {
             font-size: 1.8rem;
-            color: var(--text);
+            color: var(--primary);
             margin-bottom: 20px;
         }
 
@@ -81,17 +87,16 @@
         form textarea {
             padding: 10px;
             font-size: 1rem;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid rgba(15,23,42,0.1);
             border-radius: 8px;
             margin-bottom: 20px;
             width: 100%;
             box-sizing: border-box;
+            background-color: #fefefe;
+            color: var(--text);
         }
 
-        form textarea {
-            resize: vertical;
-            height: 150px;
-        }
+        form textarea { resize: vertical; height: 150px; }
 
         .btn-submit {
             background: linear-gradient(90deg, var(--primary), var(--primary-2));
@@ -110,26 +115,23 @@
 
         footer {
             background-color: var(--card);
-            color: var(--text);
+            color: var(--muted);
             text-align: center;
             padding: 15px 0;
-            width: 100%;
-            bottom: 0;
+            border-top: 1px solid rgba(15,23,42,0.1);
         }
 
-        /* Responsive Design */
         @media (max-width: 1000px) {
-            .contact-info {
-                flex-direction: column;
-            }
+            .contact-info { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <header th:replace="components/menu_cliente"></header>
 
-
     <div class="container">
+        <div th:replace="components/figuras"></div>
+
         <!-- Contact Information -->
         <section class="contact-info">
             <div class="info-item">
@@ -167,7 +169,6 @@
                 <button type="submit" class="btn-submit">Enviar Mensaje</button>
             </form>
         </section>
-
     </div>
 
     <footer>
@@ -176,18 +177,3 @@
 
 </body>
 </html>
-
-<script>
-    const dropdown = document.getElementById("userDropdown");
-    const btn = document.getElementById("userDropdownBtn");
-
-    btn.addEventListener("click", () => {
-        dropdown.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove("open");
-        }
-    });
-</script>

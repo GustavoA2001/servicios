@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Informes de Pagos | ADM</title>
+    <link rel="stylesheet" href="/css/styleAdmin.css">
+
+    <style>
+        .informes_contenedor {
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(180, 160, 255, 0.2);
+            padding: 25px;
+            box-sizing: border-box;
+            animation: fadeIn 0.4s ease-in;
+        }
+        .informes_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        .informes_header h3 {
+            font-size: 22px;
+            color: #4a3c8a;
+            font-weight: 700;
+        }
+        .informes_tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .informes_tabla thead {
+            background-color: #f3efff;
+        }
+        .informes_tabla th {
+            padding: 12px;
+            text-align: left;
+            color: #4a3c8a;
+            font-weight: 600;
+            border-bottom: 2px solid #e2dbff;
+        }
+        .informes_tabla td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            vertical-align: top;
+        }
+        .informes_tabla tr:hover {
+            background-color: #f9f7ff;
+        }
+        .informes_tabla_contenedor {
+            max-height: 700px;
+            overflow-y: auto;
+            border: 1px solid #e2dbff;
+            border-radius: 8px;
+        }
+        .informes_tabla thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f3efff;
+            z-index: 2;
+        }
+        .cliente_link, .empleado_link {
+            color: #4a3c8a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .cliente_link:hover, .empleado_link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="~{components/menu_admin(activeMenu=${activeMenu}, usuarioEmail=${usuarioEmail}, usuarioRol=${usuarioRol})}">
+</header>
+
+<div class="informes_contenedor space-grotesk">
+    <div class="informes_header">
+        <h3>Informe de Pagos a Servicios</h3>
+    </div>
+
+    <div class="informes_tabla_contenedor">
+        <table class="informes_tabla">
+            <thead>
+                <tr>
+                    <th>ID Pago</th>
+                    <th>Pedido ID</th>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Empleado</th>
+                    <th>Método</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="informe : ${informes}">
+                    <td th:text="${informe.pagoId}"></td>
+                    <td th:text="${informe.pedidoId}"></td>
+                    <td>
+                        <a th:href="@{'/usuarios/usuario/Cliente/' + ${informe.clienteId}}" 
+                           class="cliente_link"
+                           th:text="${informe.nombreCliente}">
+                        </a>
+                    </td>
+                    <td th:text="${informe.servicioContratado}"></td>
+                    <td>
+                        <a th:href="@{'/usuarios/usuario/Trabajador/' + ${informe.empleadoId}}" 
+                           class="empleado_link"
+                           th:text="${informe.nombreEmpleado}">
+                        </a>
+                    </td>
+                    <td th:text="${informe.metodoPago}"></td>
+                    <td th:text="${informe.monto}"></td>
+                    <td th:text="${informe.estadoPago}"></td>
+                    <td th:text="${#temporals.format(informe.fechaPago, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

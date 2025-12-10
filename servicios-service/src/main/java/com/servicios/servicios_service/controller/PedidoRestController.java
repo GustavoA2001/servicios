@@ -30,8 +30,6 @@ public class PedidoRestController {
         return ResponseEntity.ok(pedidos);
     }
     
-    
-
     // Confirmar un pedido
     @PutMapping("/{id}/confirmar")
     public ResponseEntity<Void> confirmarPedido(@PathVariable Integer id) {

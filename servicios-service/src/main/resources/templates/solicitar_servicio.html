@@ -10,14 +10,14 @@
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            background: #1e1e2f;
-            color: #fff;
+            background: #f7f8fb;
+            color: #333;
         }
 
         h1 {
             text-align: center;
             padding: 20px;
-            color: #edc73e;
+            color: #464646;
         }
 
         .pedido-container {
@@ -32,12 +32,17 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
         }
 
         .col h2,
         .col h3 {
             margin-top: 0;
             color: #edc73e;
+        }
+
+        .col p {
+            margin: 5px 0;
         }
 
         .direccion-form,
@@ -60,6 +65,22 @@
             border-radius: 6px;
             border: 1px solid #444;
             background: #1e1e2f;
+            color: #fff;
+            font-size: 14px;
+            appearance: none; /* quitar estilo nativo */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Estilo del select desplegado */
+        select:focus {
+            border-color: #edc73e;
+            outline: none;
+            box-shadow: 0 0 5px #edc73e;
+        }
+
+        select option {
+            background: #2a2a40;
             color: #fff;
         }
 
@@ -106,6 +127,20 @@
             border-radius: 5px;
             margin: 10px 0;
         }
+
+        /* Texto aclaratorio de precio */
+        .precio-aclaracion {
+            font-size: 13px;
+            color: #ccc;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        .descripcion-servicio {
+            margin: 10px 0 15px;
+            font-size: 14px;
+            color: #eee;
+        }
     </style>
 </head>
 
@@ -121,20 +156,18 @@
         <div class="col servicio-info">
             <img th:src="${servicio.imagen}" th:alt="${servicio.titulo}" />
             <h2 th:text="${servicio.titulo}"></h2>
-
+            <p class="descripcion-servicio" th:text="${servicio.descripcionCompleta}"></p>
             <p><strong>Categoría:</strong> <span th:text="${servicio.categoria}"></span></p>
             <p><strong>Precio por hora:</strong> S/ <span th:text="${servicio.precioEstimado}"></span></p>
+            <p class="precio-aclaracion">*El precio mostrado es por hora y se multiplicará por las horas de servicio seleccionadas.</p>
             <p><strong>Contacto:</strong> <span th:text="${servicio.telefonoContacto}"></span></p>
         </div>
 
         <!-- COLUMNA 2: Direcciones -->
         <div class="col">
             <h3>Dirección de atención</h3>
-
             <div id="direccionContainer">
-                <!-- Formularios iniciales -->
                 <div id="formulariosDireccion">
-                    <!-- Selección -->
                     <form id="formSelect" th:action="@{/direccion/seleccionar}" method="post" class="direccion-form">
                         <input type="hidden" name="servicioId" th:value="${servicio.id}">
                         <label for="idDireccion">Seleccionar dirección existente:</label>
@@ -149,10 +182,8 @@
 
                     <div class="divider">O agrega una nueva</div>
 
-                    <!-- Nueva dirección -->
                     <form id="formAdd" th:action="@{/direccion/agregar}" method="post" class="direccion-form">
                         <input type="hidden" name="servicioId" th:value="${servicio.id}">
-
                         <label for="direccionCompleta">Dirección completa:</label>
                         <input type="text" id="direccionCompleta" name="direccionCompleta" required>
 
@@ -167,9 +198,7 @@
                             </option>
                         </select>
 
-                        <!-- Campo oculto para enviar también el nombre -->
                         <input type="hidden" id="distritoNombre" name="distritoNombre">
-
                         <button type="submit" class="btn-azul">Agregar dirección</button>
                     </form>
                 </div>
@@ -179,7 +208,6 @@
         <!-- COLUMNA 3: Pedido -->
         <div class="col pedido-section">
             <h3>Datos del pedido</h3>
-
             <form th:action="@{/pedidos/guardar}" method="post">
                 <input type="hidden" name="servicioId" th:value="${servicio.id}" />
 
@@ -205,8 +233,8 @@
         </div>
 
     </div>
+
 </body>
-<!-- SCRIPT DE HORAS + AJAX -->
 <script>
     (function cargarHoras() {
         const select = document.getElementById('horaServicio');
@@ -252,7 +280,6 @@
             document.getElementById('distritoNombre').value = nombre;
         }
 
-        // Seleccionar dirección existente
         formSelect.addEventListener('submit', async e => {
             e.preventDefault();
             const formData = new FormData(formSelect);
@@ -265,14 +292,9 @@
             }
         });
 
-        // Agregar nueva dirección
-        // Agregar nueva dirección
         formAdd.addEventListener('submit', async e => {
             e.preventDefault();
-
-            // Asegurar que el nombre del distrito se copie al hidden antes de enviar
             actualizarNombreDistrito();
-
             const formData = new FormData(formAdd);
             const response = await fetch(formAdd.action, { method: 'POST', body: formData });
             const data = await response.json();
@@ -289,8 +311,6 @@
                 formAdd.reset();
             }
         });
-
     });
-
-    
 </script>
+</html>
