@@ -91,7 +91,7 @@
         </button>
         <div style="display:flex; flex-direction:column; align-items:flex-start;">
           <div class="small" th:text="${empleadoNombre != null ? empleadoNombre : 'Usuario'}">Usuario</div>
-          <a th:href="@{/logout}" class="small" style="color:#999; text-decoration:none; margin-top:2px;">Cerrar sesión</a>
+          <a href="http://localhost:8081/auth/logout" class="small" style="color:#999; text-decoration:none; margin-top:2px;">Cerrar sesión</a>
         </div>
       </div>
     </nav>
