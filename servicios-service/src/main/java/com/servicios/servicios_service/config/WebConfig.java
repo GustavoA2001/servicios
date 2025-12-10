@@ -1,6 +1,5 @@
 package com.servicios.servicios_service.config;
 
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,6 +19,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(clienteAuthInterceptor)
-                .addPathPatterns("/**"); // protege todas las rutas
+                .excludePathPatterns(
+                        "/css/**",
+                        "/js/**",
+                        "/img/**",
+                        "/assets/**",
+                        "/favicon.ico",
+                        "/webjars/**",
+                        "/error",
+                        "/", // Si el home no requiere token
+                        "/public/**" // lo que sea que no requiera token
+                );
     }
+
 }

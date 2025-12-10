@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Mis Pedidos</title>
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
+
+    <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0f1930;
+            --primary: #5A2D9C;
+            --primary-2: #7B4FDB;
+            --secondary: #2A5D8B;
+            --accent: #4BC1E8;
+            --muted: #94A3B8;
+            --text: #E6EEF8;
+            --glass: rgba(255, 255, 255, 0.04);
+        }
+
+        body {
+            font-family: Inter, system-ui, Arial;
+            background: linear-gradient(180deg, #081021 0%, #071029 40%, #021025 100%);
+            margin: 0;
+            color: var(--text);
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 34px;
+            font-weight: 800;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Tabs */
+        .status-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 25px 0 35px;
+        }
+
+        .status-tab {
+            padding: 10px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-weight: 700;
+            transition: 0.25s;
+        }
+
+        .status-tab.active {
+            background: linear-gradient(90deg, var(--primary), var(--primary-2));
+            color: white;
+            border: none;
+        }
+
+        /* Cards */
+        .order-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .order-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .order-title {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .order-meta {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .order-price {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .bloque-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        /* Botón pagar */
+        .btn-pay {
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px 14px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-2));
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .pedido-seccion {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header th:replace="components/menu_cliente"></header>
+
+    <h1>Mis Pedidos</h1>
+
+    <div class="container">
+
+        <!-- TABS -->
+        <div class="status-tabs">
+            <div class="status-tab active" onclick="openTab('pendientes', this)">Solicitados</div>
+            <div class="status-tab" onclick="openTab('confirmados', this)">Confirmados</div>
+            <div class="status-tab" onclick="openTab('activos', this)">Activos</div>
+        </div>
+
+        <!-- ---------------------- PENDIENTES ---------------------- -->
+        <div id="pendientes" class="pedido-seccion" style="display:block;">
+            <div class="order-grid">
+
+                <div th:each="p : ${pendientes}" class="order-card">
+
+                    <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
+
+                    <div class="order-meta">
+                        <strong>Fecha pedido:</strong>
+                        <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span>
+                    </div>
+
+                    <div class="order-meta">
+                        <strong>Servicio:</strong> <span th:text="${p.servicioID}"></span>
+                    </div>
+
+                    <div class="order-meta"><strong>Duración:</strong>
+                        <span th:text="${p.diasServicio}"></span>d /
+                        <span th:text="${p.horasServicio}"></span>h
+                    </div>
+
+                    <!-- BLOQUES -->
+                    <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                    <div class="order-meta" th:if="${p.observaciones}">
+                        <strong>Observaciones:</strong> <span th:text="${p.observaciones}"></span>
+                    </div>
+
+                    <div class="order-price">
+                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ---------------------- CONFIRMADOS ---------------------- -->
+        <div id="confirmados" class="pedido-seccion">
+            <div class="order-grid">
+
+                <div th:each="p : ${confirmados}" class="order-card">
+
+                    <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
+
+                    <div class="order-meta">
+                        <strong>Fecha pedido:</strong>
+                        <span th:text="${#temporals.format(p.fechaPedido,'dd MMM yyyy - hh:mm a')}"></span>
+                    </div>
+
+                    <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+
+                    <div class="order-meta"><strong>Duración:</strong>
+                        <span th:text="${p.diasServicio}"></span>d /
+                        <span th:text="${p.horasServicio}"></span>h
+                    </div>
+
+                    <!-- BLOQUES -->
+                    <div class="order-meta"><strong>Bloques:</strong></div>
+                    <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                    <div class="order-price">
+                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
+                    </div>
+
+                    <!-- BOTÓN PAGAR -->
+                    <a class="btn-pay"
+                        th:href="@{'http://localhost:8083/pagos/checkout?pedidoId=' + ${p.pedidoID} + '&costo=' + ${p.costoTotal}}">
+                        Pagar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---------------------- ACTIVOS ---------------------- -->
+        <div id="activos" class="pedido-seccion">
+            <div class="order-grid">
+
+                <div th:each="p : ${activos}" class="order-card">
+
+                    <div class="order-title">Pedido #<span th:text="${p.pedidoID}"></span></div>
+
+                    <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+
+                    <div class="order-meta"><strong>Días/Horas:</strong>
+                        <span th:text="${p.diasServicio}"></span>d /
+                        <span th:text="${p.horasServicio}"></span>h
+                    </div>
+
+                    <!-- BLOQUES -->
+                    <div class="order-meta"><strong>Bloques:</strong></div>
+                    <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                    <div class="order-price">
+                        S/ <span th:text="${#numbers.formatDecimal(p.costoTotal,1,'COMMA',2,'POINT')}"></span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= SCRIPT ================= -->
+    <script>
+        function openTab(sectionId, btn) {
+            document.querySelectorAll('.pedido-seccion').forEach(s => s.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        /* ======== Procesar JSON de bloques ======== */
+        document.querySelectorAll('.bloque-list').forEach(el => {
+            let raw = el.dataset.json;
+            if (!raw) return;
+
+            let bloques;
+            try { bloques = JSON.parse(raw); }
+            catch { el.innerHTML = "<div>Error de formato de bloques</div>"; return; }
+
+            el.innerHTML = bloques.map(b => {
+                const d = new Date(b.dia);
+                const dia = d.toLocaleDateString('es-ES', { day: "2-digit", month: "short", year: "numeric" });
+
+                const inicio = new Date(b.inicio).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
+                const fin = new Date(b.fin).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
+
+                return `<div class="bloque-item">${dia} — ${inicio} a ${fin}</div>`;
+            }).join('');
+        });
+    </script>
+
+</body>
+
+</html>

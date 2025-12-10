@@ -9,6 +9,7 @@ import com.servicios.servicios_service.model.Servicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -83,5 +84,14 @@ public class ServicioService {
         servicio.setDisponible(true);
 
         return servicio;
+    }
+
+    public BigDecimal obtenerPrecio(int id) {
+        Servicio servicio = serviciosDAO.obtenerServicioPorId(id);
+        if (servicio != null && servicio.getPrecioEstimado() != null) {
+            return BigDecimal.valueOf(servicio.getPrecioEstimado());
+        }
+        // fallback si no existe
+        return BigDecimal.ZERO;
     }
 }

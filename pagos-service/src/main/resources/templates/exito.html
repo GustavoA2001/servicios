@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #fff;
+            padding: 40px 35px;
+            border-radius: 14px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+            text-align: center;
+            width: 420px;
+        }
+
+        .card img {
+            width: 90px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #444;
+            font-size: 16px;
+        }
+
+        .pedido {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .btn {
+            margin-top: 25px;
+            display: inline-block;
+            background: #5A2D9C;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #7B4FDB;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <img src="/img/check-success.png" alt="Éxito">
+
+        <h1>¡Pago Exitoso!</h1>
+        <p>Tu pago ha sido procesado correctamente.</p>
+
+        <p class="pedido">
+            Pedido #: <span th:text="${pedidoId}"></span>
+        </p>
+
+        <a class="btn" th:href="@{http://localhost:8085/servicios}">Volver a Servicios</a>
+    </div>
+
+</body>
+</html>

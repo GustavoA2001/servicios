@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>Formulario de Pedido</title>
+    <link rel="stylesheet" th:href="@{/css/styleAdmin.css}" />
+
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -24,7 +26,6 @@
             margin: 20px;
         }
 
-        /* Columnas estilo tarjeta */
         .col {
             flex: 1;
             background: #2a2a40;
@@ -39,7 +40,6 @@
             color: #edc73e;
         }
 
-        /* Formularios */
         .direccion-form,
         .pedido-section form {
             display: flex;
@@ -61,13 +61,6 @@
             border: 1px solid #444;
             background: #1e1e2f;
             color: #fff;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #edc73e;
         }
 
         button,
@@ -98,7 +91,6 @@
             min-height: 80px;
         }
 
-        /* Imagen servicio */
         .servicio-info img {
             border-radius: 8px;
             margin-bottom: 15px;
@@ -107,13 +99,19 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
-        .servicio-info p {
-            margin: 6px 0;
+        .mensaje {
+            background: #28a745;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
         }
     </style>
 </head>
 
 <body>
+
+    <header th:replace="components/menu_cliente"></header>
 
     <h1>Solicitar Servicio</h1>
 
@@ -121,7 +119,7 @@
 
         <!-- COLUMNA 1: Servicio -->
         <div class="col servicio-info">
-            <img th:src="@{${servicio.imagen}}" th:alt="${servicio.titulo}" />
+            <img th:src="${servicio.imagen}" th:alt="${servicio.titulo}" />
             <h2 th:text="${servicio.titulo}"></h2>
 
             <p><strong>Categoría:</strong> <span th:text="${servicio.categoria}"></span></p>
@@ -133,62 +131,71 @@
         <div class="col">
             <h3>Dirección de atención</h3>
 
-            <!-- Seleccionar dirección existente -->
-            <form th:action="@{/checkout/seleccionarDireccion}" method="post" class="direccion-form">
-                <input type="hidden" name="servicioId" th:value="${servicio.id}">
-                <label for="idDireccion">Seleccionar dirección existente:</label>
-                <select name="idDireccion" id="idDireccion" required>
-                    <option value="">-- Seleccionar --</option>
-                    <option th:each="dir : ${direcciones}" th:value="${dir.idDireccion}"
-                        th:text="${dir.direccion + ' (' + dir.distrito + ')'}"></option>
-                </select>
-                <button type="submit" class="btn-azul">Usar dirección</button>
-            </form>
+            <div id="direccionContainer">
+                <!-- Formularios iniciales -->
+                <div id="formulariosDireccion">
+                    <!-- Selección -->
+                    <form id="formSelect" th:action="@{/direccion/seleccionar}" method="post" class="direccion-form">
+                        <input type="hidden" name="servicioId" th:value="${servicio.id}">
+                        <label for="idDireccion">Seleccionar dirección existente:</label>
+                        <select name="idDireccion" id="idDireccion" required>
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="dir : ${direcciones}" th:value="${dir.direccionID}"
+                                th:text="${dir.direccion + ' (' + dir.distrito.nomb_Distrito + ')'}">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn-azul">Usar dirección</button>
+                    </form>
 
-            <div class="divider">O agrega una nueva</div>
+                    <div class="divider">O agrega una nueva</div>
 
-            <!-- Agregar nueva dirección -->
-            <form th:action="@{/checkout/agregarDireccion}" method="post" class="direccion-form">
-                <input type="hidden" name="servicioId" th:value="${servicio.id}">
-                <label for="direccionCompleta">Dirección completa:</label>
-                <input type="text" id="direccionCompleta" name="direccionCompleta" required>
+                    <!-- Nueva dirección -->
+                    <form id="formAdd" th:action="@{/direccion/agregar}" method="post" class="direccion-form">
+                        <input type="hidden" name="servicioId" th:value="${servicio.id}">
 
-                <label for="referencia">Referencia:</label>
-                <input type="text" id="referencia" name="referencia">
+                        <label for="direccionCompleta">Dirección completa:</label>
+                        <input type="text" id="direccionCompleta" name="direccionCompleta" required>
 
-                <label for="idDistrito">Distrito:</label>
-                <select id="idDistrito" name="idDistrito" required>
-                    <option value="">-- Seleccionar distrito --</option>
-                    <option th:each="dist : ${distritos}" th:value="${dist.idDistrito}" th:text="${dist.nomDistrito}">
-                    </option>
-                </select>
+                        <label for="referencia">Referencia:</label>
+                        <input type="text" id="referencia" name="referencia">
 
-                <button type="submit" class="btn-azul">Agregar dirección</button>
-            </form>
+                        <label for="idDistrito">Distrito:</label>
+                        <select id="idDistrito" name="idDistrito" required onchange="actualizarNombreDistrito()">
+                            <option value="">-- Seleccionar distrito --</option>
+                            <option th:each="dist : ${distritos}" th:value="${dist.distritoID}"
+                                th:text="${dist.nomb_Distrito}">
+                            </option>
+                        </select>
+
+                        <!-- Campo oculto para enviar también el nombre -->
+                        <input type="hidden" id="distritoNombre" name="distritoNombre">
+
+                        <button type="submit" class="btn-azul">Agregar dirección</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- COLUMNA 3: Pedido -->
-        <!-- COLUMNA 3: Pedido -->
         <div class="col pedido-section">
             <h3>Datos del pedido</h3>
+
             <form th:action="@{/pedidos/guardar}" method="post">
                 <input type="hidden" name="servicioId" th:value="${servicio.id}" />
 
-                <!-- Fecha -->
                 <label for="fechaServicio">Día de inicio:</label>
                 <input type="date" id="fechaServicio" name="fechaServicio" required />
 
-                <!-- Hora -->
                 <label for="horaServicio">Hora de inicio:</label>
                 <select id="horaServicio" name="horaServicio" required>
                     <option value="">-- Seleccionar hora --</option>
                 </select>
 
-                <label>Horas de servicio:</label>
-                <input type="number" name="horasServicio" min="1" required />
-
                 <label>Días de atención:</label>
                 <input type="number" name="diasServicio" min="1" required />
+
+                <label>Horas de servicio:</label>
+                <input type="number" name="horasServicio" min="1" required />
 
                 <label>Observaciones:</label>
                 <textarea name="observaciones"></textarea>
@@ -197,29 +204,93 @@
             </form>
         </div>
 
-
     </div>
-
 </body>
-
-</html>
-
-</select>
-
+<!-- SCRIPT DE HORAS + AJAX -->
 <script>
-(function cargarHoras() {
-  const select = document.getElementById('horaServicio');
-  const inicio = 8;   // 08:00
-  const fin = 21;     // 22:00
+    (function cargarHoras() {
+        const select = document.getElementById('horaServicio');
+        const inicio = 8;
+        const fin = 21;
 
-  for (let h = inicio; h <= fin; h++) {
-    ['00','30'].forEach(m => {
-      const label = `${String(h).padStart(2,'0')}:${m}`;
-      const opt = document.createElement('option');
-      opt.value = label;
-      opt.textContent = label;
-      select.appendChild(opt);
+        for (let h = inicio; h <= fin; h++) {
+            ['00', '30'].forEach(m => {
+                const label = `${String(h).padStart(2, '0')}:${m}`;
+                const opt = document.createElement('option');
+                opt.value = label;
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const formSelect = document.getElementById('formSelect');
+        const formAdd = document.getElementById('formAdd');
+        const contenedor = document.getElementById('direccionContainer');
+        const formularios = document.getElementById('formulariosDireccion');
+
+        function mostrarDireccion(texto, mensaje) {
+            formularios.style.display = 'none';
+            contenedor.innerHTML = `
+                    <div class="mensaje">
+                        <span>${mensaje}</span>
+                        <p><strong>${texto}</strong></p>
+                        <button class="btn-azul" id="cambiarDireccion">Cambiar dirección</button>
+                    </div>
+                `;
+            document.getElementById('cambiarDireccion').addEventListener('click', () => {
+                contenedor.innerHTML = '';
+                contenedor.appendChild(formularios);
+                formularios.style.display = 'block';
+            });
+        }
+
+        function actualizarNombreDistrito() {
+            const select = document.getElementById('idDistrito');
+            const nombre = select.options[select.selectedIndex].text;
+            document.getElementById('distritoNombre').value = nombre;
+        }
+
+        // Seleccionar dirección existente
+        formSelect.addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(formSelect);
+            const response = await fetch(formSelect.action, { method: 'POST', body: formData });
+            const data = await response.json();
+            if (data.success) {
+                const select = document.getElementById('idDireccion');
+                const textoSeleccionado = select.options[select.selectedIndex].text;
+                mostrarDireccion(textoSeleccionado, "Dirección seleccionada correctamente");
+            }
+        });
+
+        // Agregar nueva dirección
+        // Agregar nueva dirección
+        formAdd.addEventListener('submit', async e => {
+            e.preventDefault();
+
+            // Asegurar que el nombre del distrito se copie al hidden antes de enviar
+            actualizarNombreDistrito();
+
+            const formData = new FormData(formAdd);
+            const response = await fetch(formAdd.action, { method: 'POST', body: formData });
+            const data = await response.json();
+            if (data.success) {
+                const texto = `${data.direccion.direccion} (${data.direccion.distritoNombre})`;
+                mostrarDireccion(texto, "Dirección registrada correctamente");
+
+                const select = document.getElementById('idDireccion');
+                const opt = document.createElement('option');
+                opt.value = data.direccion.direccionID;
+                opt.textContent = texto;
+                select.appendChild(opt);
+
+                formAdd.reset();
+            }
+        });
+
     });
-  }
-})();
+
+    
 </script>

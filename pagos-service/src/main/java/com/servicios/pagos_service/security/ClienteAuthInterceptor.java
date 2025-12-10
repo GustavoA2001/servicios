@@ -1,12 +1,14 @@
-package com.servicios.servicios_service.security;
+package com.servicios.pagos_service.security;
 
-import io.jsonwebtoken.Claims;
+import org.springframework.stereotype.Component;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import io.jsonwebtoken.Claims;
 
 @Component
 public class ClienteAuthInterceptor implements HandlerInterceptor {
@@ -17,20 +19,18 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
         this.jwtUtil = jwtUtil;
     }
 
+    @SuppressWarnings("null")
     @Override
     public boolean preHandle(HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler) throws Exception {
+                             HttpServletResponse response,
+                             Object handler) throws Exception {
 
         String token = null;
-
-        // --- 1. Header ---
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
         }
 
-        // --- 2. Cookie ---
         if (token == null && request.getCookies() != null) {
             for (Cookie c : request.getCookies()) {
                 if ("jwt".equals(c.getName())) {
@@ -41,7 +41,6 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
         }
 
         if (token == null) {
-            System.out.println("Interceptor: Token faltante");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token faltante");
             return false;
         }
@@ -50,32 +49,18 @@ public class ClienteAuthInterceptor implements HandlerInterceptor {
             Claims claims = jwtUtil.validateToken(token);
             String rol = claims.get("rol", String.class);
 
-            // --- MICROSERVICIOS INTERNOS ---
-            if ("SYSTEM".equals(rol)) {
-                System.out.println("Interceptor: acceso SISTEMA");
-                return true;
+            if (!"Cliente".equals(rol)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Solo clientes");
+                return false;
             }
 
-            // --- CLIENTE ---
-            if ("Cliente".equals(rol)) {
-                Integer clienteId = claims.get("usuarioId", Integer.class);
-                request.setAttribute("clienteId", clienteId);
-                System.out.println("Interceptor: acceso Cliente con clienteId=" + clienteId);
-                return true;
-            }
+            Integer clienteId = claims.get("usuarioId", Integer.class);
+            request.setAttribute("clienteId", clienteId);
+            System.out.println("Pago-Service: acceso Cliente con clienteId=" + clienteId);
 
-            // --- ADMIN ---
-            if ("Admin".equals(rol)) {
-                System.out.println("Interceptor: acceso Admin");
-                return true;
-            }
-
-            System.out.println("Interceptor: acceso denegado, rol=" + rol);
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado");
-            return false;
+            return true;
 
         } catch (Exception e) {
-            System.out.println("Interceptor: error validando token -> " + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
             return false;
         }

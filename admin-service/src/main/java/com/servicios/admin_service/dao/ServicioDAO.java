@@ -73,7 +73,7 @@ public class ServicioDAO {
             p.setFechaPedido(rs.getObject("FechaPedido", java.time.LocalDateTime.class));
             p.setEstadoPedido(rs.getString("EstadoPedido"));
             p.setDuracionPedido(rs.getInt("DuracionPedido"));
-            p.setCostoTotal(rs.getDouble("CostoTotal"));
+            p.setCostoTotal(rs.getBigDecimal("CostoTotal"));
 
             // Cliente
             p.getCliente().setId(rs.getLong("ClienteID"));

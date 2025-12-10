@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos | ADM</title>
+
+    <link rel="stylesheet" href="/css/styleAdmin.css">
+
+    <style>
+        .headers {
+            height: 55px;
+        }
+
+        .catalogos_container {
+            display: flex;
+            height: calc(100vh - 55px);
+            overflow: hidden;
+        }
+
+        section.section_catalogos {
+            flex: 1;
+            background-color: var(--color-white-tres);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* --------- TABS --------- */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0 25px;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--color-white-uno);
+            border: 1px solid #ccc;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .tab-btn.active {
+            background: var(--color-morado-suave);
+            color: white;
+            border: none;
+        }
+
+        /* --------- TARJETAS --------- */
+        .order-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0px;
+        }
+
+        .order-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 400px;
+        }
+
+        .order-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--color-morado-suave);
+        }
+
+        .order-meta {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .order-price {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--color-morado-suave);
+        }
+
+        .bloque-item {
+            background: #f1f1f1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .btn-admin {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: var(--color-morado-suave);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header th:replace="~{components/menu_admin}" class="headers"></header>
+
+    <div class="catalogos_container">
+
+        <section class="section_catalogos">
+
+            <!-- Buscar cliente -->
+            <form th:action="@{/admin/pedidos/buscar}" method="get" style="margin-bottom:20px;">
+                <label for="clienteId">Cliente:</label>
+
+                <select id="clienteId" name="clienteId" required
+                    style="padding:6px 10px; border-radius:8px; border:1px solid #bbb;">
+                    <option value="" disabled th:selected="${clienteId == null}">Seleccione un cliente</option>
+                    <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' ' + c.apellido}"
+                        th:selected="${clienteId != null and c.id == clienteId}">
+                    </option>
+                </select>
+
+                <button type="submit" class="btn-admin" style="width:auto;">Buscar</button>
+            </form>
+
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" data-target="solicitados">Solicitados</button>
+                <button class="tab-btn" data-target="confirmados">Confirmados</button>
+                <button class="tab-btn" data-target="activos">Activos</button>
+            </div>
+
+
+            <!-- ====================== SOLICITADOS ====================== -->
+            <div id="solicitados" class="pedido-section" style="display:block;">
+                <div th:if="${#lists.isEmpty(pendientes)}">No hay pedidos solicitados.</div>
+
+                <div class="order-grid">
+                    <div th:each="p : ${pendientes}" class="order-card">
+
+                        <div class="order-title">
+                            Pedido #<span th:text="${p.pedidoID}"></span>
+                        </div>
+
+                        <div class="order-meta"><strong>Cliente:</strong> <span th:text="${p.clienteID}"></span></div>
+                        <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+                        <div class="order-meta"><strong>Fecha:</strong> <span
+                                th:text="${#temporals.format(p.fechaPedido, 'dd MMM yyyy HH:mm')}"></span>
+                        </div>
+
+                        <!-- Bloques -->
+                        <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                        <div class="order-price">S/
+                            <span th:text="${#numbers.formatDecimal(p.costoTotal, 1, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+
+                            <!-- CONFIRMAR -->
+                            <form th:action="@{'/admin/pedidos/' + ${p.pedidoID} + '/confirmar'}" method="post"
+                                style="flex:1;">
+                                <input type="hidden" name="clienteId" th:value="${clienteId}" />
+                                <button class="btn-admin" type="submit" style="background:var(--color-morado-suave);">
+                                    Confirmar
+                                </button>
+                            </form>
+
+                            <!-- DENEGAR -->
+                            <form th:action="@{'/admin/pedidos/' + ${p.pedidoID} + '/denegar'}" method="post"
+                                style="flex:1;">
+                                <input type="hidden" name="clienteId" th:value="${clienteId}" />
+                                <button class="btn-admin" type="submit" style="background:#d9534f;">
+                                    Denegar
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ====================== CONFIRMADOS ====================== -->
+            <div id="confirmados" class="pedido-section" style="display:none;">
+                <div th:if="${#lists.isEmpty(confirmados)}">No hay pedidos confirmados.</div>
+
+                <div class="order-grid">
+                    <div th:each="p : ${confirmados}" class="order-card">
+
+                        <div class="order-title">
+                            Pedido #<span th:text="${p.pedidoID}"></span>
+                        </div>
+
+                        <div class="order-meta"><strong>Cliente:</strong> <span th:text="${p.clienteID}"></span></div>
+                        <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+                        <div class="order-meta"><strong>Fecha:</strong> <span
+                                th:text="${#temporals.format(p.fechaPedido, 'dd MMM yyyy HH:mm')}"></span>
+                        </div>
+                        <!-- Bloques -->
+                        <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                        <div class="order-price">S/
+                            <span th:text="${#numbers.formatDecimal(p.costoTotal, 1, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+
+                            <!-- DENEGAR -->
+                            <form th:action="@{'/admin/pedidos/' + ${p.pedidoID} + '/denegar'}" method="post"
+                                style="flex:1;">
+                                <input type="hidden" name="clienteId" th:value="${clienteId}" />
+                                <button class="btn-admin" type="submit" style="background:#d9534f;">
+                                    Denegar
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ====================== ACTIVOS ====================== -->
+            <div id="activos" class="pedido-section" style="display:none;">
+                <div th:if="${#lists.isEmpty(activos)}">No hay pedidos activos.</div>
+
+                <div class="order-grid">
+                    <div th:each="p : ${activos}" class="order-card">
+
+                        <div class="order-title">
+                            Pedido #<span th:text="${p.pedidoID}"></span>
+                        </div>
+
+                        <div class="order-meta"><strong>Cliente:</strong> <span th:text="${p.clienteID}"></span></div>
+                        <div class="order-meta"><strong>Servicio:</strong> <span th:text="${p.servicioID}"></span></div>
+                        <div class="order-meta"><strong>Fecha:</strong> <span
+                                th:text="${#temporals.format(p.fechaPedido, 'dd MMM yyyy HH:mm')}"></span>
+                        </div>
+                        <!-- Bloques -->
+                        <div class="bloque-list" th:data-json="${p.bloques}"></div>
+
+                        <div class="order-price">S/
+                            <span th:text="${#numbers.formatDecimal(p.costoTotal, 1, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div th:replace="components/admin_confirmacion"></div>
+
+</body>
+
+</html>
+<!-- ================= SCRIPT TABS + BLOQUES ================= -->
+<script>
+    /* ---- Tabs ---- */
+    const tabs = document.querySelectorAll(".tab-btn");
+    const sections = document.querySelectorAll(".pedido-section");
+
+    tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabs.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            sections.forEach(s => s.style.display = "none");
+            document.getElementById(btn.dataset.target).style.display = "block";
+        });
+    });
+
+
+    /* ======== Procesar JSON de bloques ======== */
+    document.querySelectorAll('.bloque-list').forEach(el => {
+        let raw = el.dataset.json;
+        if (!raw) return;
+
+        let bloques;
+        try { bloques = JSON.parse(raw); }
+        catch { el.innerHTML = "<div>Error de formato de bloques</div>"; return; }
+
+        el.innerHTML = bloques.map(b => {
+            const d = new Date(b.dia);
+            const dia = d.toLocaleDateString('es-ES', { day: "2-digit", month: "short", year: "numeric" });
+
+            const inicio = new Date(b.inicio).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
+            const fin = new Date(b.fin).toLocaleTimeString('es-ES', { hour: "2-digit", minute: "2-digit" });
+
+            return `<div class="bloque-item">${dia} — ${inicio} a ${fin}</div>`;
+        }).join('');
+    });
+</script>
+
+<script>
+    // Interceptar formularios de confirmar y denegar
+    document.querySelectorAll("form[action*='confirmar'], form[action*='denegar']")
+        .forEach(form => {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault(); // evitar envío inmediato
+
+                const esDenegar = form.action.includes("denegar");
+                const mensaje = esDenegar
+                    ? "¿Seguro que deseas DENEGAR este pedido?"
+                    : "¿Seguro que deseas CONFIRMAR este pedido?";
+
+                const ok = await mostrarModalConfirmacion(mensaje);
+
+                if (ok) form.submit();
+            });
+        });
+</script>
