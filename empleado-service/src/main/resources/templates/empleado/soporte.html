@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Soporte - Empleado</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{
+      --primary:#5e2ca5; --primary-2:#7a4bd8; --accent:#0480F4;
+      --muted:#f6f3ff; --card-bg:#ffffff; --text:#222; --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body { font-family: "Inter", Arial, sans-serif; background:#fbfbfe; color:var(--text); margin:0; padding:24px 12px; }
+    .header { background:var(--card-bg); box-shadow:0 2px 10px rgba(0,0,0,0.08); padding:16px 20px; margin:-24px -12px 24px; }
+    .header-content { max-width:1180px; margin:0 auto; display:flex; justify-content:flex-end; align-items:center; }
+    .header-nav { display:flex; gap:24px; align-items:center; margin-left:auto; }
+    .header-nav a { color:var(--text); text-decoration:none; font-weight:500; }
+    .header-nav a.active { color:var(--primary); font-weight:700; }
+    .header-label { margin-right:12px; font-weight:700; color:var(--primary); }
+    .header-profile { display:flex; align-items:center; gap:10px; margin-left:18px; }
+    .profile-icon { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; cursor:pointer; }
+    .container { max-width:1180px; margin:0 auto; padding:0 12px; }
+    .card { background:var(--card-bg); border-radius:12px; padding:18px; box-shadow:0 8px 20px rgba(16,24,64,0.04); }
+    label { display:block; margin-top:8px; font-size:14px; color:#444; }
+    input, textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #f0eff9; margin-top:6px; }
+    .btn-primary { background:linear-gradient(90deg,var(--primary),var(--primary-2)); color:#fff; border:0; padding:10px 16px; border-radius:8px; }
+    .modal-back { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.36); z-index:1200; }
+    .modal-profile { width:320px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.15); pointer-events:auto; background:#fff; padding:14px; }
+    .small { font-size:13px; color:#666; }
+    @media (max-width:700px) { .card { padding:12px; } .header-content{flex-direction:column;align-items:flex-start;} }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="header-content">
+    <div class="header-label">Panel Empleado</div>
+    <nav class="header-nav">
+      <a th:href="@{/empleado/servicios}" th:classappend="${currentUri == '/empleado/servicios'} ? ' active' : ''">Servicios</a>
+      <a th:href="@{/empleado/pedidos}" th:classappend="${currentUri == '/empleado/pedidos'} ? ' active' : ''">Pedido</a>
+      <a th:href="@{/empleado/soporte}" th:classappend="${currentUri == '/empleado/soporte'} ? ' active' : ''">Soporte</a>
+
+      <div class="header-profile">
+        <button id="profileBtn" class="profile-icon" type="button" onclick="openProfileModal()" th:title="${empleadoNombre}">
+          <span th:text="${empleadoNombre != null ? empleadoNombre.substring(0,1) : 'U'}">U</span>
+        </button>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;margin-left:8px;">
+          <div class="small" th:text="${empleadoNombre != null ? empleadoNombre : 'Usuario'}">Usuario</div>
+          <a th:href="@{/logout}" class="small" style="color:#999; text-decoration:none; margin-top:2px;">Cerrar sesión</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="card">
+    <h2>Contactar Soporte</h2>
+    <p class="muted">Envía un ticket o mensaje al equipo de soporte. Responderemos a tu email.</p>
+
+    <form th:action="@{/soporte/enviar}" method="post">
+      <label for="nombre">Nombre y Apellido</label>
+      <input id="nombre" name="nombre" th:value="${empleadoNombre != null ? empleadoNombre : ''}" />
+
+      <label for="asunto">Asunto</label>
+      <input id="asunto" name="asunto" required />
+
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="6" required></textarea>
+
+      <label for="contacto">Tu email de contacto</label>
+      <input id="contacto" name="contacto" th:value="${empleadoEmail != null ? empleadoEmail : ''}" />
+
+      <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button type="submit" class="btn-primary">Enviar a soporte</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+
+<div id="profileModalBack" class="modal-back" aria-hidden="true" role="dialog">
+  <div class="modal-profile" role="document" aria-labelledby="profileTitle">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 id="profileTitle">Mi Perfil</h3>
+      <button class="close-btn" type="button" onclick="closeProfileModal()">✕</button>
+    </div>
+    <form id="profileForm" onsubmit="event.preventDefault(); saveProfile();">
+      <input type="hidden" id="empleadoId" name="empleadoId" />
+      <label>Nombre</label>
+      <input id="inputNombre" type="text" name="nombre" placeholder="Nombre" />
+      <label style="margin-top:8px;">Apellido</label>
+      <input id="inputApellido" type="text" name="apellido" placeholder="Apellido" />
+      <label style="margin-top:8px;">Email</label>
+      <input id="inputEmail" type="email" name="email" placeholder="correo@ejemplo.com" />
+      <label style="margin-top:8px;">Teléfono</label>
+      <input id="inputTelefono" type="text" name="telefono" placeholder="+51 9xx xxx xxx" />
+      <label style="margin-top:8px;">Ubicación</label>
+      <input id="inputUbicacion" type="text" name="ubicacion" placeholder="Ubicación" />
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+        <button type="button" class="btn" onclick="closeProfileModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script th:inline="javascript">
+
+  var EMPLEADO_ID = /*[[${empleadoId != null ? empleadoId : 0}]]*/ 0;
+
+</script>
+
+<script>
+  function openProfileModal(){
+    fetch('/api/empleado/me').then(r => { if(!r.ok) throw new Error('No auth'); return r.json(); })
+      .then(data => {
+        document.getElementById('empleadoId').value = data.id || EMPLEADO_ID || 0;
+        document.getElementById('inputNombre').value = data.nombre || '';
+        document.getElementById('inputApellido').value = data.apellido || '';
+        document.getElementById('inputEmail').value = data.email || '';
+        document.getElementById('inputTelefono').value = data.telefono || '';
+        document.getElementById('inputUbicacion').value = data.ubicacion || '';
+        document.getElementById('profileModalBack').style.display = 'flex';
+        document.getElementById('profileModalBack').setAttribute('aria-hidden','false');
+      }).catch(e => { console.error(e); window.location.href='/login'; });
+  }
+  function closeProfileModal(){ document.getElementById('profileModalBack').style.display='none'; document.getElementById('profileModalBack').setAttribute('aria-hidden','true'); }
+  function saveProfile(){
+    const payload = { nombre: document.getElementById('inputNombre').value, apellido: document.getElementById('inputApellido').value, email: document.getElementById('inputEmail').value, telefono: document.getElementById('inputTelefono').value, ubicacion: document.getElementById('inputUbicacion').value };
+    fetch('/api/empleado/me',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(r => { if(!r.ok) return r.text().then(t=>{throw new Error(t||'Error')}); return r.json(); })
+      .then(updated => { const profileBtn = document.getElementById('profileBtn'); if(profileBtn && updated.nombre) profileBtn.textContent = (updated.nombre||'').substring(0,1).toUpperCase(); closeProfileModal(); alert('Perfil actualizado correctamente'); })
+      .catch(err => { console.error(err); alert('No se pudo guardar el perfil: ' + (err.message||'')); });
+  }
+</script>
+</body>
+</html>
