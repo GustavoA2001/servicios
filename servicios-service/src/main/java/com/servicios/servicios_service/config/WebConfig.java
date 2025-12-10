@@ -28,7 +28,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/favicon.ico",
                         "/webjars/**",
                         "/error",
-                        "/", // Si el home no requiere token
                         "/public/**" // lo que sea que no requiera token
                 );
     }

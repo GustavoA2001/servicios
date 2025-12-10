@@ -5,175 +5,342 @@
     <meta charset="UTF-8" />
     <title>Login</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
+        /* --- Correcciones importantes --- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --accent: #6a28c6;
+            --accent-dark: #4b0fa0;
+            --muted: #9aa0b4;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(0, 0, 0, 0.04);
+        }
+
+        html,
         body {
-            font-family: Arial;
-            background: #eef1f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            height: 100%;
             margin: 0;
+            font-family: "Poppins", Arial, sans-serif;
         }
 
-        .card {
-            background: white;
-            padding: 35px 40px;
-            border-radius: 14px;
-            width: 360px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            animation: fadeIn .4s ease;
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #f3eef9 0%, #f6f8fb 100%);
+            padding: 40px;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 460px;
+            gap: 36px;
+            align-items: center;
         }
 
-        h2 {
+        /* LEFT: ahora la imagen la asignamos via estilo inline con Thymeleaf (ver abajo) */
+        .left {
+            position: relative;
+            height: 70vh;
+            min-height: 480px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(106, 40, 198, 0.06) 0%, rgba(16, 24, 64, 0.01) 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            background-size: cover;
+            background-position: left center;
+        }
+
+        .left .ground {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 38%;
+            width: 100%;
+            background: linear-gradient(180deg, #23b07b 0%, #0ea57a 100%);
+            clip-path: polygon(0 40%, 12% 28%, 30% 46%, 52% 30%, 72% 50%, 100% 30%, 100% 100%, 0% 100%);
+            opacity: 0.95;
+        }
+
+        .login-card {
+            position: relative;
+            padding: 36px 40px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            box-shadow: 0 24px 60px rgba(16, 24, 64, 0.14);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(6px) saturate(120%);
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .brand {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--accent);
             text-align: center;
-            margin-bottom: 25px;
-            color: #444;
-            font-size: 24px;
+            margin-bottom: 12px;
         }
 
+        .subtitle {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #5a3a8b;
+            margin-bottom: 20px;
+        }
+
+        /* Labels / Inputs: aseguro ancho y que no se salgan */
         label {
-            margin-top: 15px;
             display: block;
-            color: #555;
-        }
-
-        input {
             width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            transition: 0.2s;
+            margin: 6px 0 6px 0;
+            color: #5f6571;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: normal;
+            /* permite que el texto haga wrap si es necesario */
+            word-break: break-word;
         }
 
-        input:focus {
-            border-color: #4f6ef7;
-            box-shadow: 0 0 3px rgba(79, 110, 247, .4);
-        }
-
-        button {
+        .input-group {
+            position: relative;
             width: 100%;
-            margin-top: 22px;
-            padding: 12px;
-            background: #4f6ef7;
+            margin-bottom: 18px;
+        }
+
+        .input-group svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            opacity: 0.55;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            /* espacio para icono */
+            border-radius: 10px;
+            border: 1px solid rgba(16, 24, 64, 0.06);
+            background: #fff;
+            font-size: 14px;
+            color: #222;
+            outline: none;
+            transition: all .14s ease;
+            box-shadow: 0 6px 18px rgba(16, 24, 64, 0.04);
+            -webkit-appearance: none;
+        }
+
+        input::placeholder,
+        select {
+            color: #bfc6d4;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: rgba(106, 40, 198, 0.55);
+            box-shadow: 0 10px 28px rgba(106, 40, 198, 0.06);
+        }
+
+        /* Botón */
+        #btnLogin {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            border-radius: 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #fff;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
+            box-shadow: 0 10px 30px rgba(106, 40, 198, 0.18);
         }
 
-        button:hover {
-            background: #3c57d6;
+        #btnLogin:hover {
+            transform: translateY(-2px);
         }
 
-        .msg {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 6px;
+        /* Mensaje */
+        #msg {
+            margin-top: 12px;
+            min-height: 36px;
             text-align: center;
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: inline-block;
+        }
+
+        .foot {
+            margin-top: 18px;
+            text-align: center;
+            color: var(--muted);
             font-size: 14px;
         }
 
-        .msg.error {
-            background: #ffe0df;
-            color: #d63031;
+        .foot a {
+            color: #06bfa6;
+            text-decoration: none;
+            font-weight: 700;
         }
 
-        .msg.success {
-            background: #e0f3ff;
-            color: #0984e3;
+        @media (max-width:980px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .left {
+                order: 2;
+                min-height: 300px;
+                height: 42vh;
+            }
+
+            .login-card {
+                order: 1;
+                min-height: 420px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width:520px) {
+            .login-card {
+                padding: 20px;
+                border-radius: 14px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="card">
-        <h2>Iniciar Sesión</h2>
+    <div class="hero">
+        <div class="container">
+            <!-- LEFT: usa th:style para que Thymeleaf resuelva la ruta estática -->
+            <!-- Asegúrate de mover Login.png a src/main/resources/static/Imagenes/Login.png -->
+            <div class="left" th:style="|background-image: url('@{/Imagenes/Login.png}');|">
+                <div class="ground"></div>
+            </div>
 
-        <label>Email</label>
-        <input id="email" type="text">
+            <div class="login-card">
+                <div class="brand">LookingProf</div>
+                <div class="subtitle">Iniciar Sesión</div>
 
-        <label>Contraseña</label>
-        <input id="password" type="password">
+                <label for="email">Email</label>
+                <div class="input-group">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path
+                            d="M3 6.5C3 5.67 3.67 5 4.5 5H19.5C20.33 5 21 5.67 21 6.5V17.5C21 18.33 20.33 19 19.5 19H4.5C3.67 19 3 18.33 3 17.5V6.5Z"
+                            stroke="#6b6f7d" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M21 6L12 12.5L3 6" stroke="#6b6f7d" stroke-width="1.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <input id="email" type="text" placeholder="Email">
+                </div>
 
-        <label>Ingresar como: </label>
-        <select id="tipo">
-            <option value="CLIENTE">Cliente</option>
-            <option value="EMPLEADO">Empleado</option>
-        </select>
+                <label for="password">Contraseña</label>
+                <div class="input-group">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="#6b6f7d" stroke-width="1.2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="12" cy="12" r="3" stroke="#6b6f7d" stroke-width="1.2" />
+                    </svg>
+                    <input id="password" type="password" placeholder="Contraseña">
+                </div>
 
+                <label for="tipo">Ingresar como:</label>
+                <div style="margin-bottom:6px;">
+                    <select id="tipo">
+                        <option value="CLIENTE">Cliente</option>
+                        <option value="EMPLEADO">Empleado</option>
+                    </select>
+                </div>
 
-        <button id="btnLogin">Ingresar</button>
+                <button id="btnLogin">Iniciar Sesión</button>
 
-        <div id="msg"></div>
+                <div id="msg"></div>
 
-        <p style="margin-top:15px; text-align:center;">
-            ¿No tienes cuenta?
-            <a href="http://localhost:8082/auth/registro">Regístrate aquí</a>
-        </p>
+                <p class="foot">
+                    ¿No tienes cuenta?
+                    <a href="http://localhost:8082/auth/registro">Regístrate aquí</a>
+                </p>
+            </div>
+        </div>
     </div>
 
+    <!-- tu script original sin cambios -->
     <script>
         const msg = document.getElementById("msg");
-    
+
         document.getElementById("btnLogin").onclick = async () => {
             msg.innerHTML = "";
             msg.className = "msg";
-    
+
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
             const tipo = document.getElementById("tipo").value;
-    
+
             const res = await fetch("/auth/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, tipo })
             });
-    
+
             const data = await res.json();
-    
+
             if (res.ok) {
                 msg.classList.add("success");
                 msg.innerHTML = "¡Login exitoso! Redirigiendo...";
-    
-                // 👉 Usar el rol real que devuelve el backend
+
+                // Usar el rol real que devuelve el backend
                 const rol = data.rol;
-    
+
                 setTimeout(() => {
-                    if (rol === "Cliente") {
+                    if (rol.toUpperCase() === "CLIENTE") {
                         window.location.href = "http://localhost:8085/";
-                    } else if (rol === "Trabajador") {
-                        window.location.href = "http://localhost:8086/";
-                    } else if (rol === "Administrador") {
+                    } else if (rol.toUpperCase() === "EMPLEADO" || rol.toUpperCase() === "TRABAJADOR") {
+                        window.location.href = "http://localhost:8092/";
+                    } else if (rol.toUpperCase() === "ADMINISTRADOR") {
                         window.location.href = "http://localhost:8087/";
                     } else {
                         msg.classList.add("error");
                         msg.innerHTML = "Rol no reconocido.";
                     }
                 }, 1200);
+
             } else {
                 msg.classList.add("error");
                 msg.innerHTML = data.message || "Error al iniciar sesión.";
             }
         }
     </script>
-    
-    
+
+
 
 </body>
 

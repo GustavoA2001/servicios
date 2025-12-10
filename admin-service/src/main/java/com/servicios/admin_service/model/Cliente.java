@@ -11,8 +11,6 @@ public class Cliente extends Usuario {
      */
 
 
-    private Direccion direccion;
-
     public Cliente() {
     }
 

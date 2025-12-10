@@ -167,6 +167,15 @@
         Port: 8091
         -->
         <module>empleado-service</module>
+
+        <!--
+        10: auditoria-service
+
+        -Funcionalidades:
+        Registrar datos
+        Port: 8092
+        -->
+
     </modules>
 
 
