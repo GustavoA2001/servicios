@@ -52,7 +52,7 @@
         port: 8083
         -->
 
-        <module>pedidos-service</module>
+        <!--module>pedidos-service</module-->
         <!--
         4: Pedidos o Reservas (pedidos-service)
 
@@ -166,6 +166,7 @@
         Registrar datos
         Port: 8091
         -->
+        <module>empleado-service</module>
     </modules>
 
 
