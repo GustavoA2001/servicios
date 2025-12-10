@@ -4,7 +4,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import com.servicios.pagos_service.config.FeignConfigPagos;
 
 @FeignClient(name = "servicios-service", url = "http://localhost:8085/api/pedidos")
 public interface PedidoClient {
