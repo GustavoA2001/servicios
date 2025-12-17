@@ -32,11 +32,10 @@ public class UsuariosController extends BaseController {
     // =============
     // MVC: Vistas HTML
     // =============
-
     @GetMapping
     public String UsuariosHTML(Model model) {
         model.addAttribute("activeMenu", "usuarios");
-        return "redirect:/usuarios/clientes"; 
+        return "redirect:/usuarios/clientes";
     }
 
     @GetMapping("/clientes")
@@ -49,7 +48,7 @@ public class UsuariosController extends BaseController {
         model.addAttribute("activeMenu", "usuarios");
 
         // Método de BaseController para datos del usuario
-        agregarDatosUsuario(model, request); 
+        agregarDatosUsuario(model, request);
 
         return "usuarios";
     }
@@ -65,7 +64,7 @@ public class UsuariosController extends BaseController {
 
         // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
-        return "usuarios"; 
+        return "usuarios";
     }
 
     @GetMapping("/administradores")
@@ -80,12 +79,12 @@ public class UsuariosController extends BaseController {
         // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
 
-        return "usuarios"; 
+        return "usuarios";
     }
 
     @GetMapping("/usuario/{tipo}/{id}")
     public String obtenerUsuarioPorId(@PathVariable String tipo, @PathVariable Long id, Model model,
-                                      HttpServletRequest request) {
+            HttpServletRequest request) {
         if (tipo.equalsIgnoreCase("Cliente")) {
             model.addAttribute("usuario", usuarioService.obtenerClientePorId(id));
         } else {
@@ -98,13 +97,12 @@ public class UsuariosController extends BaseController {
         // Método de BaseController para datos del usuario
         agregarDatosUsuario(model, request);
 
-        return "usuarios"; 
+        return "usuarios";
     }
 
     // ===========
-    // REST y JSON 
+    // REST y JSON
     // ===========
-
     // Lista de clientes
     @GetMapping("/api/clientes")
     @ResponseBody // Indica que la respuesta no es una vista, sino datos JSON
@@ -130,27 +128,71 @@ public class UsuariosController extends BaseController {
         return ResponseEntity.ok(usuarioService.obtenerEmpleadoPorId(id));
     }
 
-    // Registrar un nuevo usuario
+    // Registrar un nuevo usuario y mostrar la vista con el usuario registrado
     @PostMapping("/registrar")
-    @ResponseBody
-    public ResponseEntity<String> registrarUsuario(@RequestBody UsuarioRequest nuevoUsuario) {
-        // @RequestBody: convierte el JSON recibido en un objeto UsuarioRequest
+    public String registrarUsuario(@RequestBody UsuarioRequest nuevoUsuario,
+                                   Model model,
+                                   HttpServletRequest request) {
         try {
-            usuarioService.registrarUsuario(nuevoUsuario);
-            return ResponseEntity.ok("Usuario registrado exitosamente");
+            // Tomamos el actor desde atributos de request (propagados por tu interceptor de auth) 
+            String rolActor = (String) request.getAttribute("usuarioRol"); 
+            Long actorId = (Long) request.getAttribute("usuarioId");
+            System.out.println("===METODO REGISTRANDO====" + rolActor + "-" + actorId);
+
+            String endpoint = (String) request.getAttribute("endpoint"); 
+            String httpMethod = (String) request.getAttribute("httpMethod");
+
+            // Llamamos al Service con el actor para que registre auditoría con 'después'
+            String resultado = usuarioService.registrarUsuario(nuevoUsuario, rolActor, actorId, endpoint, httpMethod);
+            mensajeService.guardarMensaje(resultado);
+    
+            // 3) Tu renderizado original (sin cambios funcionales)
+            Usuario usuarioRegistrado = null;
+    
+            if ("cliente".equalsIgnoreCase(nuevoUsuario.getRol())) {
+                List<Cliente> clientes = usuarioService.obtenerClientes();
+                if (!clientes.isEmpty()) {
+                    usuarioRegistrado = clientes.get(clientes.size() - 1);
+                }
+                model.addAttribute("tipo", "Cliente");
+            } else {
+                List<Empleado> empleados = usuarioService.obtenerEmpleadosPorRol(
+                    "administrador".equalsIgnoreCase(nuevoUsuario.getRol()) ? 1 : 2
+                );
+                if (!empleados.isEmpty()) {
+                    usuarioRegistrado = empleados.get(empleados.size() - 1);
+                }
+                model.addAttribute("tipo", nuevoUsuario.getRol());
+            }
+    
+            model.addAttribute("usuario", usuarioRegistrado);
+            model.addAttribute("activePage", "usuario_info");
+            model.addAttribute("activeMenu", "usuarios");
+            model.addAttribute("mensajes", List.of(resultado));
+    
+            agregarDatosUsuario(model, request);
+    
+            return "usuarios";
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError()
-                    .body("Error al registrar el usuario: " + e.getMessage());
+            String errorMsg = "Error al registrar el usuario: " + e.getMessage();
+            mensajeService.guardarMensaje(errorMsg);
+    
+            model.addAttribute("mensajes", List.of(errorMsg));
+            model.addAttribute("activePage", "lista");
+            model.addAttribute("activeMenu", "usuarios");
+            agregarDatosUsuario(model, request);
+    
+            return "usuarios";
         }
-    }
+    }        
 
     // Actualizar usuario
     @PutMapping("/actualizar/{tipo}/{id}")
     @ResponseBody
     public ResponseEntity<String> actualizarUsuario(@PathVariable String tipo,
-                                                    @PathVariable Long id,
-                                                    @RequestBody Map<String, Object> body) {
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body,
+            HttpServletRequest request) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -171,8 +213,10 @@ public class UsuariosController extends BaseController {
                     if (usuarioExistente == null)
                         return ResponseEntity.badRequest().body("Empleado no encontrado");
                     Empleado parcial = mapper.convertValue(body, Empleado.class);
-                    if (tipo.equalsIgnoreCase("administrador")) parcial.setRolID(1);
-                    if (tipo.equalsIgnoreCase("trabajador")) parcial.setRolID(2);
+                    if (tipo.equalsIgnoreCase("administrador"))
+                        parcial.setRolID(1);
+                    if (tipo.equalsIgnoreCase("trabajador"))
+                        parcial.setRolID(2);
                     usuarioParcial = parcial;
                 }
                 default -> {
@@ -182,8 +226,17 @@ public class UsuariosController extends BaseController {
 
             Usuario usuarioFinal = combinarUsuarios(usuarioExistente, usuarioParcial);
 
+            // Actor para auditoría 
+            String rolActor = (String) request.getAttribute("usuarioRol"); 
+            Long actorId = (Long) request.getAttribute("usuarioId");
+            String endpoint = (String) request.getAttribute("endpoint"); 
+            String httpMethod = (String) request.getAttribute("httpMethod");
+
+            System.out.println("========ACTUALIZANDO USUARIO=======" + rolActor + "-" + actorId);
+
+            usuarioService.actualizarUsuario(usuarioFinal, rolActor, actorId, endpoint, httpMethod);
+
             mensajeService.guardarMensaje("Usuario actualizado correctamente");
-            usuarioService.actualizarUsuario(usuarioFinal);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -197,11 +250,22 @@ public class UsuariosController extends BaseController {
     @PutMapping("/estado/{tipo}/{id}")
     @ResponseBody
     public ResponseEntity<String> cambiarEstadoUsuario(@PathVariable String tipo,
-                                                       @PathVariable Long id,
-                                                       @RequestBody Map<String, String> body) {
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request) {
         try {
-            String nuevoEstado = body.get("estado"); 
-            usuarioService.cambiarEstadoUsuario(tipo, id, nuevoEstado);
+            String nuevoEstado = body.get("estado");
+
+            String rolActor = (String) request.getAttribute("usuarioRol"); 
+            Long actorId = (Long) request.getAttribute("usuarioId");
+
+            String endpoint = (String) request.getAttribute("endpoint"); 
+            String httpMethod = (String) request.getAttribute("httpMethod");
+
+            System.out.println("======CAMBIANDO ESTADO=====" + rolActor + "-" + actorId);
+
+            usuarioService.cambiarEstadoUsuario(tipo, id, nuevoEstado, rolActor, actorId, endpoint, httpMethod);
+
             mensajeService.guardarMensaje("Estado cambiado a " + nuevoEstado + " correctamente.");
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
@@ -212,30 +276,46 @@ public class UsuariosController extends BaseController {
         }
     }
 
-
     private Usuario combinarUsuarios(Usuario original, Usuario nuevo) {
         // Combina los datos existentes con los recibidos parcialmente (JSON)
         if (original instanceof Cliente o && nuevo instanceof Cliente n) {
-            if (n.getNombre() != null) o.setNombre(n.getNombre());
-            if (n.getApellido() != null) o.setApellido(n.getApellido());
-            if (n.getEmail() != null) o.setEmail(n.getEmail());
-            if (n.getPwd() != null) o.setPwd(n.getPwd());
-            if (n.getDNI() != null) o.setDNI(n.getDNI());
-            if (n.getFotito() != null) o.setFotito(n.getFotito());
-            if (n.getEstado() != null) o.setEstado(n.getEstado());
+            if (n.getNombre() != null)
+                o.setNombre(n.getNombre());
+            if (n.getApellido() != null)
+                o.setApellido(n.getApellido());
+            if (n.getEmail() != null)
+                o.setEmail(n.getEmail());
+            if (n.getPwd() != null)
+                o.setPwd(n.getPwd());
+            if (n.getDNI() != null)
+                o.setDNI(n.getDNI());
+            if (n.getFotito() != null)
+                o.setFotito(n.getFotito());
+            if (n.getEstado() != null)
+                o.setEstado(n.getEstado());
             return o;
         }
         if (original instanceof Empleado o && nuevo instanceof Empleado n) {
-            if (n.getNombre() != null) o.setNombre(n.getNombre());
-            if (n.getApellido() != null) o.setApellido(n.getApellido());
-            if (n.getEmail() != null) o.setEmail(n.getEmail());
-            if (n.getPwd() != null) o.setPwd(n.getPwd());
-            if (n.getDNI() != null) o.setDNI(n.getDNI());
-            if (n.getTelefono() != null) o.setTelefono(n.getTelefono());
-            if (n.getEstado() != null) o.setEstado(n.getEstado());
-            if (n.getRolID() != 0) o.setRolID(n.getRolID());
-            if (n.getFotito() != null) o.setFotito(n.getFotito());
-            if (n.getUbicacionPartida() != null) o.setUbicacionPartida(n.getUbicacionPartida());
+            if (n.getNombre() != null)
+                o.setNombre(n.getNombre());
+            if (n.getApellido() != null)
+                o.setApellido(n.getApellido());
+            if (n.getEmail() != null)
+                o.setEmail(n.getEmail());
+            if (n.getPwd() != null)
+                o.setPwd(n.getPwd());
+            if (n.getDNI() != null)
+                o.setDNI(n.getDNI());
+            if (n.getTelefono() != null)
+                o.setTelefono(n.getTelefono());
+            if (n.getEstado() != null)
+                o.setEstado(n.getEstado());
+            if (n.getRolID() != 0)
+                o.setRolID(n.getRolID());
+            if (n.getFotito() != null)
+                o.setFotito(n.getFotito());
+            if (n.getUbicacionPartida() != null)
+                o.setUbicacionPartida(n.getUbicacionPartida());
             return o;
         }
         return original;

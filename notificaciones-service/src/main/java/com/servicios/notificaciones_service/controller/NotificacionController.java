@@ -16,7 +16,6 @@ import java.util.List;
 public class NotificacionController {
 
     private final CorreoService correoService;
-
     private final NotificacionService service;
 
     public NotificacionController(CorreoService correoService, NotificacionService service) {
@@ -24,10 +23,12 @@ public class NotificacionController {
         this.service = service;
     }
 
+    // Endpoint para enviar un correo electrónico
+    // Recibe un EmailRequest con destinatario, asunto y mensaje
     @PostMapping("/enviarCorreo")
     public ResponseEntity<String> enviarCorreo(@RequestBody EmailRequest emailRequest) {
         try {
-            correoService.enviarCorreo(emailRequest);
+            correoService.enviarCorreo(emailRequest); // delega en CorreoService
             return ResponseEntity.ok("Correo procesado para " + emailRequest.getDestinatario());
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,19 +37,21 @@ public class NotificacionController {
         }
     }
 
+    // Endpoint para guardar una notificación genérica en BD
     @PostMapping("/enviar")
     public void enviar(@RequestBody Notificacion notificacion) throws SQLException {
         service.enviar(notificacion);
     }
 
+    // Devuelve historial de notificaciones de un usuario específico
     @GetMapping("/{usuarioId}")
     public List<Notificacion> historial(@PathVariable Long usuarioId) throws SQLException {
         return service.historial(usuarioId);
     }
 
+    // Devuelve notificaciones globales (no ligadas a un usuario)
     @GetMapping("/globales")
     public List<Notificacion> globales() throws SQLException {
         return service.globales();
     }
-
 }

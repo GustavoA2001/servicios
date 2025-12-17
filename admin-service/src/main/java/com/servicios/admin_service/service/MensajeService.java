@@ -7,30 +7,30 @@ import java.util.Queue;
 
 import org.springframework.stereotype.Service;
 
+import com.servicios.admin_service.controller.MensajeStreamController;
+
 @Service
 public class MensajeService {
     private final Queue<String> mensajes = new LinkedList<>();
+    private MensajeStreamController streamController;
+
+    public void setStreamController(MensajeStreamController streamController) {
+        this.streamController = streamController;
+    }
 
     public void guardarMensaje(String mensaje) {
         mensajes.add(mensaje);
         System.out.println("[MensajeService] Mensaje agregado a la cola: " + mensaje);
-    }
 
-    public String obtenerYBorrarMensaje() {
-        String msg = mensajes.poll();
-        System.out.println("[MensajeService] Mensaje obtenido y borrado: " + msg);
-        return msg;
+        // Notificar inmediatamente a los clientes conectados
+        if (streamController != null) {
+            streamController.broadcast(mensaje);
+        }
     }
 
     public List<String> obtenerYBorrarTodos() {
         List<String> result = new ArrayList<>(mensajes);
         mensajes.clear();
-        System.out.println("[MensajeService] Mensajes consumidos: " + result);
         return result;
-    }    
-
-    public List<String> obtenerTodos() {
-        System.out.println("[MensajeService] Mensajes actuales en cola: " + mensajes);
-        return new ArrayList<>(mensajes);
     }
 }

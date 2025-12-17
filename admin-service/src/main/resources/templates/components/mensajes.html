@@ -1,6 +1,10 @@
 <!-- ============================== -->
 <!-- Plantilla estática de toast moderno -->
 <!-- ============================== -->
+<!-- Contenedor padre para apilar toasts -->
+<div id="toast-wrapper"></div>
+
+<!-- Plantilla de toast -->
 <template id="toast-template">
     <div class="toast-container">
         <div class="toast-content">
@@ -13,13 +17,25 @@
 </template>
 
 <style>
+    
     /* ============================== */
     /* Contenedor general */
     /* ============================== */
-    .toast-container {
+
+    /* Contenedor padre */
+    #toast-wrapper {
         position: fixed;
         top: 25px;
         right: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        /* espacio entre toasts */
+        z-index: 3000;
+    }
+
+    /* Cada toast */
+    .toast-container {
         width: 340px;
         background: #fff;
         color: #333;
@@ -30,13 +46,13 @@
         transform: translateY(-30px);
         transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         font-family: "Poppins", sans-serif;
-        z-index: 3000;
     }
 
     .toast-container.mostrar {
         opacity: 1;
         transform: translateY(0);
     }
+
 
     /* ============================== */
     /* Contenido del toast */
@@ -102,8 +118,13 @@
     }
 
     @keyframes progress-bar {
-        from { width: 100%; }
-        to { width: 0%; }
+        from {
+            width: 100%;
+        }
+
+        to {
+            width: 0%;
+        }
     }
 
     /* ============================== */
@@ -112,9 +133,11 @@
         background: #dcfce7;
         color: #15803d;
     }
+
     .toast-container.success .toast-progress::after {
         background: #22c55e;
     }
+
     .toast-container.success .toast-icon::before {
         content: "✔";
     }
@@ -123,9 +146,11 @@
         background: #fee2e2;
         color: #b91c1c;
     }
+
     .toast-container.error .toast-progress::after {
         background: #ef4444;
     }
+
     .toast-container.error .toast-icon::before {
         content: "✖";
     }
@@ -134,9 +159,11 @@
         background: #fef9c3;
         color: #92400e;
     }
+
     .toast-container.warning .toast-progress::after {
         background: #f59e0b;
     }
+
     .toast-container.warning .toast-icon::before {
         content: "⚠";
     }
@@ -145,9 +172,11 @@
         background: #dbeafe;
         color: #1e40af;
     }
+
     .toast-container.info .toast-progress::after {
         background: #3b82f6;
     }
+
     .toast-container.info .toast-icon::before {
         content: "ℹ";
     }

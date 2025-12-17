@@ -16,14 +16,17 @@ public class NotificacionService {
         this.dao = dao;
     }
 
+    // Inserta una notificación en BD
     public void enviar(Notificacion n) throws SQLException {
         dao.insertar(n);
     }
 
+    // Obtiene historial de notificaciones de un usuario
     public List<Notificacion> historial(Long usuarioId) throws SQLException {
         return dao.obtenerPorUsuario(usuarioId);
     }
 
+    // Obtiene notificaciones globales
     public List<Notificacion> globales() throws SQLException {
         return dao.obtenerGlobales();
     }

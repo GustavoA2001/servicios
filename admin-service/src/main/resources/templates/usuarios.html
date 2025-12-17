@@ -189,7 +189,6 @@
             word-break: break-word;
         }
 
-
         aside.aside_usuarios,
         section.section_usuarios {
             margin: 10px;
@@ -276,7 +275,7 @@
 </body>
 
 </html>
-<!--script>
+<script>
     function mostrarToast(msg) {
         const template = document.getElementById("toast-template");
         const contenedor = template.content.firstElementChild.cloneNode(true);
@@ -289,7 +288,8 @@
         // Insertar el mensaje
         contenedor.querySelector(".toast-message").textContent = msg;
 
-        document.body.appendChild(contenedor);
+        // Insertar en el contenedor padre
+        document.getElementById("toast-wrapper").appendChild(contenedor);
 
         // Activar animación
         setTimeout(() => contenedor.classList.add("mostrar"), 50);
@@ -301,20 +301,13 @@
         }, 5000);
     }
 
-    async function verificarMensajes() {
-        try {
-            const response = await fetch("/api/mensajes/todos");
-            if (response.ok) {
-                const mensajes = await response.json();
-                mensajes.forEach(msg => mostrarToast(msg));
-            }
-        } catch (err) {
-            console.error("Error al consultar mensajes:", err);
-        }
-    }
+    // Suscripción al SSE
+    const eventSource = new EventSource("/api/mensajes/stream");
+    eventSource.addEventListener("mensaje", function (e) {
+        mostrarToast(e.data);
+    });
+    eventSource.onerror = function (err) {
+        console.error("Error en SSE:", err);
+    };
 
-    // cada 5 segundos
-    setInterval(verificarMensajes, 5000);
-
-
-</script-->
+</script>

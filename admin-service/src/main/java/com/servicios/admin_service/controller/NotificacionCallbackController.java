@@ -22,12 +22,12 @@ public class NotificacionCallbackController {
     public void recibirConfirmacion(@RequestBody Map<String, String> data) {
         String destinatario = data.get("destinatario");
         String estado = data.get("estado");
-    
+        String mensaje = "Correo enviado a " + destinatario + " - Estado: " + estado;
+
         System.out.println("[CallbackController] Confirmación recibida: destinatario=" + destinatario + ", estado=" + estado);
     
         usuarioService.confirmarEnvioCorreo(destinatario, estado);
     
-        String mensaje = "Correo enviado a " + destinatario + " - Estado: " + estado;
         mensajeService.guardarMensaje(mensaje);
     
         System.out.println("[CallbackController] Mensaje guardado en MensajeService: " + mensaje);
